@@ -236,6 +236,9 @@ export type ModelConfig = {
   // A file to read the shape from instead, like one in /config/www, which
   // Home Assistant serves as /local/. The parts then only name the colors.
   url?: string
+  // The parts that light up, by name, like the shade of a lamp. A model
+  // with any of them can stand for a light, and glows with it.
+  glow?: string[]
 }
 
 export type CardConfig = {

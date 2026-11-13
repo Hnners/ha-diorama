@@ -514,7 +514,34 @@ export default function DecorationPanel({
                     onChange={v => onUpdateModel(id, { mount: v as ModelConfig['mount'] })}
                   />
                 </label>
-                <p className={note}>Every piece of this model changes with its name and mount. {sizeNote(model)}</p>
+                {/* The parts that light up, like a lamp's shade. Ticking one
+                    lets every piece of the model stand for a light. */}
+                <div className={cn(row, 'grid-cols-[96px_1fr] items-start')}>
+                  <span className="pt-0.5">Glows</span>
+                  <div className="flex flex-col gap-1">
+                    {model.parts.map(part => {
+                      const lit = (model.glow ?? []).includes(part.name)
+                      return (
+                        <label key={part.name} className="flex min-w-0 items-center gap-2 text-[13px]">
+                          <input
+                            type="checkbox"
+                            checked={lit}
+                            onChange={e => {
+                              const rest = (model.glow ?? []).filter(n => n !== part.name)
+                              const glow = e.target.checked ? [...rest, part.name] : rest
+                              onUpdateModel(id, { glow: glow.length > 0 ? glow : undefined })
+                            }}
+                          />
+                          <span className="truncate">{part.name}</span>
+                        </label>
+                      )
+                    })}
+                  </div>
+                </div>
+                <p className={note}>
+                  Every piece of this model changes with its name, mount and glowing parts. A model with a glowing part
+                  can stand for a light. {sizeNote(model)}
+                </p>
                 {heavy && <p className="text-xs leading-snug text-[var(--warning-color,#ffa600)]">{heavy}</p>}
               </div>
             )

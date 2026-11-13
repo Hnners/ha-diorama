@@ -11,6 +11,7 @@ moves that section under the new version and uses it as the release notes.
 
 ### Added
 
+- An imported model can have parts that glow, ticked in its Model settings, and then stands for a light: those parts light up with the light's color and brightness and light the room around them.
 - A home of several floors can offer an All floors button above its floor switch, turned on in the card's new Floors settings, that shows every floor at once, one over the other, and a click on a room goes to its floor. The stairs on a floor that climb to the next one now all keep the same height, while a few steps up to a raised floor keep their own.
 
 ### Fixed

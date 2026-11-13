@@ -1,4 +1,5 @@
 import type { DecorationKind, DecorationParam, Mount } from '#/decoration/catalog.ts'
+import type { Signal } from '#/signals.ts'
 import { SCANDI } from '#/theme.ts'
 import type { ModelConfig } from '#/types.ts'
 
@@ -54,7 +55,15 @@ function side(id: string, label: string, own: number): DecorationParam {
 // Everything the parts and the stored shape say that a kind is made from.
 // The shape itself is left out: once imported it never changes.
 const signatureOf = (model: ModelConfig) =>
-  JSON.stringify([model.name, model.size, model.mount, model.url, model.parts.map(p => p.name)])
+  JSON.stringify([model.name, model.size, model.mount, model.url, model.parts.map(p => p.name), model.glow ?? []])
+
+// What a model with glowing parts shows of its light, the same as the
+// lamps in the catalog: on and off, how bright, its color and its white.
+const GLOW_SIGNALS: Signal[] = ['toggle', 'level', 'color', 'warmth', 'press']
+
+// The glowing parts a model names that it still has.
+export const glowParts = (model: ModelConfig) =>
+  (model.glow ?? []).filter(name => model.parts.some(p => p.name === name))
 
 function kindOf(id: string, model: ModelConfig): DecorationKind {
   const mount: Mount = model.mount === 'wall' || model.mount === 'ceiling' ? model.mount : 'floor'
@@ -78,7 +87,7 @@ function kindOf(id: string, model: ModelConfig): DecorationKind {
     params,
     colors,
     materials: {},
-    expresses: [],
+    expresses: glowParts(model).length > 0 ? GLOW_SIGNALS : [],
   }
 }
 
