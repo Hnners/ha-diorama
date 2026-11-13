@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Fixed
+
+- Ticking a part of an imported model as glowing now keeps it ticked and saves it.
+
 ## [1.9.1] - 2026-11-13
 
 ### Added
