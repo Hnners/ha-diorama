@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.9.2] - 2026-11-13
+
 ### Fixed
 
 - Ticking a part of an imported model as glowing now keeps it ticked and saves it.
@@ -742,7 +744,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.1...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.2...HEAD
+[1.9.2]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.1...v1.9.2
 [1.9.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.8.29...v1.9.0
 [1.8.29]: https://github.com/CarlesRojas/ha-diorama/compare/v1.8.28...v1.8.29
