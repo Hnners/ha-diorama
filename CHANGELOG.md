@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.9.1] - 2026-11-13
+
 ### Added
 
 - An imported model can have parts that glow, ticked in its Model settings, and then stands for a light: those parts light up with the light's color and brightness and light the room around them.
@@ -736,7 +738,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.1...HEAD
+[1.9.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.8.29...v1.9.0
 [1.8.29]: https://github.com/CarlesRojas/ha-diorama/compare/v1.8.28...v1.8.29
 [1.8.28]: https://github.com/CarlesRojas/ha-diorama/compare/v1.8.27...v1.8.28
