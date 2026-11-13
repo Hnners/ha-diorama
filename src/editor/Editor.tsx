@@ -92,7 +92,9 @@ type Models = Record<string, ModelConfig> | undefined
 // What of the imported models counts as a change. Their shape never changes
 // once imported, so it is left out, which keeps a long one from being written
 // out again on every edit.
-const modelSummary = (models: Models) => Object.entries(models ?? {}).map(([id, m]) => [id, m.name, m.mount ?? 'floor'])
+// What of a model the editor can change, so a change to any of it is saved.
+const modelSummary = (models: Models) =>
+  Object.entries(models ?? {}).map(([id, m]) => [id, m.name, m.mount ?? 'floor', m.glow ?? []])
 
 function nextRoomId(rooms: RoomConfig[]) {
   let n = rooms.length + 1
