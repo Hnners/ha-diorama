@@ -6,6 +6,15 @@ import { colorWell, field, group, groupTitle, note, plainButton, row } from '#/e
 import { ResetButton, Slider } from '#/editor/panel.tsx'
 import { simplifyModel, type Simplified } from '#/editor/simplify.ts'
 import { Select } from '#/components/ui/select.tsx'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '#/components/ui/alert-dialog.tsx'
 import { cn } from '#/lib/utils.ts'
 import type { ModelConfig } from '#/types.ts'
 import { useEffect, useState } from 'react'
@@ -185,6 +194,8 @@ function Detail({ id, model, onUpdateModel }: Props) {
   const [result, setResult] = useState<Simplified | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Asking before the original shape is let go.
+  const [confirming, setConfirming] = useState(false)
   const stored = model.parts.some(p => p.vertices && p.triangles)
   const bytes = model.parts.reduce((s, p) => s + (p.vertices?.length ?? 0) + (p.triangles?.length ?? 0), 0)
   const heavy = heavyNote(model)
@@ -217,6 +228,32 @@ function Detail({ id, model, onUpdateModel }: Props) {
       {heavy && <p className="text-xs leading-snug text-[var(--warning-color,#ffa600)]">{heavy}</p>}
       {stored ? (
         <>
+          {/* A simplified shape keeps the original beside it until it is
+              confirmed, so it can be had back. */}
+          {model.original && (
+            <div className="bg-fill flex flex-col gap-2 rounded-xl p-2.5">
+              <p className="text-[13px]">
+                Simplified from {thousands(model.original.triangles)} triangles. The original is kept until you choose.
+              </p>
+              <div className="grid grid-cols-2 gap-1.5">
+                <button
+                  type="button"
+                  className={plainButton}
+                  onClick={() => {
+                    const original = model.original
+                    if (!original) return
+                    onUpdateModel(id, { parts: original.parts, triangles: original.triangles, original: undefined })
+                    setKeep(original.triangles > 20000 ? 10 : 50)
+                  }}
+                >
+                  Restore original
+                </button>
+                <button type="button" className={plainButton} onClick={() => setConfirming(true)}>
+                  Keep simplified
+                </button>
+              </div>
+            </div>
+          )}
           <label className={cn(row, 'grid-cols-[96px_1fr_48px]')}>
             Keep
             <Slider aria-label="Share of triangles to keep" min={2} max={100} step={1} value={keep} onChange={e => setKeep(Number(e.target.value))} />
@@ -236,7 +273,9 @@ function Detail({ id, model, onUpdateModel }: Props) {
             disabled={busy || !result || result.triangles >= model.triangles}
             onClick={() => {
               if (!result) return
-              onUpdateModel(id, { parts: result.parts, triangles: result.triangles })
+              // The shape as imported stays until the simpler one is kept.
+              const original = model.original ?? { parts: model.parts, triangles: model.triangles }
+              onUpdateModel(id, { parts: result.parts, triangles: result.triangles, original })
               // Back to all of what it now has, so another click asks again.
               setKeep(100)
             }}
@@ -244,9 +283,30 @@ function Detail({ id, model, onUpdateModel }: Props) {
             Simplify to {result ? thousands(result.triangles) : '...'} triangles
           </button>
           <p className={note}>
-            Every piece of the model changes. Undo brings the detail back while the editor is open; after saving, import
-            the file again for the full detail.
+            Every piece of the model changes. Until you keep the simplified shape, the original stays in the card too,
+            so the card is larger meanwhile.
           </p>
+          <AlertDialog open={confirming} onOpenChange={open => !open && setConfirming(false)}>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Keep the simplified shape?</AlertDialogTitle>
+              <AlertDialogDescription>
+                {model.original
+                  ? `The original ${thousands(model.original.triangles)} triangles are let go, and the model stays at ${thousands(model.triangles)}. To get the full detail back after that, import the file again.`
+                  : ''}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setConfirming(false)}>Not yet</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  onUpdateModel(id, { original: undefined })
+                  setConfirming(false)
+                }}
+              >
+                Keep simplified
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialog>
         </>
       ) : (
         <p className={note}>

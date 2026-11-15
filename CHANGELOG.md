@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Changed
+
+- Simplifying a model keeps its original shape until you choose Keep simplified, and Restore original brings the full detail back until then.
+
 ## [1.11.0] - 2026-11-15
 
 ### Added
