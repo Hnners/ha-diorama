@@ -11,7 +11,7 @@ import {
   ROOM_ELEVATION_STEP_M,
 } from '#/theme.ts'
 import type { Floor } from '#/lib/floors.ts'
-import type { Area, DecorationConfig, HomeAssistant, RoomConfig } from '#/types.ts'
+import type { Area, DecorationConfig, HomeAssistant, RoomConfig, Point } from '#/types.ts'
 import { entityName } from '#/devices/catalog.ts'
 import { PRESENCE_COLOR, PRESENCE_STRENGTH } from '#/scene/presence.ts'
 import { useFlash } from '#/lib/flash.ts'
@@ -46,6 +46,7 @@ type Props = {
   // room's own.
   walls?: string
   onWallColor?: (roomId: string, color: string | undefined) => void
+  onWallColors?: (roomId: string, colors: RoomConfig['wall_colors']) => void
   // Every piece of the home, to tell which rooms beside this one a door
   // leads into.
   decorations: DecorationConfig[]
@@ -67,6 +68,41 @@ const cameraButton = plainButton
 
 // The selected room: its name, the area it stands for, the floor under it,
 // and the way to be rid of it.
+// The walls of a room, in the order of its edges, each named for the side of
+// the room it faces out to on the plan, and numbered when two face the same
+// way.
+function wallSides(points: Point[]) {
+  const n = points.length
+  let area = 0
+  for (let i = 0; i < n; i++) {
+    const [x1, y1] = points[i]
+    const [x2, y2] = points[(i + 1) % n]
+    area += x1 * y2 - x2 * y1
+  }
+  const ccw = area >= 0
+  const names = ['Right', 'Top right', 'Top', 'Top left', 'Left', 'Bottom left', 'Bottom', 'Bottom right']
+  const sides = points.map((p, i) => {
+    const q = points[(i + 1) % n]
+    const dx = q[0] - p[0]
+    const dy = q[1] - p[1]
+    // Out of the room: to the right of the way round for a room drawn
+    // counter clockwise, to the left for one drawn clockwise.
+    const out = ccw ? [dy, -dx] : [-dy, dx]
+    const angle = (Math.atan2(out[1], out[0]) * 180) / Math.PI
+    const label = names[(Math.round(angle / 45) + 8) % 8]
+    return { label, length: Math.hypot(dx, dy) }
+  })
+  const count = new Map<string, number>()
+  for (const s of sides) count.set(s.label, (count.get(s.label) ?? 0) + 1)
+  const seen = new Map<string, number>()
+  return sides.map(s => {
+    if ((count.get(s.label) ?? 0) < 2) return s
+    const k = (seen.get(s.label) ?? 0) + 1
+    seen.set(s.label, k)
+    return { ...s, label: `${s.label} ${k}` }
+  })
+}
+
 export default function RoomInfo({
   room,
   rooms,
@@ -84,6 +120,7 @@ export default function RoomInfo({
   onPresence,
   walls,
   onWallColor,
+  onWallColors,
   decorations,
   onArrow,
   onSaveCamera,
@@ -227,6 +264,47 @@ export default function RoomInfo({
             />
             <ResetButton label="Walls" changed={room.wall_color !== undefined} onReset={() => onWallColor(room.id, undefined)} />
           </label>
+        )}
+        {/* Each wall on its own, named for the side of the room it is on. A
+            wall left alone takes the room's color above. */}
+        {walls && onWallColors && (
+          <details className="group/walls">
+            <summary className={cn(row, 'cursor-pointer list-none grid-cols-[1fr_auto] text-[13px]')}>
+              Each wall
+              <span className="text-label-2 text-xs">
+                {(room.wall_colors ?? []).filter(Boolean).length > 0
+                  ? `${(room.wall_colors ?? []).filter(Boolean).length} of ${room.points.length} set`
+                  : 'All the room color'}
+              </span>
+            </summary>
+            <div className="flex flex-col gap-1 pt-1">
+              {wallSides(room.points).map(({ label, length }, i) => {
+                const own = room.wall_colors?.[i] ?? undefined
+                const set = (color: string | undefined) => {
+                  const list = Array.from({ length: room.points.length }, (_, k) => room.wall_colors?.[k] ?? null)
+                  list[i] = color ?? null
+                  onWallColors(room.id, list.some(Boolean) ? list : undefined)
+                }
+                return (
+                  <label key={i} className={cn(row, 'grid-cols-[96px_1fr_24px]')}>
+                    <span className="flex min-w-0 flex-col leading-tight">
+                      <span className="truncate">{label}</span>
+                      <span className="text-label-2 text-[11px] tabular-nums">{length.toFixed(2)} m</span>
+                    </span>
+                    <input
+                      type="color"
+                      className={colorWell}
+                      aria-label={`${label} wall color`}
+                      value={own ?? room.wall_color ?? walls}
+                      onChange={e => set(e.target.value)}
+                    />
+                    <ResetButton label={`${label} wall`} changed={own !== undefined} onReset={() => set(undefined)} />
+                  </label>
+                )
+              })}
+              <p className={note}>Named for the side of the room each wall is on, as the plan shows it.</p>
+            </div>
+          </details>
         )}
         {room.floor && (
           <>

@@ -76,18 +76,28 @@ const SAME_LINE_M = 0.02
 export function roomWallGeometry(
   outline: Point[],
   openings: WallOpening[],
-  options: { height: number; thickness: number; gap: number; others?: Point[][] },
+  options: {
+    height: number
+    thickness: number
+    gap: number
+    others?: Point[][]
+    // The color of each edge's wall, in the order of the outline's edges,
+    // as linear red, green and blue. Without it the material's color shows.
+    colors?: [number, number, number][]
+  },
 ): BufferGeometry {
-  const { height, thickness, gap, others = [] } = options
-  const faces: [number[], number[], number[]][] = [
-    [[], [], []],
-    [[], [], []],
+  const { height, thickness, gap, others = [], colors } = options
+  const faces: [number[], number[], number[], number[]][] = [
+    [[], [], [], []],
+    [[], [], [], []],
   ]
+  // The color the faces of the wall being built take.
+  let tint: [number, number, number] = [1, 1, 1]
 
   // One flat face from four corners in order round it, facing `n`, with the
   // texture coordinates of its corners.
   const quad = (group: 0 | 1, p: [number, number, number][], n: [number, number, number], uv: [number, number][]) => {
-    const [positions, normals, uvs] = faces[group]
+    const [positions, normals, uvs, tints] = faces[group]
     const [a, b, c] = p
     const e1 = [b[0] - a[0], b[1] - a[1], b[2] - a[2]]
     const e2 = [c[0] - a[0], c[1] - a[1], c[2] - a[2]]
@@ -97,6 +107,7 @@ export function roomWallGeometry(
       positions.push(p[k][0], p[k][1], p[k][2])
       normals.push(n[0], n[1], n[2])
       uvs.push(uv[k][0], uv[k][1])
+      tints.push(tint[0], tint[1], tint[2])
     }
   }
 
@@ -128,6 +139,7 @@ export function roomWallGeometry(
     const N: [number, number, number] = [inward[0], 0, -inward[1]]
     const U: [number, number, number] = [u[0], 0, -u[1]]
     const outside = outsideStretches(a, b, others, gap)
+    tint = colors?.[i] ?? [1, 1, 1]
     const s = start
     start += len
 
@@ -209,10 +221,11 @@ export function roomWallGeometry(
   }
 
   const geometry = new BufferGeometry()
-  const all = (k: 0 | 1 | 2) => [...faces[0][k], ...faces[1][k]]
+  const all = (k: 0 | 1 | 2 | 3) => [...faces[0][k], ...faces[1][k]]
   geometry.setAttribute('position', new Float32BufferAttribute(all(0), 3))
   geometry.setAttribute('normal', new Float32BufferAttribute(all(1), 3))
   geometry.setAttribute('uv', new Float32BufferAttribute(all(2), 2))
+  if (colors) geometry.setAttribute('color', new Float32BufferAttribute(all(3), 3))
   const inside = faces[0][0].length / 3
   geometry.addGroup(0, inside, 0)
   geometry.addGroup(inside, faces[1][0].length / 3, 1)

@@ -797,6 +797,16 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
       }),
     )
 
+  // The colors of a room's walls one by one, or none again.
+  const setWallColors = (roomId: string, colors: RoomConfig['wall_colors']) =>
+    commit(
+      rooms.map(r => {
+        if (r.id !== roomId) return r
+        const { wall_colors: _dropped, ...rest } = r
+        return colors ? { ...rest, wall_colors: colors } : rest
+      }),
+    )
+
   // Shows or hides, in a room's view, the sign on the floor into a room
   // open beside it.
   const setArrow = (roomId: string, other: string, shown: boolean) =>
@@ -1352,6 +1362,7 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
         onPresence={setPresence}
         walls={config.walls ? (config.walls.color ?? WALL_COLOR) : undefined}
         onWallColor={setWallColor}
+        onWallColors={setWallColors}
         decorations={floorDecorations}
         onArrow={setArrow}
         onSaveCamera={saveRoomCamera}

@@ -132,6 +132,10 @@ export type RoomConfig = {
   hide_arrows?: string[]
   // The color of this room's walls inside, when the card has walls.
   wall_color?: string
+  // A color for each of its walls inside, by the edge it stands on: the
+  // edge from the first point to the second, and so on round. A wall with
+  // none takes the room's color.
+  wall_colors?: (string | null)[]
 }
 
 // The side panel's section for the whole home.
