@@ -239,6 +239,9 @@ export type ModelConfig = {
   // The parts that light up, by name, like the shade of a lamp. A model
   // with any of them can stand for a light, and glows with it.
   glow?: string[]
+  // The shape as it was imported, kept after it is simplified until the
+  // simpler one is confirmed, so it can be had back.
+  original?: { parts: { name: string; vertices?: string; triangles?: string }[]; triangles: number }
   // The color each part starts in, by part name, for every piece placed
   // from it. A piece's own colors still change it.
   colors?: Record<string, string>
