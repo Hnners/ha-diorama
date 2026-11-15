@@ -16,6 +16,10 @@ export const ROOM_SLAB_EDGE_RADIUS_M = 0.07
 // stay in view over them, each room's side thin enough to leave its floor.
 export const WALL_HEIGHT_M = 1
 export const WALL_THICKNESS_M = 0.06
+// A warm red brick, tinted onto the brick pattern, and a soft plaster white
+// for the walls inside.
+export const BRICK_COLOR = '#b5674c'
+export const WALL_COLOR = '#ece6dc'
 // Rounding of the room corners, seen from above: the same as the edge's, and
 // like it only for the corners that touch no other room.
 export const ROOM_CORNER_RADIUS_M = ROOM_SLAB_EDGE_RADIUS_M

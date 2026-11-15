@@ -24,7 +24,17 @@ export type Surface = {
 }
 
 export type SurfaceKind =
-  'wood' | 'wood_floor' | 'tiles' | 'terracotta' | 'carpet' | 'concrete' | 'fabric' | 'ceramic' | 'metal' | 'matte'
+  | 'wood'
+  | 'wood_floor'
+  | 'tiles'
+  | 'terracotta'
+  | 'carpet'
+  | 'concrete'
+  | 'fabric'
+  | 'ceramic'
+  | 'metal'
+  | 'matte'
+  | 'brick'
 
 const SIZE = 512
 // Cached per kind and per intensity, since the color map is baked with it.
@@ -112,6 +122,30 @@ const FIELDS: Record<
     repeat: 0.78,
     stretch: 5,
     normalScale: 0.12,
+  },
+  brick: {
+    // Brickwork in stretcher bond: bricks 21.5 by 6.5 cm with 1 cm mortar
+    // joints, each course moved on by half a brick. The tile is two bricks
+    // across and six courses up, 45 cm square, so it meets itself at the
+    // edges. Each brick is a shade of its own, and the mortar stands back
+    // and shows lighter.
+    field: (u, v) => {
+      const courses = 6
+      const course = Math.floor(v * courses)
+      const x = u * 2 + (course % 2) * 0.5
+      const brick = Math.floor(x)
+      const fx = x - brick
+      const fy = v * courses - course
+      const joint = fx < 0.022 || fx > 0.978 || fy < 0.067 || fy > 0.933
+      const grit = fbm(u, v, 12, 12, 61, 2)
+      // Wrapped to the tile, so the same brick is the same shade either side
+      // of its edge.
+      const tone = 0.74 + (hash2(((brick % 2) + 2) % 2, course % courses, 11) - 0.5) * 0.2 + grit * 0.06
+      return { height: joint ? 0.25 : 0.7 + grit * 0.08, light: joint ? 1 : tone }
+    },
+    roughness: 0.92,
+    repeat: 1 / 0.45,
+    normalScale: 0.35,
   },
   tiles: {
     // Square tiles with grout lines. Three per tile at 0.83 tiles per meter,
@@ -405,6 +439,16 @@ function texture(data: Uint8Array, size: number, color: boolean) {
   return t
 }
 
+// What is told when patterns arrive: the scene, which only draws a frame
+// when asked, so a surface waiting on its pattern shows it straight away.
+const arrived = new Set<() => void>()
+export function onSurfacesArrive(listener: () => void) {
+  arrived.add(listener)
+  return () => {
+    arrived.delete(listener)
+  }
+}
+
 // Starts every pattern on its way in the background, so the first room
 // drawn rarely waits for one.
 export function warmSurfaces() {
@@ -429,6 +473,7 @@ export function surface(kind: SurfaceKind, intensity = 1): Surface {
     void pattern(kind).then(p => {
       for (const w of waiting.get(kind) ?? []) fill(w.map, w.normalMap, p, w.k)
       waiting.delete(kind)
+      for (const listener of arrived) listener()
     })
   }
   const out: Surface = {

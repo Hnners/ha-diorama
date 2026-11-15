@@ -69,6 +69,17 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
     )
   }, [room.id, room.points, room.radius, rooms, radius, gap, elevation, lowest, storey])
 
+  // The other rooms on this floor, where an edge is inside the home rather
+  // than its outside.
+  const others = useMemo(
+    () =>
+      walls
+        ? rooms
+            .filter(o => o.id !== room.id && (o.storey ?? 0) === storey && (o.floor_id ?? '') === (room.floor_id ?? ''))
+            .map(o => inset(ensureCounterClockwise(o.points), gap / 2))
+        : [],
+    [walls, rooms, room.id, room.floor_id, storey, gap],
+  )
   // The walls stand on the floor along its edges, inside them.
   const wallGeometry = useMemo(
     () =>
@@ -77,9 +88,10 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
             height: walls.height,
             thickness: walls.thickness,
             gap,
+            others,
           })
         : null,
-    [walls, room.points, gap, openings],
+    [walls, room.points, gap, openings, others],
   )
   useEffect(() => () => wallGeometry?.dispose(), [wallGeometry])
 
@@ -115,7 +127,14 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
           and the pieces, so the walls take none. */}
       {wallGeometry && walls && (
         <mesh geometry={wallGeometry} castShadow receiveShadow raycast={() => null}>
-          <meshStandardMaterial color={walls.color} roughness={0.9} />
+          {/* Inside, the room's own color; outside, the home's brick or
+              plain finish. */}
+          <meshStandardMaterial attach="material-0" color={room.wall_color ?? walls.color} roughness={0.9} />
+          {walls.outside === 'brick' ? (
+            <SurfaceMaterial attach="material-1" kind="brick" color={walls.outsideColor} />
+          ) : (
+            <meshStandardMaterial attach="material-1" color={walls.outsideColor} roughness={0.9} />
+          )}
         </mesh>
       )}
     </mesh>

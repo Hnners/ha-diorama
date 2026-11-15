@@ -9,6 +9,14 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- Wall colors: the walls take a color inside, for the whole home in the card's settings or for a room of its own in the editor, and the outside of the home is brick, in a color of your choice, or plain.
+
+### Fixed
+
+- Floor patterns show as soon as they are ready, instead of only after something else on screen changes.
+
 ## [1.12.0] - 2026-11-15
 
 ### Added

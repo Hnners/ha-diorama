@@ -28,7 +28,7 @@ import { ridersOf, spotOn } from '#/decoration/surfaces.ts'
 import { entityGone } from '#/devices/catalog.ts'
 import { initialTry, toggleTry, type TryState, type TryStates } from '#/editor/tryState.ts'
 import { deviceTry } from '#/scene/Devices.tsx'
-import { DEFAULT_FLOOR_MATERIAL, SCENE_BACKGROUND_CSS } from '#/theme.ts'
+import { DEFAULT_FLOOR_MATERIAL, SCENE_BACKGROUND_CSS, WALL_COLOR } from '#/theme.ts'
 import { useBackButton } from '#/lib/backButton.ts'
 import { useFlash } from '#/lib/flash.ts'
 import { cn } from '#/lib/utils.ts'
@@ -787,6 +787,16 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
       }),
     )
 
+  // A room's own wall color, or the home's again.
+  const setWallColor = (roomId: string, color: string | undefined) =>
+    commit(
+      rooms.map(r => {
+        if (r.id !== roomId) return r
+        const { wall_color: _dropped, ...rest } = r
+        return color ? { ...rest, wall_color: color } : rest
+      }),
+    )
+
   // Shows or hides, in a room's view, the sign on the floor into a room
   // open beside it.
   const setArrow = (roomId: string, other: string, shown: boolean) =>
@@ -1340,6 +1350,8 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
         onAssignFloor={moveToFloor}
         hass={hass}
         onPresence={setPresence}
+        walls={config.walls ? (config.walls.color ?? WALL_COLOR) : undefined}
+        onWallColor={setWallColor}
         decorations={floorDecorations}
         onArrow={setArrow}
         onSaveCamera={saveRoomCamera}

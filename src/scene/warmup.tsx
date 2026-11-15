@@ -1,3 +1,4 @@
+import { onSurfacesArrive } from '#/materials/textures.ts'
 import { warm } from '#/scene/warm.ts'
 import { useThree } from '@react-three/fiber'
 import { useEffect } from 'react'
@@ -37,6 +38,9 @@ export default function Warmup({ ready, onReady }: { ready: boolean; onReady: ()
     // Once per canvas: what comes later builds as it comes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  // A floor or wall whose pattern arrives after the frame it was first drawn
+  // in is drawn again with it.
+  useEffect(() => onSurfacesArrive(invalidate), [invalidate])
   // The loop only draws on demand, so the first frame is asked for once the
   // loop runs.
   useEffect(() => {
