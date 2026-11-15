@@ -94,7 +94,7 @@ type Models = Record<string, ModelConfig> | undefined
 // out again on every edit.
 // What of a model the editor can change, so a change to any of it is saved.
 const modelSummary = (models: Models) =>
-  Object.entries(models ?? {}).map(([id, m]) => [id, m.name, m.mount ?? 'floor', m.glow ?? []])
+  Object.entries(models ?? {}).map(([id, m]) => [id, m.name, m.mount ?? 'floor', m.glow ?? [], m.acts_as ?? ''])
 
 function nextRoomId(rooms: RoomConfig[]) {
   let n = rooms.length + 1

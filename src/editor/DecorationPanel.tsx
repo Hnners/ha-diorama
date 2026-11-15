@@ -12,6 +12,7 @@ import {
   preferredDomains,
   styleParams,
   withoutStyleDefaults,
+  deviceKinds,
   type DecorationKind,
 } from '#/decoration/catalog.ts'
 import { levelsAt, topsFor } from '#/decoration/surfaces.ts'
@@ -514,6 +515,27 @@ export default function DecorationPanel({
                     onChange={v => onUpdateModel(id, { mount: v as ModelConfig['mount'] })}
                   />
                 </label>
+                {/* The built-in piece the model stands in for. It takes that
+                    piece's devices, icon, widget and controls. */}
+                <label className={cn(row, 'grid-cols-[96px_1fr]')}>
+                  Works as
+                  <Select
+                    aria-label="Works as"
+                    value={model.acts_as ?? ''}
+                    placeholder="Just furniture"
+                    searchPlaceholder="Search pieces"
+                    options={[
+                      { value: '', label: 'Just furniture' },
+                      ...deviceKinds().map(k => ({
+                        value: k.id,
+                        label: k.label,
+                        area: FAMILY_LABELS[k.family] ?? k.family,
+                        keywords: FAMILY_LABELS[k.family],
+                      })),
+                    ]}
+                    onChange={v => onUpdateModel(id, { acts_as: v || undefined })}
+                  />
+                </label>
                 {/* The parts that light up, like a lamp's shade. Ticking one
                     lets every piece of the model stand for a light. */}
                 <div className={cn(row, 'grid-cols-[96px_1fr] items-start')}>
@@ -539,8 +561,9 @@ export default function DecorationPanel({
                   </div>
                 </div>
                 <p className={note}>
-                  Every piece of this model changes with its name, mount and glowing parts. A model with a glowing part
-                  can stand for a light. {sizeNote(model)}
+                  Every piece of this model changes with its name, mount, what it works as and its glowing parts.
+                  Working as a built-in piece, it is offered the same devices and shows the same icon, widget and
+                  controls. A model with a glowing part and nothing else set works as a lamp. {sizeNote(model)}
                 </p>
                 {heavy && <p className="text-xs leading-snug text-[var(--warning-color,#ffa600)]">{heavy}</p>}
               </div>

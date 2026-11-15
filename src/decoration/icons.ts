@@ -1,3 +1,5 @@
+import { decorationKind } from '#/decoration/catalog.ts'
+import { modelKind } from '#/decoration/models.ts'
 import {
   faBaby,
   faBabyCarriage,
@@ -186,7 +188,13 @@ const BY_FAMILY: Record<string, IconDefinition> = {
   custom: faCube,
 }
 
-export const decorationIcon = (kindId: string, family: string) => BY_KIND[kindId] ?? BY_FAMILY[family] ?? faBoxArchive
+export const decorationIcon = (kindId: string, family: string) => {
+  // An imported model that works as a built-in piece wears its icon.
+  const like = modelKind(kindId)?.like
+  const as = like ? decorationKind(like) : undefined
+  if (as) return BY_KIND[as.id] ?? BY_FAMILY[as.family] ?? faBoxArchive
+  return BY_KIND[kindId] ?? BY_FAMILY[family] ?? faBoxArchive
+}
 
 export const FAMILY_LABELS: Record<string, string> = {
   light: 'Lights',

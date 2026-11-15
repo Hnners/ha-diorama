@@ -1,4 +1,4 @@
-import { decorationKind } from '#/decoration/catalog.ts'
+import { behaviour, decorationKind } from '#/decoration/catalog.ts'
 import type { ItemState } from '#/scene/decor/state.ts'
 import { useEffect, useRef, useState } from 'react'
 
@@ -46,8 +46,9 @@ const FAMILY_SECONDS: Record<string, number> = { light: 0.8, cover: 1.6 }
 const PRESS_DEFAULT = 2.5
 
 export const pressSeconds = (id: string) => {
-  const kind = decorationKind(id)
-  return PRESS_SECONDS[id] ?? (kind && FAMILY_SECONDS[kind.family]) ?? PRESS_DEFAULT
+  const own = decorationKind(id)
+  const kind = own && behaviour(own)
+  return PRESS_SECONDS[kind?.id ?? id] ?? (kind && FAMILY_SECONDS[kind.family]) ?? PRESS_DEFAULT
 }
 
 // What a piece shows while a press runs: switched on, and anything that

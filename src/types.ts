@@ -239,6 +239,10 @@ export type ModelConfig = {
   // The parts that light up, by name, like the shade of a lamp. A model
   // with any of them can stand for a light, and glows with it.
   glow?: string[]
+  // The built-in piece the model works as, by its kind id, like
+  // fan_ceiling or tv_wall: it then takes that piece's devices, icon,
+  // widget and controls, and keeps its own shape.
+  acts_as?: string
 }
 
 export type CardConfig = {

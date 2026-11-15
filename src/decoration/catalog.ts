@@ -7,7 +7,7 @@ import {
   sofaArmWidth,
   sofaSeatRange,
 } from '#/scene/decor/sofaSpecs.ts'
-import { isModelKind, modelKind } from '#/decoration/models.ts'
+import { isModelKind, modelKind, setBuiltIns } from '#/decoration/models.ts'
 import type { Signal } from '#/signals.ts'
 import { CEILING_HEIGHT_M, LIGHT_BASE_COLOR, LIGHT_SHADE_COLOR, SCANDI, SCREEN_OFF_COLOR } from '#/theme.ts'
 
@@ -76,6 +76,9 @@ export type DecorationKind = {
   // Signals the model can express visually. Anything else can still be
   // bound, the model just does not change.
   expresses: Signal[]
+  // For an imported model, the built-in kind it works as, whose devices,
+  // icon and controls it takes. See `behaviour`.
+  like?: string
 }
 
 // Percentages an item can take, and what each one does to it. Most take a
@@ -92,7 +95,8 @@ const ITEM_LEVELS: Record<string, { id: string; label: string }[]> = {
   ],
 }
 
-export function itemLevels(kind: DecorationKind) {
+export function itemLevels(piece: DecorationKind) {
+  const kind = behaviour(piece)
   return ITEM_LEVELS[kind.id] ?? (kind.expresses.includes('level') ? [{ id: 'open', label: 'Level' }] : [])
 }
 
@@ -137,13 +141,15 @@ const KIND_DOMAINS: Record<string, string[]> = {
   plant_wall: ['plant', 'sensor', 'binary_sensor'],
 }
 
-export function preferredDomains(kind: DecorationKind): string[] {
+export function preferredDomains(piece: DecorationKind): string[] {
+  const kind = behaviour(piece)
   return KIND_DOMAINS[kind.id] ?? FAMILY_DOMAINS[kind.family] ?? []
 }
 
 // The pieces that open and shut with a cover, which can be set to read it
 // the other way round: an awning whose motor calls it closed when it is out.
-export function invertible(kind: DecorationKind) {
+export function invertible(piece: DecorationKind) {
+  const kind = behaviour(piece)
   return kind.id === 'curtain' || preferredDomains(kind).includes('cover')
 }
 
@@ -3491,7 +3497,20 @@ export const DECORATION_KINDS: DecorationKind[] = [
 ]
 
 // A kind from the catalog, or one made from a model the card imported.
+setBuiltIns(id => DECORATION_KINDS.find(k => k.id === id))
+
 export const decorationKind = (id: string) => DECORATION_KINDS.find(k => k.id === id) ?? modelKind(id)
+
+// The kind whose behaviour a piece has: its own, or for an imported model
+// that works as a built-in piece, that piece's. Everything that is not its
+// shape asks this one, so the model is offered the same devices, shows the
+// same icon and widget and is tried with the same controls.
+export const behaviour = (kind: DecorationKind): DecorationKind =>
+  (kind.like && DECORATION_KINDS.find(k => k.id === kind.like)) || kind
+
+// The built-in pieces a model can work as: every one that shows something
+// of a device, grouped by family in the catalog's order.
+export const deviceKinds = () => DECORATION_KINDS.filter(k => k.expresses.length > 0)
 
 // A saved size onto the stops its slider actually offers. A plan written
 // before a slider's steps changed can hold a value between two of them, or

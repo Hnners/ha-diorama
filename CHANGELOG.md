@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- An imported model can work as any built-in piece, picked under Works as in its Model settings, and then takes that piece's devices, icon, widget and controls.
+
 ## [1.9.2] - 2026-11-13
 
 ### Fixed

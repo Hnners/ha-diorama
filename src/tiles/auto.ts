@@ -1,3 +1,4 @@
+import { modelKind } from '#/decoration/models.ts'
 import type { CardConfig, DecorationConfig, DeviceConfig, RoomConfig, TileChoice, TileChoices } from '#/types.ts'
 
 // The tiles of the diorama's side panel, made from the devices placed on
@@ -114,7 +115,9 @@ function entityTile(entityId: string): AutoCard {
 
 function tile(device: DeviceConfig, pieces: Map<string, DecorationConfig>): AutoCard {
   const card = entityTile(device.entity_id)
-  const kind = device.decorations?.map(id => pieces.get(id)?.kind).find(Boolean)
+  const own = device.decorations?.map(id => pieces.get(id)?.kind).find(Boolean)
+  // An imported model that works as a built-in piece shows as that piece.
+  const kind = own ? (modelKind(own)?.like ?? own) : undefined
   const icon = kind && KIND_ICONS[kind]
   if (icon) card.piece_icon = icon
   // A projector screen comes down to open.

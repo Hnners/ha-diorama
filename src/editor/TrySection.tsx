@@ -1,4 +1,4 @@
-import { itemLevels, type DecorationKind } from '#/decoration/catalog.ts'
+import { behaviour, itemLevels, type DecorationKind } from '#/decoration/catalog.ts'
 import { Slider, Switch } from '#/editor/panel.tsx'
 import {
   isPositioned,
@@ -64,7 +64,8 @@ export default function TrySection({ kind, state, start, accent, onChange }: Pro
   const s = state ?? start
   const levels = itemLevels(kind)
   // A positioned piece's switch opens and shuts it, so it is named for that.
-  const switchLabel = SWITCH_LABELS[kind.id] ?? (isPositioned(kind) ? 'Open' : 'On')
+  const as = behaviour(kind)
+  const switchLabel = SWITCH_LABELS[as.id] ?? (isPositioned(kind) ? 'Open' : 'On')
   const isLight = kind.expresses.includes('color') || kind.expresses.includes('warmth')
   const set = (patch: Partial<TryState>) => onChange({ ...s, ...patch })
   const tintMode = s.tint?.mode ?? 'default'
@@ -98,7 +99,7 @@ export default function TrySection({ kind, state, start, accent, onChange }: Pro
             className={cn(plainButton, 'justify-self-start')}
           >
             <FontAwesomeIcon icon={faHandPointer} className="size-3" />
-            {PRESS_LABELS[kind.id] ?? FAMILY_PRESS_LABELS[kind.family] ?? 'Press'}
+            {PRESS_LABELS[as.id] ?? FAMILY_PRESS_LABELS[as.family] ?? 'Press'}
           </button>
         </div>
       )}

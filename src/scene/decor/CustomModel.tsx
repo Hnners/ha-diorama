@@ -1,4 +1,4 @@
-import { colorValue, paramValue, type DecorationKind } from '#/decoration/catalog.ts'
+import { behaviour, colorValue, paramValue, type DecorationKind } from '#/decoration/catalog.ts'
 import { glowParts, MODEL_COLOR, modelOf } from '#/decoration/models.ts'
 import { Glow, ownShadowless } from '#/scene/decor/LightModel.tsx'
 import { ShadeMaterial } from '#/scene/decor/lightMaterials.tsx'
@@ -116,7 +116,9 @@ function useDrawn(kindId: string): Drawn | null {
 export default function CustomModel({ kind, item, state }: Props) {
   const drawn = useDrawn(kind.id)
   const model = modelOf(kind.id)
-  const glowing = useMemo(() => (model ? glowParts(model) : []), [model])
+  // Glowing parts light up for a lamp, or a model working as nothing else.
+  const lamp = behaviour(kind).family === 'light' || !kind.like
+  const glowing = useMemo(() => (model && lamp ? glowParts(model) : []), [model, lamp])
   const centre = useMemo(() => (drawn ? glowCentre(drawn.parts, glowing) : null), [drawn, glowing])
   const own = useRef<Group>(null)
   // The model never darkens itself with its own bulb, as a lamp does not.

@@ -55,17 +55,33 @@ function side(id: string, label: string, own: number): DecorationParam {
 // Everything the parts and the stored shape say that a kind is made from.
 // The shape itself is left out: once imported it never changes.
 const signatureOf = (model: ModelConfig) =>
-  JSON.stringify([model.name, model.size, model.mount, model.url, model.parts.map(p => p.name), model.glow ?? []])
+  JSON.stringify([
+    model.name,
+    model.size,
+    model.mount,
+    model.url,
+    model.parts.map(p => p.name),
+    model.glow ?? [],
+    model.acts_as,
+  ])
 
 // What a model with glowing parts shows of its light, the same as the
 // lamps in the catalog: on and off, how bright, its color and its white.
 const GLOW_SIGNALS: Signal[] = ['toggle', 'level', 'color', 'warmth', 'press']
+
+// The built-in kinds, by id, handed over by the catalog once it has them,
+// since the catalog is built on this file and not the other way round.
+let builtIn: (id: string) => DecorationKind | undefined = () => undefined
+export const setBuiltIns = (find: typeof builtIn) => {
+  builtIn = find
+}
 
 // The glowing parts a model names that it still has.
 export const glowParts = (model: ModelConfig) =>
   (model.glow ?? []).filter(name => model.parts.some(p => p.name === name))
 
 function kindOf(id: string, model: ModelConfig): DecorationKind {
+  const like = model.acts_as ? builtIn(model.acts_as) : undefined
   const mount: Mount = model.mount === 'wall' || model.mount === 'ceiling' ? model.mount : 'floor'
   const [w, d, h] = model.size
   const params: DecorationParam[] = [side('width', 'Width', w), side('depth', 'Depth', d), side('height', 'Height', h)]
@@ -87,7 +103,10 @@ function kindOf(id: string, model: ModelConfig): DecorationKind {
     params,
     colors,
     materials: {},
-    expresses: glowParts(model).length > 0 ? GLOW_SIGNALS : [],
+    // Working as a built-in piece, it shows what that piece shows. A model
+    // with glowing parts and nothing else set is a lamp.
+    expresses: like ? like.expresses : glowParts(model).length > 0 ? GLOW_SIGNALS : [],
+    ...(like && { like: like.id }),
   }
 }
 

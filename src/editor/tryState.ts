@@ -1,4 +1,4 @@
-import { itemLevels, type DecorationKind } from '#/decoration/catalog.ts'
+import { behaviour, itemLevels, type DecorationKind } from '#/decoration/catalog.ts'
 import type { ItemState } from '#/scene/decor/state.ts'
 import { kelvinToRgb } from '#/signals.ts'
 import { LIGHT_GLOW_COLOR } from '#/theme.ts'
@@ -37,8 +37,10 @@ export const KELVIN_MAX = 6500
 const POSITIONED_FAMILIES = new Set(['cover'])
 const POSITIONED_KINDS = new Set(['curtain', 'projector_screen', 'driveway_gate'])
 
-export const isPositioned = (kind: DecorationKind) =>
-  POSITIONED_FAMILIES.has(kind.family) || POSITIONED_KINDS.has(kind.id)
+export const isPositioned = (piece: DecorationKind) => {
+  const kind = behaviour(piece)
+  return POSITIONED_FAMILIES.has(kind.family) || POSITIONED_KINDS.has(kind.id)
+}
 
 // Whether a piece has anything to try: more than the one look.
 export const canTry = (kind: DecorationKind) => kind.expresses.length > 0 || itemLevels(kind).length > 0
