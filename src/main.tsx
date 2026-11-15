@@ -1,3 +1,4 @@
+import { warmSurfaces } from '#/materials/textures.ts'
 import Card from '#/Card.tsx'
 import { decorationKind } from '#/decoration/catalog.ts'
 import { modelIdOf, registerModels, validModel } from '#/decoration/models.ts'
@@ -407,6 +408,9 @@ console.info(
   'color: #3f5f7a; background: #e6eef5; font-weight: bold; border-radius: 0 4px 4px 0',
 )
 
+// The floor and wall patterns start on their way as the card loads, read
+// from the browser or made in the background, so the first room rarely waits.
+warmSurfaces()
 if (!customElements.get(CARD_TYPE)) customElements.define(CARD_TYPE, DioramaCard)
 if (!customElements.get(EDITOR_TYPE)) customElements.define(EDITOR_TYPE, DioramaEditor)
 // The names the card had before it was renamed, so a dashboard written then

@@ -19,6 +19,7 @@ import Passages from '#/scene/Passages.tsx'
 import PickFallback from '#/scene/pick.tsx'
 import Room from '#/scene/Room.tsx'
 import Shadows from '#/scene/shadows.tsx'
+import Warmup from '#/scene/warmup.tsx'
 import Sky, { type SkyMode } from '#/scene/Sky.tsx'
 import type { TryStates } from '#/editor/tryState.ts'
 import { FpsTicker, type FpsTicks } from '#/scene/FpsMeter.tsx'
@@ -115,6 +116,8 @@ export default function Scene({
   // bubbling, and the camera rig can keep a click from them. They are only
   // mounted once it is there to listen on.
   const [frame, setFrame] = useState<HTMLDivElement | null>(null)
+  // Nothing is drawn until the shaders are built, see warmup.tsx.
+  const [warm, setWarm] = useState(false)
 
   return (
     // In the card a finger that sets off up or down scrolls the dashboard
@@ -130,7 +133,7 @@ export default function Scene({
         // warns and falls back to this one.
         shadows={{ type: PCFShadowMap }}
         // A frame is drawn only when something has changed, see live.ts.
-        frameloop={paused ? 'never' : 'demand'}
+        frameloop={paused || !warm ? 'never' : 'demand'}
         dpr={[1, 2]}
         // The frame is finished from a buffer and smoothed there, so the
         // screen's own smoothing would only cost.
@@ -148,6 +151,7 @@ export default function Scene({
           })
         }
       >
+        <Warmup ready={warm} onReady={() => setWarm(true)} />
         <Sky hass={hass} rooms={rooms} mode={sky} direction={config.sun_direction} />
         {/* Everything solid casts and receives, so a lamp throws the things
           around it onto the floor. */}

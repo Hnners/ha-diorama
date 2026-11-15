@@ -89,12 +89,21 @@ type Props = {
 
 type Models = Record<string, ModelConfig> | undefined
 
-// What of the imported models counts as a change. Their shape never changes
-// once imported, so it is left out, which keeps a long one from being written
-// out again on every edit.
-// What of a model the editor can change, so a change to any of it is saved.
+// What of the imported models counts as a change. Their shape only changes
+// when one is simplified, which its triangle count tells, so the long shape
+// itself is left out and not compared again on every edit.
 const modelSummary = (models: Models) =>
-  Object.entries(models ?? {}).map(([id, m]) => [id, m.name, m.mount ?? 'floor', m.glow ?? [], m.acts_as ?? ''])
+  Object.entries(models ?? {}).map(([id, m]) => [
+    id,
+    m.name,
+    m.mount ?? 'floor',
+    m.glow ?? [],
+    m.acts_as ?? '',
+    m.size,
+    m.colors ?? {},
+    // A simplified shape has fewer triangles.
+    m.triangles,
+  ])
 
 function nextRoomId(rooms: RoomConfig[]) {
   let n = rooms.length + 1
@@ -446,14 +455,11 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
     setSelectedDecoration(item.id)
   }
 
-  // A model imported into the catalog goes in with one of it placed, the
-  // way a click on a row of the catalog places one.
+  // A model imported into the catalog goes in on its own, and its page
+  // opens, so it is set up before a piece of it is placed.
   const importModel = (id: string, model: ModelConfig) => {
     registerModels({ [id]: model })
-    const models = { ...config.models, [id]: model }
-    const kind = decorationKind(modelKindId(id))
-    if (kind) addDecoration(kind, models)
-    else commit(rooms, devices, decorations, models)
+    commit(rooms, devices, decorations, { ...config.models, [id]: model })
   }
 
   // A model's name and mount are the model's, so they change every piece of
