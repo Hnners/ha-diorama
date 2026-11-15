@@ -130,6 +130,8 @@ export type RoomConfig = {
   // Rooms open beside this one whose sign on the floor is left out of this
   // room's view, as room ids.
   hide_arrows?: string[]
+  // The color of this room's walls inside, when the card has walls.
+  wall_color?: string
 }
 
 // The side panel's section for the whole home.
@@ -257,7 +259,11 @@ export type WallsConfig = {
   // How thick each room's walls are, on its own side of its edges. Two rooms
   // side by side make a wall of twice this between them.
   thickness?: number
+  // The walls' color inside the rooms, for a room without its own.
   color?: string
+  // The outside of the home: brick, the default, or plain in its color.
+  outside?: 'brick' | 'plain'
+  outside_color?: string
 }
 
 export type CardConfig = {

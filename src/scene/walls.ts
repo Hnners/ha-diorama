@@ -1,10 +1,16 @@
 import { decorationKind, paramValue } from '#/decoration/catalog.ts'
 import type { WallOpening } from '#/geometry/roomWalls.ts'
-import { SCANDI, WALL_HEIGHT_M, WALL_THICKNESS_M } from '#/theme.ts'
+import { BRICK_COLOR, WALL_COLOR, WALL_HEIGHT_M, WALL_THICKNESS_M } from '#/theme.ts'
 import type { CardConfig, DecorationConfig, RoomConfig } from '#/types.ts'
 import { createContext } from 'react'
 
-export type Walls = { height: number; thickness: number; color: string }
+export type Walls = {
+  height: number
+  thickness: number
+  color: string
+  outside: 'brick' | 'plain'
+  outsideColor: string
+}
 
 // The card's walls with every gap filled in, or null for a card without.
 export function wallsOf(config: CardConfig): Walls | null {
@@ -13,7 +19,9 @@ export function wallsOf(config: CardConfig): Walls | null {
   return {
     height: Math.min(Math.max(w.height ?? WALL_HEIGHT_M, 0.1), 4),
     thickness: Math.min(Math.max(w.thickness ?? WALL_THICKNESS_M, 0.01), 0.5),
-    color: w.color ?? SCANDI.offWhite,
+    color: w.color ?? WALL_COLOR,
+    outside: w.outside ?? 'brick',
+    outsideColor: w.outside_color ?? (w.outside === 'plain' ? (w.color ?? WALL_COLOR) : BRICK_COLOR),
   }
 }
 

@@ -42,6 +42,10 @@ type Props = {
   // floor while it does.
   hass: HomeAssistant | null
   onPresence: (roomId: string, presence: RoomConfig['presence']) => void
+  // The home's wall color inside, when the card has walls, and setting this
+  // room's own.
+  walls?: string
+  onWallColor?: (roomId: string, color: string | undefined) => void
   // Every piece of the home, to tell which rooms beside this one a door
   // leads into.
   decorations: DecorationConfig[]
@@ -78,6 +82,8 @@ export default function RoomInfo({
   onElevation,
   hass,
   onPresence,
+  walls,
+  onWallColor,
   decorations,
   onArrow,
   onSaveCamera,
@@ -209,6 +215,19 @@ export default function RoomInfo({
           />
           <ResetButton label="Floor" changed={!!room.floor} onReset={() => onFloor(room.id, undefined)} />
         </label>
+        {walls && onWallColor && (
+          <label className={cn(row, 'grid-cols-[96px_1fr_24px]')}>
+            Walls
+            <input
+              type="color"
+              className={colorWell}
+              aria-label="Wall color"
+              value={room.wall_color ?? walls}
+              onChange={e => onWallColor(room.id, e.target.value)}
+            />
+            <ResetButton label="Walls" changed={room.wall_color !== undefined} onReset={() => onWallColor(room.id, undefined)} />
+          </label>
+        )}
         {room.floor && (
           <>
             <label className={cn(row, 'grid-cols-[96px_1fr_24px]')}>

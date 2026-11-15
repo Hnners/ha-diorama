@@ -1,4 +1,4 @@
-import { surface, type SurfaceKind } from '#/materials/textures.ts'
+import { onSurfacesArrive, surface, type SurfaceKind } from '#/materials/textures.ts'
 import { useEffect, useMemo } from 'react'
 import { DoubleSide, Matrix3, Vector2 } from 'three'
 
@@ -25,6 +25,8 @@ type Props = {
   // into rings and creases round the curve.
   relief?: boolean
   doubleSide?: boolean
+  // Where it goes on its mesh, for a mesh of several materials.
+  attach?: string
 }
 
 // Standard material with the procedural color and normal maps of a surface
@@ -41,6 +43,7 @@ export default function SurfaceMaterial({
   emissiveIntensity = 0,
   relief = true,
   doubleSide = false,
+  attach,
 }: Props) {
   const s = surface(kind, intensity)
   const maps = useMemo(() => {
@@ -80,9 +83,24 @@ export default function SurfaceMaterial({
     },
     [maps],
   )
+  // A clone is uploaded by its own count of changes, so when the surface's
+  // pattern comes in after this material was made, it is told to upload too.
+  // Clones share the pixels, so the card sends them up once.
+  useEffect(
+    () =>
+      onSurfacesArrive(() => {
+        if (maps.map.version >= s.map.version) return
+        maps.map.version = s.map.version - 1
+        maps.map.needsUpdate = true
+        maps.normalMap.version = s.normalMap.version - 1
+        maps.normalMap.needsUpdate = true
+      }),
+    [maps, s],
+  )
   const normalScale = useMemo(() => new Vector2(s.normalScale, s.normalScale), [s.normalScale])
   return (
     <meshStandardMaterial
+      attach={attach}
       color={color}
       map={maps.map}
       normalMap={relief ? maps.normalMap : null}

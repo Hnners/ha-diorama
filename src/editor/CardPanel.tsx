@@ -1,3 +1,4 @@
+import { Select } from '#/components/ui/select.tsx'
 import { aspectRatioNumber } from '#/lib/aspect.ts'
 import { hasFloors } from '#/lib/floors.ts'
 import { BACKGROUNDS, DEFAULT_BACKGROUND, PLAIN_SWATCH, THEME_BACKGROUND } from '#/lib/background.ts'
@@ -5,11 +6,11 @@ import { setDevSettings, useDevSettings } from '#/lib/devSettings.ts'
 import { setPreviewRoom } from '#/lib/previewRoom.ts'
 import { screenName, thisScreen, withScreen } from '#/lib/screen.ts'
 import { cn } from '#/lib/utils.ts'
-import { field, group, groupTitle, note } from '#/editor/look.ts'
+import { field, group, groupTitle, note, colorWell } from '#/editor/look.ts'
 import ControlsGuide from '#/editor/ControlsGuide.tsx'
 import { ResetButton, Slider, Switch } from '#/editor/panel.tsx'
 import { SUN_DIRECTION_DEG } from '#/constants.ts'
-import { EDITOR_TINT_COLOR, WALL_HEIGHT_M } from '#/theme.ts'
+import { BRICK_COLOR, EDITOR_TINT_COLOR, WALL_COLOR, WALL_HEIGHT_M } from '#/theme.ts'
 import { entityName } from '#/devices/catalog.ts'
 import type {
   BackgroundConfig,
@@ -121,6 +122,12 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
     const { walls: _, ...rest } = config
     onChange(on ? { ...rest, walls: {} } : rest)
   }
+  // A setting of the walls, left out of the YAML at its default.
+  const setWall = <K extends keyof NonNullable<typeof walls>>(key: K, value: NonNullable<typeof walls>[K] | undefined) => {
+    const { [key]: _, ...rest } = config.walls ?? {}
+    onChange({ ...config, walls: value === undefined ? rest : { ...rest, [key]: value } })
+  }
+  const outside = walls?.outside ?? 'brick'
   const setWallHeight = (meters: number) => {
     const { height: _, ...rest } = config.walls ?? {}
     onChange({ ...config, walls: meters === WALL_HEIGHT_M ? rest : { ...rest, height: meters } })
@@ -471,6 +478,46 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
                 value={wallHeight}
                 onChange={e => setWallHeight(Math.round(Number(e.target.value) * 100) / 100)}
               />
+              <label className="grid grid-cols-[minmax(0,1fr)_96px_24px] items-center gap-2 pt-1 text-[13px]">
+                Inside
+                <input
+                  type="color"
+                  className={colorWell}
+                  aria-label="Wall color inside"
+                  value={walls.color ?? WALL_COLOR}
+                  onChange={e => setWall('color', e.target.value)}
+                />
+                <ResetButton label="Wall color inside" changed={walls.color !== undefined} onReset={() => setWall('color', undefined)} />
+              </label>
+              <label className="grid grid-cols-[minmax(0,1fr)_96px_24px] items-center gap-2 text-[13px]">
+                Outside
+                <Select
+                  aria-label="Outside of the walls"
+                  value={outside}
+                  options={[
+                    { value: 'brick', label: 'Brick' },
+                    { value: 'plain', label: 'Plain' },
+                  ]}
+                  onChange={v => setWall('outside', v === 'brick' ? undefined : (v as 'plain'))}
+                />
+                <span />
+              </label>
+              <label className="grid grid-cols-[minmax(0,1fr)_96px_24px] items-center gap-2 text-[13px]">
+                {outside === 'brick' ? 'Brick color' : 'Outside color'}
+                <input
+                  type="color"
+                  className={colorWell}
+                  aria-label="Wall color outside"
+                  value={walls.outside_color ?? (outside === 'brick' ? BRICK_COLOR : (walls.color ?? WALL_COLOR))}
+                  onChange={e => setWall('outside_color', e.target.value)}
+                />
+                <ResetButton
+                  label="Wall color outside"
+                  changed={walls.outside_color !== undefined}
+                  onReset={() => setWall('outside_color', undefined)}
+                />
+              </label>
+              <p className="text-label-2 text-xs">Each room can have its own color inside, in its settings in the editor.</p>
             </div>
           )}
           <div className="border-separator flex flex-col gap-2 border-t py-3">
