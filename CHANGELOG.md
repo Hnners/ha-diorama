@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.11.1] - 2026-11-15
+
 ### Changed
 
 - Simplifying a model keeps its original shape until you choose Keep simplified, and Restore original brings the full detail back until then.
@@ -770,7 +772,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.11.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.11.1...HEAD
+[1.11.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.10.1...v1.11.0
 [1.10.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.10.0...v1.10.1
 [1.10.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.2...v1.10.0
