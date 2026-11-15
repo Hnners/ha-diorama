@@ -1,7 +1,7 @@
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig, minify, type Plugin } from 'vite'
 import { mkdirSync, readdirSync, readFileSync, renameSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 
@@ -42,9 +42,32 @@ function atomicOutput(): Plugin {
   }
 }
 
+// Library builds in the es format keep their whitespace and long names, as
+// another bundler would usually take them further. The card goes straight to
+// the browser, so it is minified whole at the end: less to download and,
+// above all, less for a wall tablet to read before the card can start.
+function minifyCard(): Plugin {
+  return {
+    name: 'minify-card',
+    apply: 'build',
+    async generateBundle(_, bundle) {
+      for (const chunk of Object.values(bundle)) {
+        if (chunk.type !== 'chunk') continue
+        const out = await minify(chunk.fileName, chunk.code, {
+          compress: true,
+          mangle: true,
+          codegen: { removeWhitespace: true },
+        })
+        if (out.errors?.length) throw new Error(out.errors.map(e => e.message).join('\n'))
+        chunk.code = out.code
+      }
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [tailwindcss(), react(), babel({ presets: [reactCompilerPreset()] }), atomicOutput()],
+  plugins: [tailwindcss(), react(), babel({ presets: [reactCompilerPreset()] }), minifyCard(), atomicOutput()],
   define: { 'process.env.NODE_ENV': '"production"', __CARD_VERSION__: JSON.stringify(version) },
   server: {
     port: 5173,

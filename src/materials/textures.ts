@@ -1,5 +1,4 @@
 import {
-  CanvasTexture,
   DataTexture,
   LinearMipmapLinearFilter,
   RepeatWrapping,
@@ -220,65 +219,218 @@ export function surfaceRoughness(kind: SurfaceKind) {
 // `intensity` scales how much the pattern shows: 0 is a plain tint, 1 is the
 // surface as designed, 2 is twice the contrast and relief. The color map is
 // baked with it, so it is quantized and cached per step.
+// A kind's pattern before the intensity: the light of each pixel and the
+// normal map, as bytes. Made once per kind, kept in the browser after that.
+type Pattern = { light: Uint8Array; normal: Uint8Array }
+
+// The patterns made or read so far, and the ones on their way.
+const patterns = new Map<SurfaceKind, Pattern>()
+const pending = new Map<SurfaceKind, Promise<Pattern>>()
+// Every texture shown for a kind and intensity, so each takes its pattern
+// when it comes. Clones of a texture share its source, so the materials
+// made from them change with it.
+const waiting = new Map<SurfaceKind, { k: number; map: DataTexture; normalMap: DataTexture }[]>()
+
+// The browser's store for the patterns, by kind. The version is in the
+// key, so a card whose patterns changed makes them again once.
+const DB = 'diorama-surfaces'
+const STORE = 'patterns'
+const VERSION = `${SIZE}:${typeof __CARD_VERSION__ === 'string' ? __CARD_VERSION__ : 'dev'}`
+
+function openDb(): Promise<IDBDatabase | null> {
+  return new Promise(resolve => {
+    try {
+      if (typeof indexedDB === 'undefined') return resolve(null)
+      const req = indexedDB.open(DB, 1)
+      req.onupgradeneeded = () => req.result.createObjectStore(STORE)
+      req.onsuccess = () => resolve(req.result)
+      req.onerror = () => resolve(null)
+      req.onblocked = () => resolve(null)
+    } catch {
+      resolve(null)
+    }
+  })
+}
+let db: Promise<IDBDatabase | null> | null = null
+const database = () => (db ??= openDb())
+
+async function readStored(kind: SurfaceKind): Promise<Pattern | null> {
+  const store = await database()
+  if (!store) return null
+  return new Promise(resolve => {
+    try {
+      const req = store.transaction(STORE).objectStore(STORE).get(`${kind}@${VERSION}`)
+      req.onsuccess = () => {
+        const v = req.result as Pattern | undefined
+        resolve(v && v.light?.length === SIZE * SIZE && v.normal?.length === SIZE * SIZE * 4 ? v : null)
+      }
+      req.onerror = () => resolve(null)
+    } catch {
+      resolve(null)
+    }
+  })
+}
+
+async function keep(kind: SurfaceKind, pattern: Pattern) {
+  const store = await database()
+  if (!store) return
+  try {
+    const tx = store.transaction(STORE, 'readwrite')
+    const objects = tx.objectStore(STORE)
+    // Patterns of an older card are of no use any more.
+    const all = objects.getAllKeys()
+    all.onsuccess = () => {
+      for (const key of all.result) if (typeof key === 'string' && !key.endsWith(`@${VERSION}`)) objects.delete(key)
+    }
+    objects.put(pattern, `${kind}@${VERSION}`)
+  } catch {
+    // Not kept: it is made again next time.
+  }
+}
+
+// Gives the page a moment between slices of work, so it never freezes.
+const breather = () =>
+  new Promise<void>(resolve => {
+    const idle = (globalThis as { requestIdleCallback?: (f: () => void, o?: { timeout: number }) => void })
+      .requestIdleCallback
+    if (idle) idle(() => resolve(), { timeout: 50 })
+    else setTimeout(resolve, 0)
+  })
+
+// Makes a kind's pattern a few rows at a time, about 8 ms of work each.
+async function make(kind: SurfaceKind): Promise<Pattern> {
+  const spec = FIELDS[kind]
+  const heights = new Float32Array(SIZE * SIZE)
+  const light = new Uint8Array(SIZE * SIZE)
+  let y = 0
+  while (y < SIZE) {
+    const until = performance.now() + 8
+    for (; y < SIZE && performance.now() < until; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        const f = spec.field(x / SIZE, y / SIZE)
+        heights[y * SIZE + x] = f.height
+        light[y * SIZE + x] = Math.round(Math.min(Math.max(f.light, 0), 1) * 255)
+      }
+    }
+    if (y < SIZE) await breather()
+  }
+  // Normal map from the height field with a Sobel filter, tiling at the edges.
+  const normal = new Uint8Array(SIZE * SIZE * 4)
+  const h = (x: number, yy: number) => heights[((yy + SIZE) % SIZE) * SIZE + ((x + SIZE) % SIZE)]
+  const strength = 6
+  y = 0
+  while (y < SIZE) {
+    const until = performance.now() + 8
+    for (; y < SIZE && performance.now() < until; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        const dx =
+          (h(x + 1, y - 1) + 2 * h(x + 1, y) + h(x + 1, y + 1) - h(x - 1, y - 1) - 2 * h(x - 1, y) - h(x - 1, y + 1)) *
+          strength
+        const dy =
+          (h(x - 1, y + 1) + 2 * h(x, y + 1) + h(x + 1, y + 1) - h(x - 1, y - 1) - 2 * h(x, y - 1) - h(x + 1, y - 1)) *
+          strength
+        const len = Math.hypot(dx, dy, 1)
+        const i = (y * SIZE + x) * 4
+        normal[i] = Math.round((-dx / len) * 127 + 128)
+        normal[i + 1] = Math.round((-dy / len) * 127 + 128)
+        normal[i + 2] = Math.round((1 / len) * 127 + 128)
+        normal[i + 3] = 255
+      }
+    }
+    if (y < SIZE) await breather()
+  }
+  return { light, normal }
+}
+
+// The pattern of a kind: from memory, from the browser's store, or made.
+function pattern(kind: SurfaceKind): Promise<Pattern> {
+  const known = patterns.get(kind)
+  if (known) return Promise.resolve(known)
+  let p = pending.get(kind)
+  if (!p) {
+    p = (async () => {
+      const stored = await readStored(kind)
+      const out = stored ?? (await make(kind))
+      if (!stored) void keep(kind, out)
+      patterns.set(kind, out)
+      pending.delete(kind)
+      return out
+    })()
+    pending.set(kind, p)
+  }
+  return p
+}
+
+// The color map for an intensity: toward plain white as it drops, past the
+// design as it rises.
+function colorBytes(light: Uint8Array, k: number) {
+  const out = new Uint8Array(SIZE * SIZE * 4)
+  for (let i = 0; i < light.length; i++) {
+    const shown = 1 - (1 - light[i] / 255) * k
+    const l = Math.round(Math.min(Math.max(shown, 0), 1) * 255)
+    const j = i * 4
+    out[j] = out[j + 1] = out[j + 2] = l
+    out[j + 3] = 255
+  }
+  return out
+}
+
+function fill(map: DataTexture, normalMap: DataTexture, p: Pattern, k: number) {
+  map.image = { data: colorBytes(p.light, k), width: SIZE, height: SIZE }
+  map.needsUpdate = true
+  normalMap.image = { data: p.normal, width: SIZE, height: SIZE }
+  normalMap.needsUpdate = true
+}
+
+function plain(r: number, g: number, b: number) {
+  const out = new Uint8Array(SIZE * SIZE * 4)
+  for (let i = 0; i < out.length; i += 4) {
+    out[i] = r
+    out[i + 1] = g
+    out[i + 2] = b
+    out[i + 3] = 255
+  }
+  return out
+}
+
+function texture(data: Uint8Array, size: number, color: boolean) {
+  const t = new DataTexture(data, size, size, RGBAFormat)
+  if (color) t.colorSpace = SRGBColorSpace
+  t.wrapS = t.wrapT = RepeatWrapping
+  // A data texture comes with no mipmaps, which makes a floor seen at a
+  // grazing angle crawl and its lines break up.
+  t.generateMipmaps = true
+  t.minFilter = LinearMipmapLinearFilter
+  t.needsUpdate = true
+  return t
+}
+
+// Starts every pattern on its way in the background, so the first room
+// drawn rarely waits for one.
+export function warmSurfaces() {
+  for (const kind of Object.keys(FIELDS) as SurfaceKind[]) void pattern(kind)
+}
+
 export function surface(kind: SurfaceKind, intensity = 1): Surface {
   const k = Math.min(Math.max(Math.round(intensity * 20) / 20, 0), 3)
   const key = `${kind}@${k}`
   const cached = cache.get(key)
   if (cached) return cached
   const spec = FIELDS[kind]
-  const heights = new Float32Array(SIZE * SIZE)
-  const canvas = document.createElement('canvas')
-  canvas.width = SIZE
-  canvas.height = SIZE
-  const ctx = canvas.getContext('2d')!
-  const image = ctx.createImageData(SIZE, SIZE)
-  for (let y = 0; y < SIZE; y++) {
-    for (let x = 0; x < SIZE; x++) {
-      const { height, light } = spec.field(x / SIZE, y / SIZE)
-      heights[y * SIZE + x] = height
-      const i = (y * SIZE + x) * 4
-      // Toward plain white as the intensity drops, past the design as it rises.
-      const shown = 1 - (1 - light) * k
-      const l = Math.round(Math.min(Math.max(shown, 0), 1) * 255)
-      image.data[i] = l
-      image.data[i + 1] = l
-      image.data[i + 2] = l
-      image.data[i + 3] = 255
-    }
+  const ready = patterns.get(kind)
+  // Until its pattern is made or read, a surface is a plain tint and flat,
+  // at the full size already: the GPU keeps a texture at its first size.
+  const map = texture(ready ? colorBytes(ready.light, k) : plain(235, 235, 235), SIZE, true)
+  const normalMap = texture(ready ? ready.normal : plain(128, 128, 255), SIZE, false)
+  if (!ready) {
+    const list = waiting.get(kind) ?? []
+    list.push({ k, map, normalMap })
+    waiting.set(kind, list)
+    void pattern(kind).then(p => {
+      for (const w of waiting.get(kind) ?? []) fill(w.map, w.normalMap, p, w.k)
+      waiting.delete(kind)
+    })
   }
-  ctx.putImageData(image, 0, 0)
-  const map = new CanvasTexture(canvas)
-  map.colorSpace = SRGBColorSpace
-  map.wrapS = map.wrapT = RepeatWrapping
-
-  // Normal map from the height field with a Sobel filter, tiling at the edges.
-  const data = new Uint8Array(SIZE * SIZE * 4)
-  const h = (x: number, y: number) => heights[((y + SIZE) % SIZE) * SIZE + ((x + SIZE) % SIZE)]
-  const strength = 6
-  for (let y = 0; y < SIZE; y++) {
-    for (let x = 0; x < SIZE; x++) {
-      const dx =
-        (h(x + 1, y - 1) + 2 * h(x + 1, y) + h(x + 1, y + 1) - h(x - 1, y - 1) - 2 * h(x - 1, y) - h(x - 1, y + 1)) *
-        strength
-      const dy =
-        (h(x - 1, y + 1) + 2 * h(x, y + 1) + h(x + 1, y + 1) - h(x - 1, y - 1) - 2 * h(x, y - 1) - h(x + 1, y - 1)) *
-        strength
-      const len = Math.hypot(dx, dy, 1)
-      const i = (y * SIZE + x) * 4
-      data[i] = Math.round((-dx / len) * 127 + 128)
-      data[i + 1] = Math.round((-dy / len) * 127 + 128)
-      data[i + 2] = Math.round((1 / len) * 127 + 128)
-      data[i + 3] = 255
-    }
-  }
-  const normalMap = new DataTexture(data, SIZE, SIZE, RGBAFormat)
-  normalMap.wrapS = normalMap.wrapT = RepeatWrapping
-  // A data texture comes with no mipmaps, which makes a floor seen at a
-  // grazing angle crawl and its lines break up.
-  normalMap.generateMipmaps = true
-  normalMap.minFilter = LinearMipmapLinearFilter
-  normalMap.needsUpdate = true
-
   const out: Surface = {
     map,
     normalMap,

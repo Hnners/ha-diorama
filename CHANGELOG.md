@@ -9,6 +9,14 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- Each of My models has its own page, opened with its pen or as it is imported, to set its name, mount, what it works as, its glowing parts, the size and colors new pieces start with, and to see its triangle count and simplify its shape before placing it.
+
+### Changed
+
+- The card opens much faster after the first visit: floor and wall patterns are kept in the browser and made in the background, the 3D view waits for its shaders without freezing the page, and the card itself is smaller.
+
 ## [1.10.1] - 2026-11-15
 
 ### Added

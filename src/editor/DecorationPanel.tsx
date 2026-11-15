@@ -12,12 +12,12 @@ import {
   preferredDomains,
   styleParams,
   withoutStyleDefaults,
-  deviceKinds,
   type DecorationKind,
 } from '#/decoration/catalog.ts'
 import { levelsAt, topsFor } from '#/decoration/surfaces.ts'
-import { isModelKind, MODEL_FAMILY, modelIdOf, modelKinds } from '#/decoration/models.ts'
-import { heavyNote, importFiles, importLink, sizeNote } from '#/editor/importModel.ts'
+import { isModelKind, MODEL_FAMILY, modelIdOf, modelKind, modelKindId, modelKinds } from '#/decoration/models.ts'
+import { importFiles, importLink } from '#/editor/importModel.ts'
+import ModelSettings from '#/editor/ModelSettings.tsx'
 import { placeableEntities } from '#/devices/catalog.ts'
 import ModelPreview from '#/editor/ModelPreview.tsx'
 import TrySection from '#/editor/TrySection.tsx'
@@ -48,6 +48,7 @@ import {
   faLink,
   faMagnifyingGlass,
   faMinus,
+  faPen,
   faPlus,
   faTrash,
   faXmark,
@@ -187,6 +188,9 @@ export default function DecorationPanel({
   const [importing, setImporting] = useState(false)
   const [importError, setImportError] = useState<string | null>(null)
   const [linking, setLinking] = useState(false)
+  // The model whose own page is open, from its pen in My models or as it
+  // comes in, so it is set up before any piece of it is placed.
+  const [editing, setEditing] = useState<string | null>(null)
   const [link, setLink] = useState('')
   const fileInput = useRef<HTMLInputElement>(null)
   const bring = async (work: () => Promise<{ id: string; model: ModelConfig }>) => {
@@ -195,6 +199,7 @@ export default function DecorationPanel({
     try {
       const { id, model } = await work()
       onImportModel(id, model)
+      setEditing(id)
       setLinking(false)
       setLink('')
     } catch (error) {
@@ -205,6 +210,42 @@ export default function DecorationPanel({
   }
   const item = selected ? decorations.find(d => d.id === selected) : undefined
   const kind = item ? decorationKind(item.kind) : undefined
+
+  const editingModel = editing ? models?.[editing] : undefined
+  if (!item && editing && editingModel) {
+    const editingKind = modelKind(modelKindId(editing))
+    // A piece of it standing nowhere, for the turntable.
+    const shown: DecorationConfig = { id: `model-page:${editing}`, kind: modelKindId(editing), room: '', position: [0, 0] }
+    return (
+      <div className="flex flex-col gap-3">
+        <Sticky>
+          <SelectedHeader title={editingModel.name || 'Model'} onBack={() => setEditing(null)} />
+          <ModelPreview item={shown} boxRef={previewBox} interactive {...previewShape} />
+          <PreviewHandle onDrag={resize} />
+        </Sticky>
+        <ModelSettings id={editing} model={editingModel} onUpdateModel={onUpdateModel} full />
+        <button
+          type="button"
+          disabled={rooms.length === 0 || !editingKind}
+          className={cn(plainButton, 'w-full')}
+          style={{ color: accent }}
+          onClick={() => {
+            if (!editingKind) return
+            setEditing(null)
+            onAdd(editingKind)
+          }}
+        >
+          <FontAwesomeIcon icon={faPlus} className="size-3" />
+          Place one
+        </button>
+        <p className={note}>
+          {rooms.length === 0
+            ? 'Draw a room first, then place pieces of it.'
+            : 'Everything here is the model’s own: pieces placed from it start this way, and each can still be changed on its own.'}
+        </p>
+      </div>
+    )
+  }
 
   if (item && kind) {
     const boundDevice = devices.find(d => d.decorations?.includes(item.id))
@@ -486,88 +527,7 @@ export default function DecorationPanel({
             const id = modelIdOf(kind.id)
             const model = id ? models?.[id] : undefined
             if (!id || !model) return null
-            const heavy = heavyNote(model)
-            return (
-              <div className={group}>
-                <p className={groupTitle}>Model</p>
-                <label className={cn(row, 'grid-cols-[96px_1fr]')}>
-                  Name
-                  <input
-                    className={field}
-                    aria-label="Model name"
-                    value={model.name}
-                    onChange={e => onUpdateModel(id, { name: e.target.value })}
-                    onBlur={e => {
-                      if (!e.target.value.trim()) onUpdateModel(id, { name: 'Model' })
-                    }}
-                  />
-                </label>
-                <label className={cn(row, 'grid-cols-[96px_1fr]')}>
-                  Mount
-                  <Select
-                    aria-label="Mount"
-                    value={model.mount ?? 'floor'}
-                    options={[
-                      { value: 'floor', label: 'On the floor' },
-                      { value: 'wall', label: 'On a wall' },
-                      { value: 'ceiling', label: 'From the ceiling' },
-                    ]}
-                    onChange={v => onUpdateModel(id, { mount: v as ModelConfig['mount'] })}
-                  />
-                </label>
-                {/* The built-in piece the model stands in for. It takes that
-                    piece's devices, icon, widget and controls. */}
-                <label className={cn(row, 'grid-cols-[96px_1fr]')}>
-                  Works as
-                  <Select
-                    aria-label="Works as"
-                    value={model.acts_as ?? ''}
-                    placeholder="Just furniture"
-                    searchPlaceholder="Search pieces"
-                    options={[
-                      { value: '', label: 'Just furniture' },
-                      ...deviceKinds().map(k => ({
-                        value: k.id,
-                        label: k.label,
-                        area: FAMILY_LABELS[k.family] ?? k.family,
-                        keywords: FAMILY_LABELS[k.family],
-                      })),
-                    ]}
-                    onChange={v => onUpdateModel(id, { acts_as: v || undefined })}
-                  />
-                </label>
-                {/* The parts that light up, like a lamp's shade. Ticking one
-                    lets every piece of the model stand for a light. */}
-                <div className={cn(row, 'grid-cols-[96px_1fr] items-start')}>
-                  <span className="pt-0.5">Glows</span>
-                  <div className="flex flex-col gap-1">
-                    {model.parts.map(part => {
-                      const lit = (model.glow ?? []).includes(part.name)
-                      return (
-                        <label key={part.name} className="flex min-w-0 items-center gap-2 text-[13px]">
-                          <input
-                            type="checkbox"
-                            checked={lit}
-                            onChange={e => {
-                              const rest = (model.glow ?? []).filter(n => n !== part.name)
-                              const glow = e.target.checked ? [...rest, part.name] : rest
-                              onUpdateModel(id, { glow: glow.length > 0 ? glow : undefined })
-                            }}
-                          />
-                          <span className="truncate">{part.name}</span>
-                        </label>
-                      )
-                    })}
-                  </div>
-                </div>
-                <p className={note}>
-                  Every piece of this model changes with its name, mount, what it works as and its glowing parts.
-                  Working as a built-in piece, it is offered the same devices and shows the same icon, widget and
-                  controls. A model with a glowing part and nothing else set works as a lamp. {sizeNote(model)}
-                </p>
-                {heavy && <p className="text-xs leading-snug text-[var(--warning-color,#ffa600)]">{heavy}</p>}
-              </div>
-            )
+            return <ModelSettings id={id} model={model} onUpdateModel={onUpdateModel} />
           })()}
 
         {/* How high it stands: on the floor, on a top, or at a height of
@@ -998,7 +958,7 @@ export default function DecorationPanel({
                 <div
                   key={k.id}
                   className={cn(
-                    'grid grid-cols-[minmax(0,1fr)_auto] items-center rounded-lg transition-colors',
+                    'grid grid-cols-[minmax(0,1fr)_auto_auto] items-center rounded-lg transition-colors',
                     hovered?.id === k.id && 'bg-fill-strong',
                   )}
                   onMouseEnter={() => setHovered(k)}
@@ -1031,6 +991,18 @@ export default function DecorationPanel({
                     ) : (
                       <span />
                     )}
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Set up ${k.label}`}
+                    title="Set up this model"
+                    onClick={() => {
+                      const id = modelIdOf(k.id)
+                      if (id) setEditing(id)
+                    }}
+                    className="text-label-2 hover:bg-fill-strong flex size-7 items-center justify-center rounded-lg transition-colors"
+                  >
+                    <FontAwesomeIcon icon={faPen} className="size-3" />
                   </button>
                   <button
                     type="button"

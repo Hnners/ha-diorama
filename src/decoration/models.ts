@@ -63,6 +63,7 @@ const signatureOf = (model: ModelConfig) =>
     model.parts.map(p => p.name),
     model.glow ?? [],
     model.acts_as,
+    model.colors ?? {},
   ])
 
 // What a model with glowing parts shows of its light, the same as the
@@ -94,7 +95,8 @@ function kindOf(id: string, model: ModelConfig): DecorationKind {
     const sill = clamp(round2(1.5 - h / 2), 0, 2.5)
     params.push({ id: 'sill', label: 'Off floor', default: sill, min: 0, max: 3, step: 0.01 })
   }
-  const colors = Object.fromEntries(model.parts.map(p => [p.name, MODEL_COLOR]))
+  // The model's own starting color for a part, or the card's.
+  const colors = Object.fromEntries(model.parts.map(p => [p.name, model.colors?.[p.name] ?? MODEL_COLOR]))
   return {
     id: modelKindId(id),
     family: MODEL_FAMILY,
