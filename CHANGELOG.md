@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- Walls: a switch in the card's settings puts cut away walls along every room, with gaps for its doors and windows and a slider for their height, and pieces hung on a wall move out onto it.
+
 ## [1.11.1] - 2026-11-15
 
 ### Changed

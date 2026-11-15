@@ -251,6 +251,15 @@ export type ModelConfig = {
   acts_as?: string
 }
 
+export type WallsConfig = {
+  // How high they stand above each floor, in meters.
+  height?: number
+  // How thick each room's walls are, on its own side of its edges. Two rooms
+  // side by side make a wall of twice this between them.
+  thickness?: number
+  color?: string
+}
+
 export type CardConfig = {
   type: string
   // The floors of the home, for a home of more than one. Without them, or
@@ -265,6 +274,9 @@ export type CardConfig = {
   radius?: number
   // Gap in meters between adjacent rooms.
   gap?: number
+  // Cut away walls along every room's edges, with gaps for its doors and
+  // windows. Left out, the rooms are open floors.
+  walls?: WallsConfig
   // Card aspect ratio as "width:height". 16:9 without one. fill takes the
   // whole of whatever holds the card, which then sets its shape.
   aspect_ratio?: string
