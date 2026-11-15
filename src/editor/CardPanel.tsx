@@ -9,7 +9,7 @@ import { field, group, groupTitle, note } from '#/editor/look.ts'
 import ControlsGuide from '#/editor/ControlsGuide.tsx'
 import { ResetButton, Slider, Switch } from '#/editor/panel.tsx'
 import { SUN_DIRECTION_DEG } from '#/constants.ts'
-import { EDITOR_TINT_COLOR } from '#/theme.ts'
+import { EDITOR_TINT_COLOR, WALL_HEIGHT_M } from '#/theme.ts'
 import { entityName } from '#/devices/catalog.ts'
 import type {
   BackgroundConfig,
@@ -111,6 +111,19 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
   const setRoomsFirst = (on: boolean) => {
     const { first_click: _, ...rest } = config
     onChange(on ? { ...rest, first_click: 'room' } : rest)
+  }
+
+  // Cut away walls along the rooms, left out of the YAML while off. Their
+  // height is only written down when it is not the usual one.
+  const walls = config.walls
+  const wallHeight = walls?.height ?? WALL_HEIGHT_M
+  const setWalls = (on: boolean) => {
+    const { walls: _, ...rest } = config
+    onChange(on ? { ...rest, walls: {} } : rest)
+  }
+  const setWallHeight = (meters: number) => {
+    const { height: _, ...rest } = config.walls ?? {}
+    onChange({ ...config, walls: meters === WALL_HEIGHT_M ? rest : { ...rest, height: meters } })
   }
 
   // Which way the sun comes from, left out of the YAML at its default.
@@ -429,6 +442,37 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
               onChange={setFilterTiles}
             />
           </label>
+          <label className="border-separator flex cursor-pointer items-center justify-between gap-4 border-t py-2.5">
+            <span className="flex min-w-0 flex-col">
+              <span className="text-[13px]">Walls</span>
+              <span className="text-label-2 text-xs">
+                Cut away walls along every room, with gaps for its doors and windows
+              </span>
+            </span>
+            <Switch checked={!!walls} accent={EDITOR_TINT_COLOR} label="Walls" onChange={setWalls} />
+          </label>
+          {walls && (
+            <div className="flex flex-col gap-2 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="flex-1 text-[13px]">Wall height</span>
+                <span className="text-label-2 text-xs tabular-nums">{wallHeight.toFixed(2)} m</span>
+                <ResetButton
+                  label="Wall height"
+                  changed={wallHeight !== WALL_HEIGHT_M}
+                  onReset={() => setWallHeight(WALL_HEIGHT_M)}
+                />
+              </div>
+              <Slider
+                aria-label="Wall height"
+                className="w-full"
+                min={0.2}
+                max={2.6}
+                step={0.05}
+                value={wallHeight}
+                onChange={e => setWallHeight(Math.round(Number(e.target.value) * 100) / 100)}
+              />
+            </div>
+          )}
           <div className="border-separator flex flex-col gap-2 border-t py-3">
             <div className="flex items-center gap-2">
               <FontAwesomeIcon

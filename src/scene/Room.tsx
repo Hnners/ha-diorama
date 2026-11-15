@@ -8,8 +8,10 @@ import { presenceTint } from '#/scene/presence.ts'
 import { ensureCounterClockwise, inset, roundedShape } from '#/geometry/polygon.ts'
 import { elevationOf } from '#/geometry/elevation.ts'
 import { slabGeometry, touchesNeighbour } from '#/geometry/slab.ts'
+import { roomWallGeometry, type WallOpening } from '#/geometry/roomWalls.ts'
+import type { Walls } from '#/scene/walls.ts'
 import type { Point, RoomConfig } from '#/types.ts'
-import { memo, useMemo } from 'react'
+import { memo, useEffect, useMemo } from 'react'
 
 // Floors this close to touching are drawn as touching, in meters.
 const TOUCHING_GAP_M = 0.001
@@ -23,11 +25,15 @@ type Props = {
   gap: number
   // Someone is in the room, by its presence sensor.
   occupied?: boolean
+  // The card's walls, if it has them, and the doors and windows of this
+  // room's floor that cut them.
+  walls?: Walls | null
+  openings?: WallOpening[]
 }
 
 // Clicks on the floor are not taken here. The press fallback finds the room
 // under a press once the pieces around it have had their turn.
-function Room({ room, rooms, index, radius, gap, occupied = false }: Props) {
+function Room({ room, rooms, index, radius, gap, occupied = false, walls = null, openings }: Props) {
   const elevation = elevationOf(room)
   // With every floor in view, a floor reaches down only as far as the
   // lowest room of its own floor, and leaves the floor below in sight.
@@ -63,6 +69,20 @@ function Room({ room, rooms, index, radius, gap, occupied = false }: Props) {
     )
   }, [room.id, room.points, room.radius, rooms, radius, gap, elevation, lowest, storey])
 
+  // The walls stand on the floor along its edges, inside them.
+  const wallGeometry = useMemo(
+    () =>
+      walls
+        ? roomWallGeometry(inset(ensureCounterClockwise(room.points), gap / 2), openings ?? [], {
+            height: walls.height,
+            thickness: walls.thickness,
+            gap,
+          })
+        : null,
+    [walls, room.points, gap, openings],
+  )
+  useEffect(() => () => wallGeometry?.dispose(), [wallGeometry])
+
   const floor = room.floor ? FLOOR_MATERIALS[room.floor.material] : undefined
   // The presence filter fades over the floor and away again.
   const shown = useEased(occupied ? 1 : 0, 4)
@@ -89,6 +109,14 @@ function Room({ room, rooms, index, radius, gap, occupied = false }: Props) {
         />
       ) : (
         <meshStandardMaterial color={color} roughness={0.85} />
+      )}
+      {/* A child of the floor, so a room shown on its own keeps its walls
+          and the others' go with them. A press goes through to the floor
+          and the pieces, so the walls take none. */}
+      {wallGeometry && walls && (
+        <mesh geometry={wallGeometry} castShadow receiveShadow raycast={() => null}>
+          <meshStandardMaterial color={walls.color} roughness={0.9} />
+        </mesh>
       )}
     </mesh>
   )

@@ -11,6 +11,11 @@ export const ROOM_SLAB_THICKNESS_M = 0.01
 // Rounding of the slab's top and bottom edges where it stands free. Where two
 // floors touch they meet square.
 export const ROOM_SLAB_EDGE_RADIUS_M = 0.07
+
+// Cut away walls, when the card has them: a dollhouse's height, so the rooms
+// stay in view over them, each room's side thin enough to leave its floor.
+export const WALL_HEIGHT_M = 1
+export const WALL_THICKNESS_M = 0.06
 // Rounding of the room corners, seen from above: the same as the edge's, and
 // like it only for the corners that touch no other room.
 export const ROOM_CORNER_RADIUS_M = ROOM_SLAB_EDGE_RADIUS_M

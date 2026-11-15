@@ -1,3 +1,4 @@
+import { inWall, WallInset } from '#/scene/walls.ts'
 import type { Between } from '#/decoration/between.ts'
 import { decorationKind, paramValue } from '#/decoration/catalog.ts'
 import { usePressActions, type PressAction } from '#/scene/decor/press.ts'
@@ -22,7 +23,7 @@ import PlugModel from '#/scene/decor/Plug.tsx'
 import TechModel from '#/scene/decor/Tech.tsx'
 import { sameState, type ItemState } from '#/scene/decor/state.ts'
 import type { DecorationKind } from '#/decoration/catalog.ts'
-import { memo, useLayoutEffect, useMemo, type ReactNode } from 'react'
+import { memo, useContext, useLayoutEffect, useMemo, type ReactNode } from 'react'
 import type { DecorationConfig, RoomConfig } from '#/types.ts'
 import { MathUtils } from 'three'
 import { useEased } from '#/scene/decor/ease.ts'
@@ -152,6 +153,7 @@ function DecorationModel({
   fade,
 }: Props) {
   const interactive = usePressActions(onClick, onOpen)
+  const wallInset = useContext(WallInset)
   const rise = useEased(raise, 2)
   // A press shows as the piece switched on for as long as it runs.
   const pressed = usePressed(item.kind, state?.presses)
@@ -182,12 +184,16 @@ function DecorationModel({
   // it meets the wall. The piece itself keeps facing its room, so it is still
   // in that room and its clicks still go where they did.
   const outside = paramValue(kind, item.params, 'outside', item.variant) > 0.5
+  // With walls, a piece hung on one stands out from the room's edge by the
+  // wall, the way it faces. Doors and windows sit in the wall itself, and a
+  // piece on the other side of its wall is already off it.
+  const off = kind.mount === 'wall' && !outside && !inWall(kind.like ?? kind.id) ? wallInset : 0
 
   return (
     <group
       // Named so the editor's outline can find the piece that is picked.
       name={`decoration:${item.id}`}
-      position={[item.position[0], lift, -item.position[1]]}
+      position={[item.position[0] + Math.sin(rotation) * off, lift, -item.position[1] + Math.cos(rotation) * off]}
       rotation={[0, rotation, 0]}
       // A press that lands near this item rather than on it finds these. A
       // piece with nothing to do says which room it stands in instead, so a

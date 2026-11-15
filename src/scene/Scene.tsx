@@ -20,6 +20,7 @@ import PickFallback from '#/scene/pick.tsx'
 import Room from '#/scene/Room.tsx'
 import Shadows from '#/scene/shadows.tsx'
 import Warmup from '#/scene/warmup.tsx'
+import { floorKey, openingsByFloor, WallInset, wallsOf } from '#/scene/walls.ts'
 import Sky, { type SkyMode } from '#/scene/Sky.tsx'
 import type { TryStates } from '#/editor/tryState.ts'
 import { FpsTicker, type FpsTicks } from '#/scene/FpsMeter.tsx'
@@ -28,7 +29,7 @@ import type { CardConfig, HomeAssistant } from '#/types.ts'
 import { OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { MathUtils, PCFShadowMap } from 'three'
-import { useCallback, useRef, useState, type RefObject } from 'react'
+import { useCallback, useMemo, useRef, useState, type RefObject } from 'react'
 
 export type { CameraHandle } from '#/scene/CameraRig.tsx'
 
@@ -104,6 +105,14 @@ export default function Scene({
   const rooms = config.rooms ?? []
   const radius = config.radius ?? ROOM_CORNER_RADIUS_M
   const gap = config.gap ?? ROOM_GAP_M
+  // Kept while the walls' settings stay the same, so the rooms keep theirs.
+  const wallsKey = JSON.stringify(config.walls ?? null)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const walls = useMemo(() => wallsOf(config), [wallsKey])
+  const openings = useMemo(
+    () => (walls ? openingsByFloor(config.rooms ?? [], config.decorations ?? []) : null),
+    [walls, config.rooms, config.decorations],
+  )
   // When the press fallback last handed a near miss to a piece. Three still
   // sees that same click as landing on nothing, a moment later, and without
   // this it would let go of the piece the fallback had just picked.
@@ -151,6 +160,8 @@ export default function Scene({
           })
         }
       >
+        {/* Pieces on a wall stand out from the edge by the wall's thickness. */}
+        <WallInset.Provider value={walls?.thickness ?? 0}>
         <Warmup ready={warm} onReady={() => setWarm(true)} />
         <Sky hass={hass} rooms={rooms} mode={sky} direction={config.sun_direction} />
         {/* Everything solid casts and receives, so a lamp throws the things
@@ -207,6 +218,8 @@ export default function Scene({
             radius={radius}
             gap={gap}
             occupied={occupied(hass, room)}
+            walls={walls}
+            openings={openings?.get(floorKey(room))}
           />
         ))}
         {frame && (
@@ -223,6 +236,7 @@ export default function Scene({
             maxDistance={CAMERA_MAX_DISTANCE_M}
           />
         )}
+        </WallInset.Provider>
       </Canvas>
     </div>
   )
