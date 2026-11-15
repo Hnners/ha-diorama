@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-11-15
+
 ### Added
 
 - Each of My models has its own page, opened with its pen or as it is imported, to set its name, mount, what it works as, its glowing parts, the size and colors new pieces start with, and to see its triangle count and simplify its shape before placing it.
@@ -764,7 +766,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.10.1...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.11.0...HEAD
+[1.11.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.10.1...v1.11.0
 [1.10.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.10.0...v1.10.1
 [1.10.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.2...v1.10.0
 [1.9.2]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.1...v1.9.2
