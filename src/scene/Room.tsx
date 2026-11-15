@@ -5,7 +5,8 @@ import { FLOOR_MATERIALS, FLOOR_PATTERN_SHIFT_M, ROOM_SLAB_EDGE_RADIUS_M, ROOM_S
 import { floorColor } from '#/scene/floorColor.ts'
 import { useEased } from '#/scene/decor/ease.ts'
 import { presenceTint } from '#/scene/presence.ts'
-import { ensureCounterClockwise, inset, roundedShape } from '#/geometry/polygon.ts'
+import { ensureCounterClockwise, inset, roundedShape, signedArea } from '#/geometry/polygon.ts'
+import { Color } from 'three'
 import { elevationOf } from '#/geometry/elevation.ts'
 import { slabGeometry, touchesNeighbour } from '#/geometry/slab.ts'
 import { roomWallGeometry, type WallOpening } from '#/geometry/roomWalls.ts'
@@ -80,6 +81,23 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
         : [],
     [walls, rooms, room.id, room.floor_id, storey, gap],
   )
+  // The color of the wall on each edge, in the order the walls are built
+  // in: round the room counter clockwise, which is the plan's order the other
+  // way round when the room was drawn clockwise.
+  const roomWall = room.wall_color ?? walls?.color
+  const edgeColors = useMemo(() => {
+    if (!walls || !roomWall) return undefined
+    const n = room.points.length
+    const flipped = signedArea(room.points) < 0
+    const own = room.wall_colors ?? []
+    return Array.from({ length: n }, (_, k) => {
+      // Built edge k runs from point k to k + 1 of the counter clockwise
+      // outline, which is the plan's edge n - 2 - k when it was reversed.
+      const edge = flipped ? (((n - 2 - k) % n) + n) % n : k
+      const c = new Color(own[edge] ?? roomWall)
+      return [c.r, c.g, c.b] as [number, number, number]
+    })
+  }, [walls, roomWall, room.points, room.wall_colors])
   // The walls stand on the floor along its edges, inside them.
   const wallGeometry = useMemo(
     () =>
@@ -89,9 +107,10 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
             thickness: walls.thickness,
             gap,
             others,
+            colors: edgeColors,
           })
         : null,
-    [walls, room.points, gap, openings, others],
+    [walls, room.points, gap, openings, others, edgeColors],
   )
   useEffect(() => () => wallGeometry?.dispose(), [wallGeometry])
 
@@ -129,7 +148,7 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
         <mesh geometry={wallGeometry} castShadow receiveShadow raycast={() => null}>
           {/* Inside, the room's own color; outside, the home's brick or
               plain finish. */}
-          <meshStandardMaterial attach="material-0" color={room.wall_color ?? walls.color} roughness={0.9} />
+          <meshStandardMaterial attach="material-0" vertexColors roughness={0.9} />
           {walls.outside === 'brick' ? (
             <SurfaceMaterial attach="material-1" kind="brick" color={walls.outsideColor} />
           ) : (
