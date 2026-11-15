@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.14.0] - 2026-11-15
+
 ### Added
 
 - Each wall of a room can have its own color, under Each wall in the room's settings, where the walls are named for the side of the room they are on.
@@ -792,7 +794,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.13.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.14.0...HEAD
+[1.14.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.13.0...v1.14.0
 [1.13.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.12.0...v1.13.0
 [1.12.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.11.0...v1.11.1
