@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-11-15
+
 ### Added
 
 - Wall colors: the walls take a color inside, for the whole home in the card's settings or for a room of its own in the editor, and the outside of the home is brick, in a color of your choice, or plain.
@@ -786,7 +788,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.12.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.13.0...HEAD
+[1.13.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.12.0...v1.13.0
 [1.12.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.10.1...v1.11.0
