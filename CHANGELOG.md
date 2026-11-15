@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.12.0] - 2026-11-15
+
 ### Added
 
 - Walls: a switch in the card's settings puts cut away walls along every room, with gaps for its doors and windows and a slider for their height, and pieces hung on a wall move out onto it.
@@ -776,7 +778,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.11.1...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.12.0...HEAD
+[1.12.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.10.1...v1.11.0
 [1.10.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.10.0...v1.10.1
