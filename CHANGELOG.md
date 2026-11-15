@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- A floor plant can stand on a table, shelf or counter, or be raised off the floor by hand, like a shelf plant.
+
 ## [1.10.0] - 2026-11-15
 
 ### Added

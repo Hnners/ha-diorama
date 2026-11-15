@@ -1942,7 +1942,7 @@ export const DECORATION_KINDS: DecorationKind[] = [
     'decor',
     'Floor plant',
     'floor',
-    [size(0.8, 0.3, 1.6), height(1.6, 0.6, 2.4), dryBelow()],
+    [size(0.8, 0.3, 1.6), height(1.6, 0.6, 2.4), lift(0), dryBelow()],
     { pot: SCANDI.offWhite, soil: '#3c332b', stems: '#7a6a58', leaves: '#4f7d3c' },
     { pot: 'ceramic', soil: 'matte', stems: 'wood', leaves: 'wood' },
     // A plant wilts when the soil its sensor reads goes dry.
