@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-11-15
+
 ### Added
 
 - An imported model can work as any built-in piece, picked under Works as in its Model settings, and then takes that piece's devices, icon, widget and controls.
@@ -748,7 +750,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.2...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.10.0...HEAD
+[1.10.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.2...v1.10.0
 [1.9.2]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.1...v1.9.2
 [1.9.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.8.29...v1.9.0
