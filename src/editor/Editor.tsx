@@ -101,6 +101,7 @@ const modelSummary = (models: Models) =>
     m.acts_as ?? '',
     m.size,
     m.colors ?? {},
+    m.glow_colors ?? {},
     // A simplified shape has fewer triangles, and keeps the original until
     // it is confirmed.
     m.triangles,

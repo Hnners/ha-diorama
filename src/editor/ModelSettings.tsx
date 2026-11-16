@@ -29,6 +29,9 @@ type Props = {
   full?: boolean
 }
 
+// A warm white to start a part's own glow color from.
+const GLOW_PICK = '#ffd59a'
+
 const thousands = (n: number) => Math.round(n).toLocaleString('en-US')
 const round2 = (v: number) => Math.round(v * 100) / 100
 
@@ -94,27 +97,68 @@ export default function ModelSettings({ id, model, onUpdateModel, full = false }
           <div className="flex flex-col gap-1">
             {model.parts.map(part => {
               const lit = (model.glow ?? []).includes(part.name)
+              // What it glows in: the light's color, its own color, or one
+              // chosen here.
+              const set = model.glow_colors?.[part.name]
+              const mode = !set ? 'light' : set === 'body' ? 'body' : 'own'
+              const setGlowColor = (value: string | undefined) => {
+                const { [part.name]: _, ...rest } = model.glow_colors ?? {}
+                const next = value ? { ...rest, [part.name]: value } : rest
+                onUpdateModel(id, { glow_colors: Object.keys(next).length > 0 ? next : undefined })
+              }
               return (
-                <label key={part.name} className="flex min-w-0 items-center gap-2 text-[13px]">
-                  <input
-                    type="checkbox"
-                    checked={lit}
-                    onChange={e => {
-                      const rest = (model.glow ?? []).filter(n => n !== part.name)
-                      const glow = e.target.checked ? [...rest, part.name] : rest
-                      onUpdateModel(id, { glow: glow.length > 0 ? glow : undefined })
-                    }}
-                  />
-                  <span className="truncate">{part.name}</span>
-                </label>
+                <div key={part.name} className="flex min-w-0 flex-col gap-1">
+                  <label className="flex min-w-0 items-center gap-2 text-[13px]">
+                    <input
+                      type="checkbox"
+                      checked={lit}
+                      onChange={e => {
+                        const rest = (model.glow ?? []).filter(n => n !== part.name)
+                        const glow = e.target.checked ? [...rest, part.name] : rest
+                        onUpdateModel(id, { glow: glow.length > 0 ? glow : undefined })
+                      }}
+                    />
+                    <span className="truncate">{part.name}</span>
+                  </label>
+                  {lit && (
+                    <div className="grid grid-cols-[1fr_auto] items-center gap-1.5 pl-6">
+                      <Select
+                        aria-label={`${part.name} glow color`}
+                        value={mode}
+                        options={[
+                          { value: 'light', label: 'Light’s color' },
+                          { value: 'body', label: 'Its own color' },
+                          { value: 'own', label: 'A color of its own' },
+                        ]}
+                        onChange={v =>
+                          setGlowColor(
+                            v === 'light' ? undefined : v === 'body' ? 'body' : mode === 'own' ? set : GLOW_PICK,
+                          )
+                        }
+                      />
+                      {mode === 'own' ? (
+                        <input
+                          type="color"
+                          className={colorWell}
+                          aria-label={`${part.name} glow`}
+                          value={set}
+                          onChange={e => setGlowColor(e.target.value)}
+                        />
+                      ) : (
+                        <span />
+                      )}
+                    </div>
+                  )}
+                </div>
               )
             })}
           </div>
         </div>
         <p className={note}>
-          Every piece of this model changes with its name, mount, what it works as and its glowing parts. Working as a
-          built-in piece, it is offered the same devices and shows the same icon, widget and controls. A model with a
-          glowing part and nothing else set works as a lamp.{full ? '' : ` ${sizeNote(model)}`}
+          Every piece of this model changes with its name, mount, what it works as and its glowing parts. A glowing part
+          lights up in the light’s color as Home Assistant sets it, in its own color, or in one chosen for it. Working
+          as a built-in piece, it is offered the same devices and shows the same icon, widget and controls. A model with
+          a glowing part and nothing else set works as a lamp.{full ? '' : ` ${sizeNote(model)}`}
         </p>
         {!full && heavy && <p className="text-xs leading-snug text-[var(--warning-color,#ffa600)]">{heavy}</p>}
       </div>
@@ -217,7 +261,9 @@ function Detail({ id, model, onUpdateModel }: Props) {
       clearTimeout(t)
     }
   }, [keep, model, stored])
-  const outBytes = result ? result.parts.reduce((s, p) => s + (p.vertices?.length ?? 0) + (p.triangles?.length ?? 0), 0) : 0
+  const outBytes = result
+    ? result.parts.reduce((s, p) => s + (p.vertices?.length ?? 0) + (p.triangles?.length ?? 0), 0)
+    : 0
   return (
     <div className={group}>
       <p className={groupTitle}>Detail</p>
@@ -256,7 +302,14 @@ function Detail({ id, model, onUpdateModel }: Props) {
           )}
           <label className={cn(row, 'grid-cols-[96px_1fr_48px]')}>
             Keep
-            <Slider aria-label="Share of triangles to keep" min={2} max={100} step={1} value={keep} onChange={e => setKeep(Number(e.target.value))} />
+            <Slider
+              aria-label="Share of triangles to keep"
+              min={2}
+              max={100}
+              step={1}
+              value={keep}
+              onChange={e => setKeep(Number(e.target.value))}
+            />
             <span className="text-right text-[13px] tabular-nums">{keep}%</span>
           </label>
           <p className={note}>

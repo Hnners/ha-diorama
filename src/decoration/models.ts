@@ -64,6 +64,8 @@ const signatureOf = (model: ModelConfig) =>
     model.glow ?? [],
     model.acts_as,
     model.colors ?? {},
+    // A new glow color draws its pieces again.
+    model.glow_colors ?? {},
   ])
 
 // What a model with glowing parts shows of its light, the same as the

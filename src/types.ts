@@ -248,6 +248,10 @@ export type ModelConfig = {
   // The shape as it was imported, kept after it is simplified until the
   // simpler one is confirmed, so it can be had back.
   original?: { parts: { name: string; vertices?: string; triangles?: string }[]; triangles: number }
+  // What color each glowing part lights up in, by part name: 'body' for the
+  // part's own color, or a color of its own. A part not named takes the
+  // light's color, as the light is set in Home Assistant.
+  glow_colors?: Record<string, string>
   // The color each part starts in, by part name, for every piece placed
   // from it. A piece's own colors still change it.
   colors?: Record<string, string>
