@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- An Other floors button in the editor's toolbar, or the O key, hides the faint outlines of the other floors under the plan, and the editor remembers the choice.
+
 ## [1.14.0] - 2026-11-15
 
 ### Added

@@ -113,6 +113,9 @@ function nextRoomId(rooms: RoomConfig[]) {
   return n
 }
 
+// Where the editor keeps whether the other floors show under the plan.
+const OTHER_FLOORS_KEY = 'diorama-editor-other-floors'
+
 export default function Editor({ hass, config, onChange, onSave }: Props) {
   const [rooms, setRooms] = useState<RoomConfig[]>(config.rooms ?? [])
   const [devices, setDevices] = useState<DeviceConfig[]>(config.devices ?? [])
@@ -159,6 +162,23 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
   // view and takes a moment, during which the button shows it is working.
   const [opening, setOpening] = useState(false)
   const [showLengths, setShowLengths] = useState(false)
+  // The other floors, faint under the plan. Kept in the browser, so turned
+  // off it stays off.
+  const [showOtherFloors, setShowOtherFloorsState] = useState(() => {
+    try {
+      return localStorage.getItem(OTHER_FLOORS_KEY) !== 'off'
+    } catch {
+      return true
+    }
+  })
+  const setShowOtherFloors = (on: boolean) => {
+    setShowOtherFloorsState(on)
+    try {
+      localStorage.setItem(OTHER_FLOORS_KEY, on ? 'on' : 'off')
+    } catch {
+      // Not kept: it is shown again next time.
+    }
+  }
   // The picture the rooms are traced over. It is selected like anything
   // else on the plan, which is when it can be moved and sized, and it opens
   // selected when it is first chosen.
@@ -1039,7 +1059,7 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
   // its plan with that floor's rooms, to build this one over them.
   const below = multi ? levels[levels.findIndex(f => f.id === activeFloor) - 1] : undefined
   const belowRooms = new Set(rooms.filter(r => below && floorOf(r, levels) === below.id).map(r => r.id))
-  const ghostPieces = decorations.filter(d => belowRooms.has(d.room)).map(pieceOutline)
+  const ghostPieces = showOtherFloors ? decorations.filter(d => belowRooms.has(d.room)).map(pieceOutline) : []
 
   const togglePreview = () => setShowPreview(!showPreview)
 
@@ -1215,6 +1235,10 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
       case 'P':
         togglePreview()
         break
+      case 'o':
+      case 'O':
+        if (multi) setShowOtherFloors(!showOtherFloors)
+        break
       case 'n':
       case 'N':
         flipHour()
@@ -1261,7 +1285,7 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
   const canvas = (
     <Canvas
       rooms={floorRooms}
-      ghosts={rooms.filter(r => !onActive(r))}
+      ghosts={showOtherFloors ? rooms.filter(r => !onActive(r)) : []}
       arriving={arriving}
       ghostPieces={ghostPieces}
       devices={devices}
@@ -1324,6 +1348,8 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
         onFit={() => setView(null)}
         showLengths={showLengths}
         onShowLengths={setShowLengths}
+        showOtherFloors={showOtherFloors}
+        onShowOtherFloors={multi ? setShowOtherFloors : undefined}
         showPreview={showPreview}
         onShowPreview={togglePreview}
         hour={hour}
