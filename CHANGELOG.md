@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.17.0] - 2026-11-16
+
 ### Added
 
 - Each glowing part of an imported model has its own glow color: the light's color, the part's own color, or a color chosen for it, so one lamp can glow in several colors.
@@ -810,7 +812,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.16.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.17.0...HEAD
+[1.17.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.16.0...v1.17.0
 [1.16.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.15.0...v1.16.0
 [1.15.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.14.0...v1.15.0
 [1.14.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.13.0...v1.14.0
