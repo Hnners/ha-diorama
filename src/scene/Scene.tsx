@@ -20,6 +20,7 @@ import PickFallback from '#/scene/pick.tsx'
 import Room from '#/scene/Room.tsx'
 import Shadows from '#/scene/shadows.tsx'
 import Warmup from '#/scene/warmup.tsx'
+import ViewFacingProvider from '#/scene/viewFacing.tsx'
 import { floorKey, openingsByFloor, WallInset, wallsOf } from '#/scene/walls.ts'
 import Sky, { type SkyMode } from '#/scene/Sky.tsx'
 import type { TryStates } from '#/editor/tryState.ts'
@@ -162,80 +163,82 @@ export default function Scene({
       >
         {/* Pieces on a wall stand out from the edge by the wall's thickness. */}
         <WallInset.Provider value={walls?.thickness ?? 0}>
-        <Warmup ready={warm} onReady={() => setWarm(true)} />
-        <Sky hass={hass} rooms={rooms} mode={sky} direction={config.sun_direction} />
-        {/* Everything solid casts and receives, so a lamp throws the things
+          <ViewFacingProvider on={!!walls?.tall}>
+            <Warmup ready={warm} onReady={() => setWarm(true)} />
+            <Sky hass={hass} rooms={rooms} mode={sky} direction={config.sun_direction} />
+            {/* Everything solid casts and receives, so a lamp throws the things
           around it onto the floor. */}
-        <Shadows />
-        <Cleanup />
-        <Adaptive />
-        {fpsTicks && <FpsTicker ticks={fpsTicks} />}
-        <CameraRig
-          rooms={rooms}
-          decorations={config.decorations ?? []}
-          view={config.camera}
-          framed={config.frame_rooms}
-          focus={focus}
-          floor={floor}
-          handle={cameraRef}
-          onAway={onCameraAway}
-          wheelZoom={wheelZoom}
-        />
-        <Devices
-          hass={hass}
-          config={config}
-          onPick={onPickDecoration}
-          tries={tries}
-          onTry={onTry}
-          roomFirst={roomFirst}
-          // The editor picks a room from its floor, never from a door.
-          onRoom={onPickDecoration ? undefined : onPickRoom}
-          stairs={stairs}
-          onStairs={onPickDecoration ? undefined : onStairs}
-        />
-        {/* In the card, the pieces with no device behind them are drawn
+            <Shadows />
+            <Cleanup />
+            <Adaptive />
+            {fpsTicks && <FpsTicker ticks={fpsTicks} />}
+            <CameraRig
+              rooms={rooms}
+              decorations={config.decorations ?? []}
+              view={config.camera}
+              framed={config.frame_rooms}
+              focus={focus}
+              floor={floor}
+              handle={cameraRef}
+              onAway={onCameraAway}
+              wheelZoom={wheelZoom}
+            />
+            <Devices
+              hass={hass}
+              config={config}
+              onPick={onPickDecoration}
+              tries={tries}
+              onTry={onTry}
+              roomFirst={roomFirst}
+              // The editor picks a room from its floor, never from a door.
+              onRoom={onPickDecoration ? undefined : onPickRoom}
+              stairs={stairs}
+              onStairs={onPickDecoration ? undefined : onStairs}
+            />
+            {/* In the card, the pieces with no device behind them are drawn
           together, a room at a time. In the editor every piece is its own,
           so it can be picked and tried. */}
-        {!onPickDecoration && !onTry && <Merged config={config} keep={onStairs ? stairs : undefined} />}
-        {/* A press that misses everything looks around itself for something
+            {!onPickDecoration && !onTry && <Merged config={config} keep={onStairs ? stairs : undefined} />}
+            {/* A press that misses everything looks around itself for something
           to act on, so small things are still easy to hit, and only then
           asks whether it landed on a room's floor. */}
-        <PickFallback onHandled={markFallback} onRoom={onPickRoom} />
-        {/* In the card, a focused room shows the way into a room open beside it. */}
-        {!onPickDecoration && onPickRoom && (
-          <Passages rooms={rooms} decorations={config.decorations ?? []} onRoom={onPickRoom} />
-        )}
-        {/* The frame is finished from a buffer: shaded where things meet,
+            <PickFallback onHandled={markFallback} onRoom={onPickRoom} />
+            {/* In the card, a focused room shows the way into a room open beside it. */}
+            {!onPickDecoration && onPickRoom && (
+              <Passages rooms={rooms} decorations={config.decorations ?? []} onRoom={onPickRoom} />
+            )}
+            {/* The frame is finished from a buffer: shaded where things meet,
           tone mapped, softly darkened at the corners, and in the editor with
           the picked thing outlined. */}
-        <Effects selected={selected} focus={focus} />
-        {rooms.map((room, i) => (
-          <Room
-            key={room.id}
-            room={room}
-            rooms={rooms}
-            index={i}
-            radius={radius}
-            gap={gap}
-            occupied={occupied(hass, room)}
-            walls={walls}
-            openings={openings?.get(floorKey(room))}
-          />
-        ))}
-        {frame && (
-          <OrbitControls
-            makeDefault
-            domElement={frame}
-            enablePan
-            screenSpacePanning={false}
-            enableDamping
-            dampingFactor={0.1}
-            minPolarAngle={MathUtils.degToRad(CAMERA_MIN_POLAR_DEG)}
-            maxPolarAngle={MathUtils.degToRad(CAMERA_MAX_POLAR_DEG)}
-            minDistance={CAMERA_MIN_DISTANCE_M}
-            maxDistance={CAMERA_MAX_DISTANCE_M}
-          />
-        )}
+            <Effects selected={selected} focus={focus} />
+            {rooms.map((room, i) => (
+              <Room
+                key={room.id}
+                room={room}
+                rooms={rooms}
+                index={i}
+                radius={radius}
+                gap={gap}
+                occupied={occupied(hass, room)}
+                walls={walls}
+                openings={openings?.get(floorKey(room))}
+              />
+            ))}
+            {frame && (
+              <OrbitControls
+                makeDefault
+                domElement={frame}
+                enablePan
+                screenSpacePanning={false}
+                enableDamping
+                dampingFactor={0.1}
+                minPolarAngle={MathUtils.degToRad(CAMERA_MIN_POLAR_DEG)}
+                maxPolarAngle={MathUtils.degToRad(CAMERA_MAX_POLAR_DEG)}
+                minDistance={CAMERA_MIN_DISTANCE_M}
+                maxDistance={CAMERA_MAX_DISTANCE_M}
+              />
+            )}
+          </ViewFacingProvider>
         </WallInset.Provider>
       </Canvas>
     </div>

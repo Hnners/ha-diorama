@@ -10,7 +10,15 @@ import { field, group, groupTitle, note, colorWell } from '#/editor/look.ts'
 import ControlsGuide from '#/editor/ControlsGuide.tsx'
 import { ResetButton, Slider, Switch } from '#/editor/panel.tsx'
 import { SUN_DIRECTION_DEG } from '#/constants.ts'
-import { BRICK_COLOR, EDITOR_TINT_COLOR, WALL_COLOR, WALL_HEIGHT_M } from '#/theme.ts'
+import {
+  BRICK_COLOR,
+  EDITOR_TINT_COLOR,
+  TALL_WALL_HEIGHT_M,
+  TALL_WALL_JUT_M,
+  TALL_WALL_RADIUS_M,
+  WALL_COLOR,
+  WALL_HEIGHT_M,
+} from '#/theme.ts'
 import { entityName } from '#/devices/catalog.ts'
 import type {
   BackgroundConfig,
@@ -123,11 +131,49 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
     onChange(on ? { ...rest, walls: {} } : rest)
   }
   // A setting of the walls, left out of the YAML at its default.
-  const setWall = <K extends keyof NonNullable<typeof walls>>(key: K, value: NonNullable<typeof walls>[K] | undefined) => {
+  const setWall = <K extends keyof NonNullable<typeof walls>>(
+    key: K,
+    value: NonNullable<typeof walls>[K] | undefined,
+  ) => {
     const { [key]: _, ...rest } = config.walls ?? {}
     onChange({ ...config, walls: value === undefined ? rest : { ...rest, [key]: value } })
   }
   const outside = walls?.outside ?? 'brick'
+  // Tall walls at the back, and their sizes, each left out at its default.
+  const tallWalls = walls?.tall
+  const setTallWalls = (on: boolean) => {
+    const { tall: _, ...rest } = config.walls ?? {}
+    onChange({ ...config, walls: on ? { ...rest, tall: {} } : rest })
+  }
+  const setTallSize = (key: 'height' | 'jut' | 'radius', value: number, fallback: number) => {
+    const { [key]: _, ...rest } = config.walls?.tall ?? {}
+    onChange({ ...config, walls: { ...config.walls, tall: value === fallback ? rest : { ...rest, [key]: value } } })
+  }
+  const tallSlider = (label: string, key: 'height' | 'jut' | 'radius', fallback: number, min: number, max: number) => {
+    const value = tallWalls?.[key] ?? fallback
+    return (
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-2">
+          <span className="flex-1 text-[13px]">{label}</span>
+          <span className="text-label-2 text-xs tabular-nums">{value.toFixed(2)} m</span>
+          <ResetButton
+            label={label}
+            changed={value !== fallback}
+            onReset={() => setTallSize(key, fallback, fallback)}
+          />
+        </div>
+        <Slider
+          aria-label={label}
+          className="w-full"
+          min={min}
+          max={max}
+          step={0.01}
+          value={value}
+          onChange={e => setTallSize(key, Math.round(Number(e.target.value) * 100) / 100, fallback)}
+        />
+      </div>
+    )
+  }
   const setWallHeight = (meters: number) => {
     const { height: _, ...rest } = config.walls ?? {}
     onChange({ ...config, walls: meters === WALL_HEIGHT_M ? rest : { ...rest, height: meters } })
@@ -461,7 +507,7 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
           {walls && (
             <div className="flex flex-col gap-2 pb-3">
               <div className="flex items-center gap-2">
-                <span className="flex-1 text-[13px]">Wall height</span>
+                <span className="flex-1 text-[13px]">{tallWalls ? 'Low wall height' : 'Wall height'}</span>
                 <span className="text-label-2 text-xs tabular-nums">{wallHeight.toFixed(2)} m</span>
                 <ResetButton
                   label="Wall height"
@@ -487,7 +533,11 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
                   value={walls.color ?? WALL_COLOR}
                   onChange={e => setWall('color', e.target.value)}
                 />
-                <ResetButton label="Wall color inside" changed={walls.color !== undefined} onReset={() => setWall('color', undefined)} />
+                <ResetButton
+                  label="Wall color inside"
+                  changed={walls.color !== undefined}
+                  onReset={() => setWall('color', undefined)}
+                />
               </label>
               <label className="grid grid-cols-[minmax(0,1fr)_96px_24px] items-center gap-2 text-[13px]">
                 Outside
@@ -517,7 +567,31 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
                   onReset={() => setWall('outside_color', undefined)}
                 />
               </label>
-              <p className="text-label-2 text-xs">Each room can have its own color inside, in its settings in the editor.</p>
+              <p className="text-label-2 text-xs">
+                Each room can have its own color inside, in its settings in the editor.
+              </p>
+              <label className="flex cursor-pointer items-center justify-between gap-4 pt-2">
+                <span className="flex min-w-0 flex-col">
+                  <span className="text-[13px]">Tall back walls</span>
+                  <span className="text-label-2 text-xs">
+                    The outside walls away from the camera stand to full height and follow the view as it turns; the
+                    rest stay low
+                  </span>
+                </span>
+                <Switch
+                  checked={!!tallWalls}
+                  accent={EDITOR_TINT_COLOR}
+                  label="Tall back walls"
+                  onChange={setTallWalls}
+                />
+              </label>
+              {tallWalls && (
+                <>
+                  {tallSlider('Tall wall height', 'height', TALL_WALL_HEIGHT_M, 1, 4)}
+                  {tallSlider('Runs into a low wall by', 'jut', TALL_WALL_JUT_M, 0, 1)}
+                  {tallSlider('Curve at its foot', 'radius', TALL_WALL_RADIUS_M, 0, 1)}
+                </>
+              )}
             </div>
           )}
           <div className="border-separator flex flex-col gap-2 border-t py-3">

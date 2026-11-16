@@ -268,6 +268,11 @@ export type WallsConfig = {
   // The outside of the home: brick, the default, or plain in its color.
   outside?: 'brick' | 'plain'
   outside_color?: string
+  // The outside walls at the back of the home, away from the camera, stand
+  // to full height, and the rest stay at `height`. Where a tall wall meets a
+  // low one it runs on into it by `jut` and steps down to it with a curve of
+  // `radius`. Left out, every wall is low.
+  tall?: { height?: number; jut?: number; radius?: number }
 }
 
 export type CardConfig = {
