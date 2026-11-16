@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.16.0] - 2026-11-16
+
 ### Added
 
 - Tall back walls: the outside walls away from the camera can stand to full height while the rest stay low, changing as you turn the view, and where a tall wall meets a low one it runs on into it and steps down with a rounded foot, with its height, how far it runs on and the curve set in the card's settings. Doors and windows in a tall wall keep the wall over them.
@@ -804,7 +806,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.15.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.16.0...HEAD
+[1.16.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.15.0...v1.16.0
 [1.15.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.14.0...v1.15.0
 [1.14.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.13.0...v1.14.0
 [1.13.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.12.0...v1.13.0
