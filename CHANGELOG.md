@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.18.1] - 2026-11-16
+
 ### Fixed
 
 - The brick on a wall that has sunk low keeps its size instead of being squeezed into the shorter wall.
@@ -822,7 +824,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.1...HEAD
+[1.18.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.0...v1.18.1
 [1.18.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.17.0...v1.18.0
 [1.17.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.16.0...v1.17.0
 [1.16.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.15.0...v1.16.0
