@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Fixed
+
+- Furniture snapped against a wall stands in front of it instead of reaching into it and showing through on the other side.
+
 ## [1.18.1] - 2026-11-16
 
 ### Fixed
