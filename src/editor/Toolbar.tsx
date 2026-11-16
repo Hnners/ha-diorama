@@ -14,6 +14,7 @@ import {
   faCube,
   faMoon,
   faRuler,
+  faLayerGroup,
   faSun,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -52,6 +53,10 @@ type Props = {
   onFit: () => void
   showLengths: boolean
   onShowLengths: (value: boolean) => void
+  // The other floors drawn faint under this one's plan. Left out for a home
+  // of one floor, which has none to show.
+  showOtherFloors?: boolean
+  onShowOtherFloors?: (value: boolean) => void
   showPreview: boolean
   onShowPreview: () => void
   hour: number
@@ -68,6 +73,8 @@ export default function Toolbar({
   onFit,
   showLengths,
   onShowLengths,
+  showOtherFloors,
+  onShowOtherFloors,
   showPreview,
   onShowPreview,
   hour,
@@ -137,6 +144,21 @@ export default function Toolbar({
         toggle
         onClick={() => onShowLengths(!showLengths)}
       />
+      {onShowOtherFloors && (
+        <ToolButton
+          action={{
+            id: 'other-floors',
+            icon: faLayerGroup,
+            title: 'Other floors',
+            description: 'Show the other floors faint under this one, to line it up on them.',
+            shortcut: 'O',
+          }}
+          active={!!showOtherFloors}
+          color={color}
+          toggle
+          onClick={() => onShowOtherFloors(!showOtherFloors)}
+        />
+      )}
       <TracePanel color={color} trace={trace} onTrace={onTrace} onPick={onPickTrace} />
     </div>
   )
