@@ -10,9 +10,9 @@ import { Color } from 'three'
 import { elevationOf } from '#/geometry/elevation.ts'
 import { slabGeometry, touchesNeighbour } from '#/geometry/slab.ts'
 import { roomWallGeometry, type WallOpening } from '#/geometry/roomWalls.ts'
-import type { Walls } from '#/scene/walls.ts'
+import { ViewFacing, type Walls } from '#/scene/walls.ts'
 import type { Point, RoomConfig } from '#/types.ts'
-import { memo, useEffect, useMemo } from 'react'
+import { memo, useContext, useEffect, useMemo } from 'react'
 
 // Floors this close to touching are drawn as touching, in meters.
 const TOUCHING_GAP_M = 0.001
@@ -50,9 +50,9 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
     const neighbours =
       gap > TOUCHING_GAP_M
         ? []
-        : rooms.filter(
-            other => other.id !== room.id && (other.storey ?? 0) === storey && elevationOf(other) >= elevation,
-          ).map(r => r.points)
+        : rooms
+            .filter(other => other.id !== room.id && (other.storey ?? 0) === storey && elevationOf(other) >= elevation)
+            .map(r => r.points)
     // A concave corner wraps around a neighbour's convex corner. For the two
     // arcs to be concentric its radius grows by the gap.
     const outline = roundedShape(points, cornerRadius, cornerRadius + gap, i => touchesNeighbour(points[i], neighbours))
@@ -98,20 +98,23 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
       return [c.r, c.g, c.b] as [number, number, number]
     })
   }, [walls, roomWall, room.points, room.wall_colors])
+  // Which way the camera looks from, for the walls standing tall at the
+  // back of the home.
+  const facing = useContext(ViewFacing)
   // The walls stand on the floor along its edges, inside them.
-  const wallGeometry = useMemo(
-    () =>
-      walls
-        ? roomWallGeometry(inset(ensureCounterClockwise(room.points), gap / 2), openings ?? [], {
-            height: walls.height,
-            thickness: walls.thickness,
-            gap,
-            others,
-            colors: edgeColors,
-          })
-        : null,
-    [walls, room.points, gap, openings, others, edgeColors],
-  )
+  const wallGeometry = useMemo(() => {
+    if (!walls) return null
+    const outline = inset(ensureCounterClockwise(room.points), gap / 2)
+    const tall = walls.tall && facing ? { ...walls.tall, toCamera: facing, floor: [outline, ...others] } : null
+    return roomWallGeometry(outline, openings ?? [], {
+      height: walls.height,
+      thickness: walls.thickness,
+      gap,
+      others,
+      colors: edgeColors,
+      tall,
+    })
+  }, [walls, room.points, gap, openings, others, edgeColors, facing])
   useEffect(() => () => wallGeometry?.dispose(), [wallGeometry])
 
   const floor = room.floor ? FLOOR_MATERIALS[room.floor.material] : undefined

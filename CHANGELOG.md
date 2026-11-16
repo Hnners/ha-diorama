@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- Tall back walls: the outside walls away from the camera can stand to full height while the rest stay low, changing as you turn the view, and where a tall wall meets a low one it runs on into it and steps down with a rounded foot, with its height, how far it runs on and the curve set in the card's settings. Doors and windows in a tall wall keep the wall over them.
+
 ## [1.15.0] - 2026-11-16
 
 ### Added

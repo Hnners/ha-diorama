@@ -16,6 +16,11 @@ export const ROOM_SLAB_EDGE_RADIUS_M = 0.07
 // stay in view over them, each room's side thin enough to leave its floor.
 export const WALL_HEIGHT_M = 1
 export const WALL_THICKNESS_M = 0.06
+// Tall walls, at the back of the home: a room's height, run on into a low
+// wall by a hand's width and stepping down to it in a soft curve.
+export const TALL_WALL_HEIGHT_M = 2.4
+export const TALL_WALL_JUT_M = 0.15
+export const TALL_WALL_RADIUS_M = 0.25
 // A warm red brick, tinted onto the brick pattern, and a soft plaster white
 // for the walls inside.
 export const BRICK_COLOR = '#b5674c'
