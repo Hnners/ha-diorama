@@ -130,6 +130,9 @@ export type RoomConfig = {
   // Rooms open beside this one whose sign on the floor is left out of this
   // room's view, as room ids.
   hide_arrows?: string[]
+  // A garden, a patio or a drive: no walls of its own when the card has
+  // walls, and the building's walls along it are its outside walls.
+  outdoor?: boolean
   // The color of this room's walls inside, when the card has walls.
   wall_color?: string
   // A color for each of its walls inside, by the edge it stands on: the

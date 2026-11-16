@@ -47,6 +47,7 @@ type Props = {
   walls?: string
   onWallColor?: (roomId: string, color: string | undefined) => void
   onWallColors?: (roomId: string, colors: RoomConfig['wall_colors']) => void
+  onOutdoor?: (roomId: string, outdoor: boolean) => void
   // Every piece of the home, to tell which rooms beside this one a door
   // leads into.
   decorations: DecorationConfig[]
@@ -121,6 +122,7 @@ export default function RoomInfo({
   walls,
   onWallColor,
   onWallColors,
+  onOutdoor,
   decorations,
   onArrow,
   onSaveCamera,
@@ -252,7 +254,23 @@ export default function RoomInfo({
           />
           <ResetButton label="Floor" changed={!!room.floor} onReset={() => onFloor(room.id, undefined)} />
         </label>
-        {walls && onWallColor && (
+        {/* A garden, a patio or a drive: no walls of its own, and the
+            building's walls along it stay up as its outside walls. */}
+        {walls && onOutdoor && (
+          <label className={cn(row, 'cursor-pointer grid-cols-[1fr_auto]')}>
+            <span className="flex min-w-0 flex-col">
+              <span>Outside space</span>
+              <span className="text-label-2 text-xs">No walls of its own; the building's walls along it stay up</span>
+            </span>
+            <Switch
+              checked={!!room.outdoor}
+              accent={accent}
+              label="Outside space"
+              onChange={on => onOutdoor(room.id, on)}
+            />
+          </label>
+        )}
+        {walls && onWallColor && !room.outdoor && (
           <label className={cn(row, 'grid-cols-[96px_1fr_24px]')}>
             Walls
             <input
@@ -262,12 +280,16 @@ export default function RoomInfo({
               value={room.wall_color ?? walls}
               onChange={e => onWallColor(room.id, e.target.value)}
             />
-            <ResetButton label="Walls" changed={room.wall_color !== undefined} onReset={() => onWallColor(room.id, undefined)} />
+            <ResetButton
+              label="Walls"
+              changed={room.wall_color !== undefined}
+              onReset={() => onWallColor(room.id, undefined)}
+            />
           </label>
         )}
         {/* Each wall on its own, named for the side of the room it is on. A
             wall left alone takes the room's color above. */}
-        {walls && onWallColors && (
+        {walls && onWallColors && !room.outdoor && (
           <details className="group/walls">
             <summary className={cn(row, 'cursor-pointer list-none grid-cols-[1fr_auto] text-[13px]')}>
               Each wall

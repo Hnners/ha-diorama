@@ -77,7 +77,15 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
     () =>
       walls
         ? rooms
-            .filter(o => o.id !== room.id && (o.storey ?? 0) === storey && (o.floor_id ?? '') === (room.floor_id ?? ''))
+            // An outside space is not a room the walls are shared with: the
+            // building's walls along it are its outside walls.
+            .filter(
+              o =>
+                o.id !== room.id &&
+                !o.outdoor &&
+                (o.storey ?? 0) === storey &&
+                (o.floor_id ?? '') === (room.floor_id ?? ''),
+            )
             .map(o => inset(ensureCounterClockwise(o.points), gap / 2))
         : [],
     [walls, rooms, room.id, room.floor_id, storey, gap],
@@ -104,7 +112,8 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
   const heights = useContext(WallHeights)
   // The walls stand on the floor along its edges, inside them.
   const wallGeometry = useMemo(() => {
-    if (!walls) return null
+    // An outside space has no walls of its own.
+    if (!walls || room.outdoor) return null
     const outline = inset(ensureCounterClockwise(room.points), gap / 2)
     const tall = walls.tall && heights ? { ...walls.tall, floor: [outline, ...others] } : null
     return roomWallGeometry(outline, openings ?? [], {
@@ -115,7 +124,7 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
       colors: edgeColors,
       tall,
     })
-  }, [walls, room.points, gap, openings, others, edgeColors, heights])
+  }, [walls, room.outdoor, room.points, gap, openings, others, edgeColors, heights])
   const wallMesh = useRef<Mesh>(null)
   // Its materials, and the ones its shadows are drawn with, set their heights
   // from the camera. Done again whenever a material is made anew.
