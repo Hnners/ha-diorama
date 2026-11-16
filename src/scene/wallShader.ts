@@ -50,6 +50,39 @@ const TOP = /* glsl */ `
   vWallKeep = wallExtra.x < 0.0 ? 1.0 : step(wallExtra.x + 0.005, wallTop);
 `
 
+// The texture coordinates the maps read: up a face, the height the corner
+// stands at now. The faces on top keep theirs, across the wall.
+const MAPS = [
+  'ALPHAMAP_UV',
+  'ANISOTROPYMAP_UV',
+  'AOMAP_UV',
+  'BUMPMAP_UV',
+  'CLEARCOATMAP_UV',
+  'CLEARCOAT_NORMALMAP_UV',
+  'CLEARCOAT_ROUGHNESSMAP_UV',
+  'DISPLACEMENTMAP_UV',
+  'EMISSIVEMAP_UV',
+  'IRIDESCENCEMAP_UV',
+  'IRIDESCENCE_THICKNESSMAP_UV',
+  'LIGHTMAP_UV',
+  'MAP_UV',
+  'METALNESSMAP_UV',
+  'NORMALMAP_UV',
+  'ROUGHNESSMAP_UV',
+  'SHEEN_COLORMAP_UV',
+  'SHEEN_ROUGHNESSMAP_UV',
+  'SPECULARMAP_UV',
+  'SPECULAR_COLORMAP_UV',
+  'SPECULAR_INTENSITYMAP_UV',
+  'THICKNESSMAP_UV',
+  'TRANSMISSIONMAP_UV',
+]
+const UVS = /* glsl */ `
+  vec2 wallUv = uv;
+  if (wallShape.x > 0.5 && wallExtra.y < 0.5) wallUv.y = clamp(wallTop, wallShape.z, wallShape.w);
+${MAPS.map(m => `#ifdef ${m}\n#undef ${m}\n#define ${m} wallUv\n#endif`).join('\n')}
+`
+
 function patch(material: Material, uniforms: WallUniforms, normals: boolean) {
   const before = material.onBeforeCompile
   material.onBeforeCompile = (shader, renderer) => {
@@ -57,6 +90,10 @@ function patch(material: Material, uniforms: WallUniforms, normals: boolean) {
     Object.assign(shader.uniforms, uniforms)
     shader.vertexShader = shader.vertexShader
       .replace('void main() {', `${HEAD}\nvoid main() {\n${TOP}`)
+      // A pattern up a wall's face is measured from its foot in meters, so
+      // as the wall sinks the bricks stay their size and are cut off at the
+      // top, rather than squeezed into it. The maps read this instead.
+      .replace('#include <uv_vertex>', `${UVS}\n#include <uv_vertex>`)
       .replace(
         '#include <begin_vertex>',
         '#include <begin_vertex>\n  if (wallShape.x > 0.5) transformed.y = clamp(wallTop, wallShape.z, wallShape.w);',

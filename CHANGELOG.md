@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Fixed
+
+- The brick on a wall that has sunk low keeps its size instead of being squeezed into the shorter wall.
+
 ## [1.18.0] - 2026-11-16
 
 ### Changed
