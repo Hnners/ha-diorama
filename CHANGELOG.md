@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- Each glowing part of an imported model has its own glow color: the light's color, the part's own color, or a color chosen for it, so one lamp can glow in several colors.
+
 ## [1.16.0] - 2026-11-16
 
 ### Added

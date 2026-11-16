@@ -7,7 +7,7 @@ import type { ItemState } from '#/scene/decor/state.ts'
 import { decodeShape, fetchGltf, partGeometry, shapeOf, type Shape } from '#/scene/decor/modelShape.ts'
 import type { DecorationConfig, ModelConfig } from '#/types.ts'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Box3, type BufferGeometry, type Group } from 'three'
+import { Box3, Color, type BufferGeometry, type Group } from 'three'
 
 type Props = { kind: DecorationKind; item: DecorationConfig; state: ItemState | null }
 
@@ -125,6 +125,14 @@ export default function CustomModel({ kind, item, state }: Props) {
   useLayoutEffect(() => {
     if (own.current && centre) ownShadowless(own.current)
   })
+  // The color each glowing part lights up in, where it is not the light's:
+  // its own color, or one of its own.
+  const glowOf = (part: string, color: string): [number, number, number] | null => {
+    const set = model?.glow_colors?.[part]
+    if (!set) return null
+    const c = new Color(set === 'body' ? color : set)
+    return [c.r, c.g, c.b]
+  }
   if (!drawn) return null
   const w = paramValue(kind, item.params, 'width', item.variant)
   const d = paramValue(kind, item.params, 'depth', item.variant)
@@ -133,17 +141,30 @@ export default function CustomModel({ kind, item, state }: Props) {
   const slots = Object.keys(kind.colors)
   const offset: [number, number, number] = [0, kind.mount === 'ceiling' ? -h : 0, kind.mount === 'wall' ? d / 2 : 0]
   const scale: [number, number, number] = [w / sw, h / sh, d / sd]
+  const colorOf = (part: { name: string }, i: number) => {
+    // A part is painted by its name, and by its place when the file it is
+    // read from has changed since it was imported.
+    const slot = slots.includes(part.name) ? part.name : slots[i]
+    return slot ? colorValue(kind, item.colors, slot) : MODEL_COLOR
+  }
+  // What each glowing part glows in, and the bulb the mix of them, so a
+  // lamp of two colors lights the room in between.
+  const glows = drawn.parts.flatMap((part, i) =>
+    glowing.includes(part.name) ? [glowOf(part.name, colorOf(part, i)) ?? state?.glow ?? [1, 1, 1]] : [],
+  )
+  const bulb: [number, number, number] | undefined =
+    glows.length > 0 && model?.glow_colors && Object.keys(model.glow_colors).some(p => glowing.includes(p))
+      ? ([0, 1, 2].map(k => glows.reduce((sum, g) => sum + g[k], 0) / glows.length) as [number, number, number])
+      : undefined
   return (
     <group ref={own}>
       <group position={offset} scale={scale}>
         {drawn.parts.map((part, i) => {
-          // A part is painted by its name, and by its place when the file it
-          // is read from has changed since it was imported.
-          const slot = slots.includes(part.name) ? part.name : slots[i]
-          const color = slot ? colorValue(kind, item.colors, slot) : MODEL_COLOR
+          const color = colorOf(part, i)
+          const own = glowing.includes(part.name) ? glowOf(part.name, color) : null
           return glowing.includes(part.name) ? (
             <mesh key={i} geometry={part.geometry} receiveShadow dispose={null} userData={{ transmits: true }}>
-              <ShadeMaterial color={color} state={state} solid />
+              <ShadeMaterial color={color} state={own && state ? { ...state, glow: own } : state} solid />
             </mesh>
           ) : (
             <mesh key={i} geometry={part.geometry} castShadow receiveShadow dispose={null}>
@@ -154,7 +175,7 @@ export default function CustomModel({ kind, item, state }: Props) {
       </group>
       {centre && (
         <Glow
-          state={state}
+          state={bulb && state ? { ...state, glow: bulb } : state}
           at={[offset[0] + centre[0] * scale[0], offset[1] + centre[1] * scale[1], offset[2] + centre[2] * scale[2]]}
         />
       )}
