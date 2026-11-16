@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.18.3] - 2026-11-16
+
 ### Fixed
 
 - Tall walls no longer leave small struts standing where a short piece of wall or a sliver of outside wall faces away, and their ends no longer slant or open up where they meet another wall.
@@ -834,7 +836,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.2...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.3...HEAD
+[1.18.3]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.2...v1.18.3
 [1.18.2]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.1...v1.18.2
 [1.18.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.0...v1.18.1
 [1.18.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.17.0...v1.18.0
