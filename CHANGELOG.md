@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.18.2] - 2026-11-16
+
 ### Fixed
 
 - Furniture snapped against a wall stands in front of it instead of reaching into it and showing through on the other side.
@@ -828,7 +830,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.1...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.2...HEAD
+[1.18.2]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.1...v1.18.2
 [1.18.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.0...v1.18.1
 [1.18.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.17.0...v1.18.0
 [1.17.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.16.0...v1.17.0
