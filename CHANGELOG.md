@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.19.0] - 2026-11-16
+
 ### Added
 
 - An Outside space switch in a room's settings, for a garden, a patio or a drive: it has no walls of its own, and the building's walls along it stay up as outside walls, in brick and standing tall at the back.
@@ -840,7 +842,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.3...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.19.0...HEAD
+[1.19.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.3...v1.19.0
 [1.18.3]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.2...v1.18.3
 [1.18.2]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.1...v1.18.2
 [1.18.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.0...v1.18.1
