@@ -1,4 +1,4 @@
-import { inWall, WallInset } from '#/scene/walls.ts'
+import { inWall, WallClearance, WallInset } from '#/scene/walls.ts'
 import type { Between } from '#/decoration/between.ts'
 import { decorationKind, paramValue } from '#/decoration/catalog.ts'
 import { usePressActions, type PressAction } from '#/scene/decor/press.ts'
@@ -154,6 +154,8 @@ function DecorationModel({
 }: Props) {
   const interactive = usePressActions(onClick, onOpen)
   const wallInset = useContext(WallInset)
+  // Out of a wall it was snapped into.
+  const clear = useContext(WallClearance).get(item.id)
   const rise = useEased(raise, 2)
   // A press shows as the piece switched on for as long as it runs.
   const pressed = usePressed(item.kind, state?.presses)
@@ -193,7 +195,11 @@ function DecorationModel({
     <group
       // Named so the editor's outline can find the piece that is picked.
       name={`decoration:${item.id}`}
-      position={[item.position[0] + Math.sin(rotation) * off, lift, -item.position[1] + Math.cos(rotation) * off]}
+      position={[
+        item.position[0] + Math.sin(rotation) * off + (clear?.[0] ?? 0),
+        lift,
+        -item.position[1] + Math.cos(rotation) * off - (clear?.[1] ?? 0),
+      ]}
       rotation={[0, rotation, 0]}
       // A press that lands near this item rather than on it finds these. A
       // piece with nothing to do says which room it stands in instead, so a
