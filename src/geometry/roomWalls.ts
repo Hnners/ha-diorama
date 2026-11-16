@@ -50,6 +50,14 @@ const FOOT_M = 0.03
 const SAME_LINE_M = 0.02
 // Steps the rounded foot is drawn in.
 const FOOT_STEPS = 8
+// A wall shorter than this, a jog or a return in the outline, never stands
+// tall by itself, which would leave it a lone strut: it rises with the tall
+// walls at its ends. Never under the room its juts take.
+const SHORT_WALL_M = 0.4
+// How far inside a corner a wall's end stands, at a corner turning round the
+// outside of the room, so it never flickers against the next wall's face and
+// shows only where that wall stands lower.
+const CORNER_CAP_M = 0.004
 
 const sub = (a: Point, b: Point): Point => [a[0] - b[0], a[1] - b[1]]
 const dot = (a: Point, b: Point) => a[0] * b[0] + a[1] * b[1]
@@ -94,7 +102,9 @@ export function outsideStretches(a: Point, b: Point, others: Point[][], gap: num
 
 // A stretch of the outside of the home, which can stand tall, with the way
 // it faces out of its room.
-type Outside = { room: number; edge: number; a: Point; b: Point; out: Point }
+// `len` is the stretch's own length: a short one has no say in the walls
+// around it.
+type Outside = { room: number; edge: number; a: Point; b: Point; out: Point; len: number }
 
 // Every stretch of the outside of the home on a floor.
 function outsideSegments(floor: Point[][], gap: number): Outside[] {
@@ -115,6 +125,7 @@ function outsideSegments(floor: Point[][], gap: number): Outside[] {
           b: [a[0] + u[0] * s1, a[1] + u[1] * s1],
           // Out of the room, for an outline counter clockwise.
           out: [u[1], -u[0]],
+          len: s1 - s0,
         })
     }
   })
@@ -140,6 +151,9 @@ type Rise = { start: number; dir: 1 | -1; reach: number; out: Point }
 // wall faces, when that is the outside of the home, the tall wall it rises to
 // and how high it stands when only that one is tall, and what holds it in.
 type Top = {
+  // A short wall standing tall only while the walls at both its ends do:
+  // `own` is then the one at its start and `rise` the one at its end.
+  both?: boolean
   own: Point | null
   rise: Point | null
   risen: number
@@ -189,6 +203,7 @@ export function roomWallGeometry(
   let tint: [number, number, number] = [1, 1, 1]
   // This room is the first of its floor.
   const outsides = tall ? outsideSegments(tall.floor, gap) : []
+  const short = tall ? Math.max(SHORT_WALL_M, 2 * (thickness + tall.jut)) : 0
 
   // A corner of a face: where it is on the plan and how high it stands
   // while every wall is low, and, for one on the wall's top, how it moves.
@@ -226,7 +241,7 @@ export function roomWallGeometry(
       f.color.push(tint[0], tint[1], tint[2])
       if (!tall) continue
       const t = v.top
-      f.own.push(t?.own?.[0] ?? 0, t?.own?.[1] ?? 0, t?.own ? 1 : 0)
+      f.own.push(t?.own?.[0] ?? 0, t?.own?.[1] ?? 0, t?.own ? (t.both ? 2 : 1) : 0)
       f.rise.push(t?.rise?.[0] ?? 0, t?.rise?.[1] ?? 0, t?.rise ? 1 : 0)
       f.shape.push(t && !v.still ? 1 : 0, t?.risen ?? v.y, t?.min ?? -1e3, t?.max ?? 1e3)
       f.extra.push(v.lintel ?? -1, slope ? 1 : 0)
@@ -274,15 +289,32 @@ export function roomWallGeometry(
     // outside of the home anywhere else on the floor, risen to it for the
     // wall's thickness and the jut.
     const rises: Rise[] = []
+    // A short wall follows the tall walls at its ends instead, see below.
+    let follows: { a: Point | null; b: Point | null } | null = null
     if (tall) {
-      for (const [x0, x1] of outside) {
+      const meets = (p: Point) => {
+        let best: { d: number; out: Point } | null = null
+        for (const o of outsides) {
+          // Not itself, and not another short wall, which has no say.
+          if ((o.room === 0 && o.edge === i) || o.len < short) continue
+          const d = distance(p, o.a, o.b)
+          if (d <= gap + SAME_LINE_M && (!best || d < best.d)) best = { d, out: o.out }
+        }
+        return best?.out ?? null
+      }
+      if (len < short) follows = { a: meets(a), b: meets(b) }
+    }
+    // The stretches of its outside long enough to stand tall by themselves.
+    const tallOutside = follows ? [] : outside.filter(([x0, x1]) => x1 - x0 >= short)
+    if (tall && !follows) {
+      for (const [x0, x1] of tallOutside) {
         if (x0 > 1e-4) rises.push({ start: x0, dir: -1, reach: tall.jut, out: outward })
         if (x1 < len - 1e-4) rises.push({ start: x1, dir: 1, reach: tall.jut, out: outward })
       }
       const meets = (p: Point) => {
         let best: { d: number; out: Point } | null = null
         for (const o of outsides) {
-          if (o.room === 0 && o.edge === i) continue
+          if ((o.room === 0 && o.edge === i) || o.len < short) continue
           const d = distance(p, o.a, o.b)
           if (d <= gap + SAME_LINE_M && (!best || d < best.d)) best = { d, out: o.out }
         }
@@ -294,10 +326,18 @@ export function roomWallGeometry(
       if (rb) rises.push({ start: len, dir: -1, reach: thickness + tall.jut, out: rb })
     }
     const isOutside = (t: number) => outside.some(([x0, x1]) => t > x0 + 1e-6 && t < x1 - 1e-6)
+    const standsTall = (t: number) => tallOutside.some(([x0, x1]) => t > x0 + 1e-6 && t < x1 - 1e-6)
     // How a point of the top moves, taken just to one side of t, where it
     // steps.
     const topAt = (t: number, side: -1 | 1, min: number, max: number): Top => {
-      const x = t + side * 1e-7
+      // A short wall, all of it: tall with both the walls at its ends, with
+      // the one there is, and low with none.
+      if (follows) {
+        const { a: fa, b: fb } = follows
+        if (fa && fb) return { both: true, own: fa, rise: fb, risen: H, min, max }
+        return { own: null, rise: fa ?? fb, risen: fa || fb ? H : low, min, max }
+      }
+      const x = t + side * 1e-5
       let rise: Rise | null = null
       let risen = low
       let nearest = Infinity
@@ -308,12 +348,17 @@ export function roomWallGeometry(
         rise = g
         risen = d <= g.reach ? H : low + r - Math.sqrt(Math.max(r * r - (r - (d - g.reach)) ** 2, 0))
       }
-      return { own: isOutside(x) ? outward : null, rise: rise?.out ?? null, risen, min, max }
+      return { own: standsTall(x) ? outward : null, rise: rise?.out ?? null, risen, min, max }
     }
     // Where its top changes along it: the ends of the outside, and of the
     // rises and the points down their feet.
     const breaks = [
       ...outside.flatMap(([x0, x1]) => [x0, x1]),
+      // Where the nearest of two rises from either way changes, the wall
+      // steps from one to the other rather than slanting between them.
+      ...rises.flatMap(g =>
+        rises.filter(h => h.dir !== g.dir && (h.start - g.start) * g.dir > 0).map(h => (g.start + h.start) / 2),
+      ),
       ...rises.flatMap(g =>
         Array.from({ length: FOOT_STEPS + 1 }, (_, k) => g.start + g.dir * (g.reach + (r * k) / FOOT_STEPS)),
       ),
@@ -346,6 +391,7 @@ export function roomWallGeometry(
             top &&
             Math.abs(last.risen - top.risen) < 1e-9 &&
             last.own === top.own &&
+            last.both === top.both &&
             last.rise?.[0] === top.rise?.[0] &&
             last.rise?.[1] === top.rise?.[1]
           )
@@ -430,8 +476,13 @@ export function roomWallGeometry(
       }
       if (s0 > 1e-4) cap(first, back, 0)
       else if (!convex(i)) cap(first, back, endGroup(0))
+      // At a corner round the outside of the room, a little inside it: the
+      // next wall covers it while it stands as tall, and where that one is
+      // lower it closes this one's end.
+      else if (tall) cap({ ...first, t: first.t + CORNER_CAP_M }, back, endGroup(0))
       if (s1 < len - 1e-4) cap(last, U, 0)
       else if (!convex((i + 1) % n)) cap(last, U, endGroup(len))
+      else if (tall) cap({ ...last, t: last.t - CORNER_CAP_M }, U, endGroup(len))
     }
 
     // The doors and windows in this wall, as stretches along it.
