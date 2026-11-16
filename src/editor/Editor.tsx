@@ -818,6 +818,16 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
       }),
     )
 
+  // A room as an outside space, with no walls, or a room again.
+  const setOutdoor = (roomId: string, outdoor: boolean) =>
+    commit(
+      rooms.map(r => {
+        if (r.id !== roomId) return r
+        const { outdoor: _dropped, ...rest } = r
+        return outdoor ? { ...rest, outdoor: true } : rest
+      }),
+    )
+
   // The colors of a room's walls one by one, or none again.
   const setWallColors = (roomId: string, colors: RoomConfig['wall_colors']) =>
     commit(
@@ -1390,6 +1400,7 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
         walls={config.walls ? (config.walls.color ?? WALL_COLOR) : undefined}
         onWallColor={setWallColor}
         onWallColors={setWallColors}
+        onOutdoor={setOutdoor}
         decorations={floorDecorations}
         onArrow={setArrow}
         onSaveCamera={saveRoomCamera}

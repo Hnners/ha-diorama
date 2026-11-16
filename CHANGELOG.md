@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- An Outside space switch in a room's settings, for a garden, a patio or a drive: it has no walls of its own, and the building's walls along it stay up as outside walls, in brick and standing tall at the back.
+
 ## [1.18.3] - 2026-11-16
 
 ### Fixed

@@ -103,7 +103,10 @@ export function clearOfWalls(
   thickness: number,
   gap: number,
 ): Map<string, [number, number]> {
-  const outlines = new Map(rooms.map(r => [r.id, inset(ensureCounterClockwise(r.points), gap / 2)]))
+  // An outside space has no walls to stand clear of.
+  const outlines = new Map(
+    rooms.filter(r => !r.outdoor).map(r => [r.id, inset(ensureCounterClockwise(r.points), gap / 2)]),
+  )
   const out = new Map<string, [number, number]>()
   for (const d of decorations) {
     const kind = decorationKind(d.kind)
