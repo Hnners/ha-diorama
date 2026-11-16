@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Changed
+
+- Tall back walls rise and sink smoothly as you turn the view, instead of jumping between full height and low, and the card no longer builds the walls again while you turn it.
+
 ## [1.17.0] - 2026-11-16
 
 ### Added

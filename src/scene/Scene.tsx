@@ -20,7 +20,7 @@ import PickFallback from '#/scene/pick.tsx'
 import Room from '#/scene/Room.tsx'
 import Shadows from '#/scene/shadows.tsx'
 import Warmup from '#/scene/warmup.tsx'
-import ViewFacingProvider from '#/scene/viewFacing.tsx'
+import WallHeightsProvider from '#/scene/viewFacing.tsx'
 import { floorKey, openingsByFloor, WallInset, wallsOf } from '#/scene/walls.ts'
 import Sky, { type SkyMode } from '#/scene/Sky.tsx'
 import type { TryStates } from '#/editor/tryState.ts'
@@ -163,7 +163,9 @@ export default function Scene({
       >
         {/* Pieces on a wall stand out from the edge by the wall's thickness. */}
         <WallInset.Provider value={walls?.thickness ?? 0}>
-          <ViewFacingProvider on={!!walls?.tall}>
+          <WallHeightsProvider
+            tall={walls?.tall ? { low: walls.height, high: Math.max(walls.tall.height, walls.height) } : null}
+          >
             <Warmup ready={warm} onReady={() => setWarm(true)} />
             <Sky hass={hass} rooms={rooms} mode={sky} direction={config.sun_direction} />
             {/* Everything solid casts and receives, so a lamp throws the things
@@ -238,7 +240,7 @@ export default function Scene({
                 maxDistance={CAMERA_MAX_DISTANCE_M}
               />
             )}
-          </ViewFacingProvider>
+          </WallHeightsProvider>
         </WallInset.Provider>
       </Canvas>
     </div>

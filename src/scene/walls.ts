@@ -9,7 +9,8 @@ import {
   WALL_HEIGHT_M,
   WALL_THICKNESS_M,
 } from '#/theme.ts'
-import type { CardConfig, DecorationConfig, Point, RoomConfig } from '#/types.ts'
+import type { CardConfig, DecorationConfig, RoomConfig } from '#/types.ts'
+import type { WallUniforms } from '#/scene/wallShader.ts'
 import { createContext } from 'react'
 
 export type Walls = {
@@ -79,10 +80,6 @@ export const WallInset = createContext(0)
 // Doors and windows sit in the wall, so they are not moved off it.
 export const inWall = (kindId: string) => kindId === 'window' || DOORS.has(kindId)
 
-// Toward the camera on the plan, level and of length 1, in steps of a few
-// degrees: the tall walls are the ones facing away from it, so they are
-// built again as the view turns past a step. Null while no walls are tall.
-export const ViewFacing = createContext<Point | null>(null)
-
-// The steps the view's turn is followed in, in degrees.
-export const FACING_STEP_DEG = 5
+// What the walls take their heights from on the graphics card, the way the
+// camera looks among it, while some walls stand tall. See wallShader.ts.
+export const WallHeights = createContext<WallUniforms | null>(null)

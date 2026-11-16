@@ -6,13 +6,14 @@ import { floorColor } from '#/scene/floorColor.ts'
 import { useEased } from '#/scene/decor/ease.ts'
 import { presenceTint } from '#/scene/presence.ts'
 import { ensureCounterClockwise, inset, roundedShape, signedArea } from '#/geometry/polygon.ts'
-import { Color } from 'three'
+import { Color, type Mesh } from 'three'
 import { elevationOf } from '#/geometry/elevation.ts'
 import { slabGeometry, touchesNeighbour } from '#/geometry/slab.ts'
 import { roomWallGeometry, type WallOpening } from '#/geometry/roomWalls.ts'
-import { ViewFacing, type Walls } from '#/scene/walls.ts'
+import { animateWalls } from '#/scene/wallShader.ts'
+import { WallHeights, type Walls } from '#/scene/walls.ts'
 import type { Point, RoomConfig } from '#/types.ts'
-import { memo, useContext, useEffect, useMemo } from 'react'
+import { memo, useContext, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 
 // Floors this close to touching are drawn as touching, in meters.
 const TOUCHING_GAP_M = 0.001
@@ -98,14 +99,14 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
       return [c.r, c.g, c.b] as [number, number, number]
     })
   }, [walls, roomWall, room.points, room.wall_colors])
-  // Which way the camera looks from, for the walls standing tall at the
-  // back of the home.
-  const facing = useContext(ViewFacing)
+  // What the walls set their heights from on the graphics card, while some
+  // stand tall.
+  const heights = useContext(WallHeights)
   // The walls stand on the floor along its edges, inside them.
   const wallGeometry = useMemo(() => {
     if (!walls) return null
     const outline = inset(ensureCounterClockwise(room.points), gap / 2)
-    const tall = walls.tall && facing ? { ...walls.tall, toCamera: facing, floor: [outline, ...others] } : null
+    const tall = walls.tall && heights ? { ...walls.tall, floor: [outline, ...others] } : null
     return roomWallGeometry(outline, openings ?? [], {
       height: walls.height,
       thickness: walls.thickness,
@@ -114,7 +115,13 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
       colors: edgeColors,
       tall,
     })
-  }, [walls, room.points, gap, openings, others, edgeColors, facing])
+  }, [walls, room.points, gap, openings, others, edgeColors, heights])
+  const wallMesh = useRef<Mesh>(null)
+  // Its materials, and the ones its shadows are drawn with, set their heights
+  // from the camera. Done again whenever a material is made anew.
+  useLayoutEffect(() => {
+    if (heights && wallMesh.current) animateWalls(wallMesh.current, heights)
+  })
   useEffect(() => () => wallGeometry?.dispose(), [wallGeometry])
 
   const floor = room.floor ? FLOOR_MATERIALS[room.floor.material] : undefined
@@ -148,7 +155,7 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
           and the others' go with them. A press goes through to the floor
           and the pieces, so the walls take none. */}
       {wallGeometry && walls && (
-        <mesh geometry={wallGeometry} castShadow receiveShadow raycast={() => null}>
+        <mesh ref={wallMesh} geometry={wallGeometry} castShadow receiveShadow raycast={() => null}>
           {/* Inside, the room's own color; outside, the home's brick or
               plain finish. */}
           <meshStandardMaterial attach="material-0" vertexColors roughness={0.9} />
