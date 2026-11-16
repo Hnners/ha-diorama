@@ -44,9 +44,12 @@ float wallRiseOf(vec3 e) {
 
 // The height of this corner's top, and what is kept of a lintel.
 const TOP = /* glsl */ `
-  float wallRo = wallRiseOf(wallOwn);
+  float wallRo = wallRiseOf(vec3(wallOwn.xy, min(wallOwn.z, 1.0)));
   float wallRn = wallRiseOf(wallRise);
-  float wallTop = mix(mix(uWallLow, wallShape.y, wallRn), uWallHigh, wallRo);
+  // A short wall between two tall ones stands only as tall as the lower.
+  float wallTop = wallOwn.z > 1.5
+    ? mix(uWallLow, uWallHigh, min(wallRo, wallRn))
+    : mix(mix(uWallLow, wallShape.y, wallRn), uWallHigh, wallRo);
   vWallKeep = wallExtra.x < 0.0 ? 1.0 : step(wallExtra.x + 0.005, wallTop);
 `
 

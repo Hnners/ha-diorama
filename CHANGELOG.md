@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Fixed
+
+- Tall walls no longer leave small struts standing where a short piece of wall or a sliver of outside wall faces away, and their ends no longer slant or open up where they meet another wall.
+
 ## [1.18.2] - 2026-11-16
 
 ### Fixed
