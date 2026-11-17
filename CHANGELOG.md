@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.21.0] - 2026-11-17
+
 ### Added
 
 - An item can be shown by an on and off entity, like a toggle helper, so it only appears on the dashboard while that entity is on, or while it is off, along with anything standing on it.
@@ -852,7 +854,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.20.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.21.0...HEAD
+[1.21.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.19.0...v1.20.0
 [1.19.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.3...v1.19.0
 [1.18.3]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.2...v1.18.3
