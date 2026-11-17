@@ -1,3 +1,4 @@
+import { lean as isLean, useDevSettings } from '#/lib/devSettings.ts'
 import {
   CAMERA_FAR_M,
   CAMERA_FOV_DEG,
@@ -105,6 +106,8 @@ export default function Scene({
 }: Props) {
   const rooms = config.rooms ?? []
   const radius = config.radius ?? ROOM_CORNER_RADIUS_M
+  // Lower quality on this device, see devSettings.ts.
+  const leanMode = isLean(useDevSettings())
   const gap = config.gap ?? ROOM_GAP_M
   // Kept while the walls' settings stay the same, so the rooms keep theirs.
   const wallsKey = JSON.stringify(config.walls ?? null)
@@ -149,7 +152,9 @@ export default function Scene({
         shadows={{ type: PCFShadowMap }}
         // A frame is drawn only when something has changed, see live.ts.
         frameloop={paused || !warm ? 'never' : 'demand'}
-        dpr={[1, 2]}
+        // Up to twice the screen's pixels for sharp edges, or just the screen's
+        // own on a device set to lower quality.
+        dpr={leanMode ? 1 : [1, 2]}
         // The frame is finished from a buffer and smoothed there, so the
         // screen's own smoothing would only cost.
         gl={{ alpha: true, antialias: false }}

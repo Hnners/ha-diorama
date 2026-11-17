@@ -1,5 +1,6 @@
 import { flights } from '#/scene/flights.ts'
 import { due } from '#/scene/pace.ts'
+import { lean as isLean, useDevSettings } from '#/lib/devSettings.ts'
 import { coarseOnly } from '#/scene/device.ts'
 import { EDITOR_SELECTED_COLOR } from '#/theme.ts'
 import { FOCUS_FADE_S } from '#/constants.ts'
@@ -105,6 +106,8 @@ export default function Effects({ selected, focus = null }: Props) {
   const size = useThree(state => state.size)
   const dpr = useThree(state => state.viewport.dpr)
   const invalidate = useThree(state => state.invalidate)
+  // Lower quality on this device: lighter occlusion and smoothing.
+  const light = isLean(useDevSettings())
 
   // The picked object is found by name, and found again whenever the one in
   // hand has left the scene, which happens when a model is rebuilt.
@@ -117,11 +120,12 @@ export default function Effects({ selected, focus = null }: Props) {
     // Half float, so the scene keeps its range until it is tone mapped.
     const composer = new EffectComposer(gl, { frameBufferType: HalfFloatType })
     composer.addPass(new RenderPass(scene, camera))
-    // A phone or a tablet gets the occlusion at half resolution and with
-    // fewer samples.
+    // A phone or a tablet, or a device set to lower quality, gets the
+    // occlusion at half resolution and with fewer samples.
     const ao = new N8AOPostPass(scene, camera)
-    ao.setQualityMode(coarseOnly() ? 'Low' : 'Medium')
-    ao.configuration.halfRes = coarseOnly()
+    const low = light || coarseOnly()
+    ao.setQualityMode(low ? 'Low' : 'Medium')
+    ao.configuration.halfRes = low
     ao.configuration.aoRadius = AO_RADIUS_M
     ao.configuration.distanceFalloff = AO_FALLOFF
     ao.configuration.intensity = AO_INTENSITY
@@ -142,7 +146,7 @@ export default function Effects({ selected, focus = null }: Props) {
     const last = new EffectPass(
       camera,
       ...(outline ? [outline] : []),
-      new SMAAEffect({ preset: SMAAPreset.HIGH }),
+      new SMAAEffect({ preset: light ? SMAAPreset.LOW : SMAAPreset.HIGH }),
       new ToneMappingEffect({ mode: ToneMappingMode.ACES_FILMIC }),
     )
     // The picture replaces a share of what the screen holds. The share is
@@ -174,13 +178,13 @@ export default function Effects({ selected, focus = null }: Props) {
       // The composer disposes of its passes, and they of their effects.
       composer.dispose()
     }
-  }, [gl, scene, camera, outlined])
+  }, [gl, scene, camera, outlined, light])
 
   useEffect(() => {
     // The composer sizes its buffers from the canvas, which follows the
     // pixel ratio, and this only tells it the canvas has changed.
     pipeline.current?.composer.setSize(size.width, size.height, false)
-  }, [gl, scene, camera, outlined, size.width, size.height, dpr])
+  }, [gl, scene, camera, outlined, light, size.width, size.height, dpr])
 
   // Frames are drawn on request, and a new pick or a new size is one.
   useEffect(() => {

@@ -84,6 +84,8 @@ type Props = {
 const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a)
 
 export default function CardPanel({ hass, config, onChange, opening, onOpen }: Props) {
+  // This browser's own settings, for lower quality.
+  const devNow = useDevSettings()
   const rooms = config.rooms ?? []
   const sidePanel = config.side_panel === true
   // The page of widgets, in place of the settings, and on top of it the
@@ -493,6 +495,23 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
               accent={EDITOR_TINT_COLOR}
               label="Hide other rooms' widgets"
               onChange={setFilterTiles}
+            />
+          </label>
+          {/* Kept in this browser, not the card, so a slow computer can have it
+              and a fast one not, on the same dashboard. */}
+          <label className="border-separator flex cursor-pointer items-center justify-between gap-4 border-t py-2.5">
+            <span className="flex min-w-0 flex-col">
+              <span className="text-[13px]">Lower quality on this device</span>
+              <span className="text-label-2 text-xs">
+                For a slower computer: no shadows, fewer frames while moving, the screen's own resolution and lighter
+                effects. Only this browser changes
+              </span>
+            </span>
+            <Switch
+              checked={devNow.lowQuality}
+              accent={EDITOR_TINT_COLOR}
+              label="Lower quality on this device"
+              onChange={lowQuality => setDevSettings({ lowQuality })}
             />
           </label>
           <label className="border-separator flex cursor-pointer items-center justify-between gap-4 border-t py-2.5">

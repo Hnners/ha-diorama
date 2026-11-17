@@ -13,10 +13,14 @@ export type DevSettings = {
   // Performance mode on a phone or tablet, on unless turned off here: fewer
   // frames and no shadows. A computer never has it.
   touchPerformance: boolean
+  // Lower quality on this browser, whatever the device, for a computer that
+  // finds the card heavy: performance mode, at the screen's own resolution
+  // and with lighter effects. Set in the card's settings, not hidden here.
+  lowQuality: boolean
 }
 
 const KEY = 'diorama-dev'
-const NONE: DevSettings = { open: false, fps: false, touchPerformance: true }
+const NONE: DevSettings = { open: false, fps: false, touchPerformance: true, lowQuality: false }
 
 function load(): DevSettings {
   try {
@@ -60,6 +64,6 @@ const subscribe = (listener: () => void) => {
 export const devSettings = () => settings
 
 // Whether the card runs in performance mode on this device.
-export const lean = (from: DevSettings = settings) => from.touchPerformance && coarseOnly()
+export const lean = (from: DevSettings = settings) => from.lowQuality || (from.touchPerformance && coarseOnly())
 
 export const useDevSettings = () => useSyncExternalStore(subscribe, () => settings)
