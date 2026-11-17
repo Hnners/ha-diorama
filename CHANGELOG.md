@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- A "Lower quality on this device" switch in the card settings makes the view lighter for slower computers, with no shadows, fewer frames while moving and simpler effects, and only changes the browser it is turned on in.
+
 ## [1.19.0] - 2026-11-16
 
 ### Added
