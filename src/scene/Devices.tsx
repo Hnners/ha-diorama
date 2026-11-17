@@ -1,4 +1,5 @@
 import { betweenOf, coverAt, coversOver, roomLookedFrom, type Between } from '#/decoration/between.ts'
+import { hiddenPieces } from '#/scene/shownWhen.ts'
 import { decorationKind, invertible, paramValue, type DecorationKind } from '#/decoration/catalog.ts'
 import { canTry, initialTry, tryItemState, type TryState, type TryStates } from '#/editor/tryState.ts'
 import { elevationOf } from '#/geometry/elevation.ts'
@@ -376,9 +377,13 @@ export default function Devices({
     return total
   }
 
+  // Pieces their entity says are not there now. The editor shows them all.
+  const hidden = pick || onTry ? new Set<string>() : hiddenPieces(hass ?? undefined, decorations)
+
   return (
     <>
       {decorations.map(item => {
+        if (hidden.has(item.id)) return null
         const { device, kind, tried, state, flip } = states.get(item.id) ?? stateOf(item)
         // A flight seen from the floor it climbs up to is on the floor below,
         // so the editor does not pick it from here.

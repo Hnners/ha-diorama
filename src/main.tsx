@@ -174,6 +174,8 @@ function validate(config: CardConfig) {
     if (!item.kind) throw new Error(`Decoration ${item.id} needs a kind`)
     if (!Array.isArray(item.position) || item.position.length !== 2)
       throw new Error(`Decoration ${item.id} needs a position`)
+    if (item.show_when !== undefined && typeof item.show_when?.entity !== 'string')
+      throw new Error(`Decoration ${item.id} needs an entity in show_when`)
   }
 }
 

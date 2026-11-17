@@ -1,6 +1,7 @@
 import { betweenOf, coversOver } from '#/decoration/between.ts'
 import { decorationKind } from '#/decoration/catalog.ts'
 import { showOnly } from '#/scene/focus.ts'
+import { comingAndGoing } from '#/scene/shownWhen.ts'
 import type { CardConfig } from '#/types.ts'
 import { useThree } from '@react-three/fiber'
 import { useEffect } from 'react'
@@ -57,9 +58,11 @@ function staticIds(config: CardConfig, keep?: ReadonlySet<string>) {
   const byId = new Map(items.map(d => [d.id, d]))
   const bound = new Set<string>()
   for (const device of config.devices ?? []) for (const id of device.decorations ?? []) bound.add(id)
+  // A piece an entity shows and hides keeps its own meshes, to leave out.
+  const coming = comingAndGoing(items)
   const ids = new Set<string>()
   for (const item of items) {
-    if (bound.has(item.id) || keep?.has(item.id)) continue
+    if (bound.has(item.id) || keep?.has(item.id) || coming.has(item.id)) continue
     const kind = decorationKind(item.kind)
     if (!kind || LIVE_KINDS.has(kind.id)) continue
     // A piece in a wall between two rooms stays its own, so it can stay

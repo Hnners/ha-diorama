@@ -18,7 +18,8 @@ import { levelsAt, topsFor } from '#/decoration/surfaces.ts'
 import { isModelKind, MODEL_FAMILY, modelIdOf, modelKind, modelKindId, modelKinds } from '#/decoration/models.ts'
 import { importFiles, importLink } from '#/editor/importModel.ts'
 import ModelSettings from '#/editor/ModelSettings.tsx'
-import { placeableEntities } from '#/devices/catalog.ts'
+import { entityName, placeableEntities } from '#/devices/catalog.ts'
+import { onOffEntities } from '#/scene/shownWhen.ts'
 import ModelPreview from '#/editor/ModelPreview.tsx'
 import TrySection from '#/editor/TrySection.tsx'
 import { canTry, type TryState, type TryStates } from '#/editor/tryState.ts'
@@ -215,7 +216,12 @@ export default function DecorationPanel({
   if (!item && editing && editingModel) {
     const editingKind = modelKind(modelKindId(editing))
     // A piece of it standing nowhere, for the turntable.
-    const shown: DecorationConfig = { id: `model-page:${editing}`, kind: modelKindId(editing), room: '', position: [0, 0] }
+    const shown: DecorationConfig = {
+      id: `model-page:${editing}`,
+      kind: modelKindId(editing),
+      room: '',
+      position: [0, 0],
+    }
     return (
       <div className="flex flex-col gap-3">
         <Sticky>
@@ -284,6 +290,7 @@ export default function DecorationPanel({
       hass ? deviceSignals(hass, entityId).filter(x => kind.expresses.includes(x)).length : 0
     const own = preferredDomains(kind)
     const ownKind = (entityId: string) => (own.includes(entityId.split('.')[0]) ? 1 : 0)
+    const switches = hass ? onOffEntities(hass) : []
     const fits = (hass ? placeableEntities(hass) : [])
       .filter(e => shared(e.entity_id) > 0)
       .sort(
@@ -860,6 +867,62 @@ export default function DecorationPanel({
                 </>
               )}
             </>
+          )}
+        </div>
+
+        {/* An entity that decides whether the piece is there at all, like a
+            helper switched on for Christmas. The editor keeps showing it. */}
+        <div className={group}>
+          <p className={groupTitle}>Shown by</p>
+          <Select
+            aria-label="Shown by"
+            value={item.show_when?.entity ?? ''}
+            options={[
+              { value: '', label: 'Always shown' },
+              ...(item.show_when?.entity && !switches.some(e => e.entity_id === item.show_when?.entity)
+                ? [{ value: item.show_when.entity, label: item.show_when.entity }]
+                : []),
+              ...switches.map(e => ({
+                value: e.entity_id,
+                label: e.name,
+                keywords: [e.entity_id, e.area_name].filter(Boolean).join(' '),
+                area: e.area_name ?? undefined,
+              })),
+            ]}
+            onChange={v =>
+              onUpdate(item.id, {
+                show_when: v
+                  ? { entity: v, ...(item.show_when?.state ? { state: item.show_when.state } : {}) }
+                  : undefined,
+              })
+            }
+          />
+          {item.show_when?.entity && (
+            <>
+              <label className={cn(row, 'grid-cols-[1fr_auto]')}>
+                Show while it is off
+                <Switch
+                  checked={item.show_when.state === 'off'}
+                  accent={accent}
+                  label="Show while it is off"
+                  onChange={off =>
+                    onUpdate(item.id, {
+                      show_when: { entity: item.show_when!.entity, ...(off ? { state: 'off' } : {}) },
+                    })
+                  }
+                />
+              </label>
+              <p className={note}>
+                {`On the dashboard this ${kind.label.toLowerCase()} is only there while ${
+                  hass ? entityName(hass, item.show_when.entity) : item.show_when.entity
+                } is ${item.show_when.state ?? 'on'}, and so is anything standing on it. Here in the editor it always shows.`}
+              </p>
+            </>
+          )}
+          {!item.show_when?.entity && (
+            <p className={note}>
+              Pick an on and off entity, like a toggle helper, to show this item only while it is on.
+            </p>
           )}
         </div>
 
