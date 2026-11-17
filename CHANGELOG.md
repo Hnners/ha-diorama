@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.20.0] - 2026-11-17
+
 ### Added
 
 - A "Lower quality on this device" switch in the card settings makes the view lighter for slower computers, with no shadows, fewer frames while moving and simpler effects, and only changes the browser it is turned on in.
@@ -846,7 +848,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.19.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.20.0...HEAD
+[1.20.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.19.0...v1.20.0
 [1.19.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.3...v1.19.0
 [1.18.3]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.2...v1.18.3
 [1.18.2]: https://github.com/CarlesRojas/ha-diorama/compare/v1.18.1...v1.18.2
