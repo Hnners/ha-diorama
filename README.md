@@ -1,8 +1,10 @@
-<img src="docs/images/icon.svg" width="128" alt="A lit opal globe table lamp in a wooden cradle, the Diorama icon">
+<img src="docs/images/icon.svg" width="128" alt="A lit opal globe table lamp in a wooden cradle, the Home Assistant but its Sims now icon">
 
-# Diorama
+# Home Assistant but its Sims now
 
 A Home Assistant card that turns your home into a small 3D model you can click.
+
+This is a fork of [Diorama](https://github.com/CarlesRojas/ha-diorama) by Carles Rojas, with extra features on top. It goes by its own name so it is easy to tell apart from the original in the Marketplace.
 
 ## The diorama
 
@@ -14,7 +16,7 @@ A sharper version of the clip is in [docs/video/demo.mp4](docs/video/demo.mp4).
 
 ## Widgets
 
-Diorama comes with its own widgets in the same look as the model. Turn on **Show widgets beside the 3D view** and they appear next to it, one for each device you placed, grouped by room. You can also use them on their own, anywhere on a dashboard.
+The card comes with its own widgets in the same look as the model. Turn on **Show widgets beside the 3D view** and they appear next to it, one for each device you placed, grouped by room. You can also use them on their own, anywhere on a dashboard.
 
 ![A thermostat dial dragged down, a brightness slider, a front door opened with two taps, an all lights group and a robot vacuum started from its own button](docs/images/widgets.gif)
 
@@ -26,22 +28,22 @@ Everything is built inside Home Assistant, in the card's own full-screen editor.
 
 ## Install
 
-Diorama needs Home Assistant 2024.6 or newer.
+Home Assistant but its Sims now needs Home Assistant 2024.6 or newer.
 
 1. In Home Assistant open **HACS**, open the three-dot menu in the top right and choose **Custom repositories**.
-2. Paste `https://github.com/CarlesRojas/ha-diorama`, pick the **Dashboard** type and add it.
-3. Search for **Diorama** in HACS and download it. HACS registers the card's resource for you.
+2. Paste `https://github.com/Hnners/ha-diorama`, pick the **Dashboard** type and add it.
+3. Search for **Home Assistant but its Sims now** in HACS and download it. HACS registers the card's resource for you.
 4. Reload the browser.
-5. Edit a dashboard, choose **Add card** and search for **Diorama**.
+5. Edit a dashboard, choose **Add card** and search for **Home Assistant but its Sims now**.
 
 Updates arrive through HACS like any other card. If a new version does not show up after updating, clear the browser cache. The card logs its version in the browser console on load, so a stale copy is easy to spot.
 
 <details>
 <summary>Install by hand, without HACS</summary>
 
-1. Download `card.js` from the [latest release](https://github.com/CarlesRojas/ha-diorama/releases/latest) into `config/www/diorama/card.js`.
+1. Download `card.js` from the [latest release](https://github.com/Hnners/ha-diorama/releases/latest) into `config/www/diorama/card.js`.
 2. In **Settings > Dashboards**, open the three-dot menu, choose **Resources** and add `/local/diorama/card.js` as a **JavaScript module**.
-3. Edit a dashboard, choose **Add card** and search for **Diorama**.
+3. Edit a dashboard, choose **Add card** and search for **Home Assistant but its Sims now**.
 
 When you update, bump a `?v=` query on the resource URL so browsers pick up the new file.
 

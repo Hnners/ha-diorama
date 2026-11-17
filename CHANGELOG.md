@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Changed
+
+- The card is now called Home Assistant but its Sims now in the Marketplace and the card picker, to tell it apart from the original Diorama. Existing dashboards keep working as they are.
+
 ## [1.21.0] - 2026-11-17
 
 ### Added

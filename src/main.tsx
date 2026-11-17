@@ -428,7 +428,7 @@ window.customCards = window.customCards ?? []
 if (!window.customCards.some(card => card.type === CARD_TYPE))
   window.customCards.push({
     type: CARD_TYPE,
-    name: 'Diorama',
+    name: 'Home Assistant but its Sims now',
     description: 'Your home as a 3D model, with your devices in it',
     preview: true,
   })
