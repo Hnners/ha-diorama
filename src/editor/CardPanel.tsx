@@ -450,13 +450,13 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
       data-light={light}
       className="dio-editor font-system flex flex-col gap-6 px-5 py-6 text-(--primary-text-color) antialiased"
     >
-      <Section title="Diorama">
+      <Section title="Home Assistant but its Sims now">
         <div className={cn(group, 'flex-row items-center gap-3')}>
           <span className="bg-tint-fill flex size-9 shrink-0 items-center justify-center rounded-[10px] text-white">
             <FontAwesomeIcon icon={faPenRuler} className="size-4" />
           </span>
           <span className="flex min-w-0 flex-1 flex-col">
-            <span className="text-[13px] font-semibold">Diorama editor</span>
+            <span className="text-[13px] font-semibold">3D editor</span>
             <span className="text-label-2 truncate text-xs">Rooms, furniture and devices</span>
           </span>
           <button
@@ -871,7 +871,7 @@ function Footer() {
   return (
     <footer className="flex flex-col gap-6 pt-2">
       <div className="flex flex-col items-center gap-0.5">
-        <span className="text-label-2 text-[13px] font-semibold">Diorama</span>
+        <span className="text-label-2 text-[13px] font-semibold">Home Assistant but its Sims now</span>
         <button type="button" onClick={tap} className="text-label-2 cursor-default text-xs tabular-nums select-none">
           v{__CARD_VERSION__}
         </button>
