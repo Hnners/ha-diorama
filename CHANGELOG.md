@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- An item can be shown by an on and off entity, like a toggle helper, so it only appears on the dashboard while that entity is on, or while it is off, along with anything standing on it.
+
 ## [1.20.0] - 2026-11-17
 
 ### Added

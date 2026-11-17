@@ -220,6 +220,11 @@ export type DecorationConfig = {
   light_brightness?: number
   // Which of the kind's styles it is drawn in. The kind's first when absent.
   variant?: string
+  // An entity that decides whether the piece is there at all, like an
+  // input_boolean for a Christmas tree. It shows while the entity is in
+  // `state`, 'on' when absent, and is left out otherwise, with everything
+  // standing on it. The editor always shows it, so it can still be moved.
+  show_when?: { entity: string; state?: string }
   // Set by the card, never saved: a flight of stairs seen from the floor it
   // leads up to is drawn this far below that floor, so its top meets it.
   below?: number
