@@ -26,7 +26,7 @@ import type { CardConfig } from '#/types.ts'
 const GHOST_OPACITY = 0.18
 // How fast it fades either way, as the share of the way gone in a second.
 const FADE_RATE = 7
-// A piece whose top stands this far above its own floor counts as high, in
+// A piece whose top stands this far above the floor counts as high, in
 // meters: above a person's eye when seated, and over most of a room.
 const HIGH_M = 1.4
 // Kinds that are never ghosts: a flight of stairs fades with height already.
@@ -55,7 +55,8 @@ export function ghostCandidates(scene: Scene, config: CardConfig): Set<string> {
   })
   scene.updateMatrixWorld()
   for (const item of items) {
-    if (bound.has(item.id) || NEVER.has(item.kind)) continue
+    // A window is seen through already, and its frame fading would only look odd.
+    if (bound.has(item.id) || NEVER.has(item.kind) || item.kind.includes('window')) continue
     if (DOOR_KINDS.has(item.kind)) {
       ids.add(item.id)
       continue
@@ -64,8 +65,10 @@ export function ghostCandidates(scene: Scene, config: CardConfig): Set<string> {
     if (!group) continue
     box.setFromObject(group)
     if (box.isEmpty()) continue
+    // Counted from the floor, so wall cabinets hung up high count too.
     group.getWorldPosition(at)
-    if (box.max.y - at.y >= HIGH_M) ids.add(item.id)
+    const floor = typeof group.userData.floor === 'number' ? group.userData.floor : at.y
+    if (box.max.y - floor >= HIGH_M) ids.add(item.id)
   }
   // What stands on a ghost goes with it, so a vase is not left in the air.
   const byId = new Map(items.map(item => [item.id, item]))
