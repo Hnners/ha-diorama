@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.22.0] - 2026-11-24
+
 ### Added
 
 - Doors and tall or high pieces turn see-through while they hide something you can click, and a click on one goes through to what is behind it. A switch in the card settings turns it off.
@@ -864,7 +866,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.21.1...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.22.0...HEAD
+[1.22.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.21.1...v1.22.0
 [1.21.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.21.0...v1.21.1
 [1.21.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.19.0...v1.20.0
