@@ -1,6 +1,7 @@
 import { betweenOf, coversOver } from '#/decoration/between.ts'
 import { decorationKind } from '#/decoration/catalog.ts'
 import { showOnly } from '#/scene/focus.ts'
+import { ghostCandidates } from '#/scene/ghosts.tsx'
 import { comingAndGoing } from '#/scene/shownWhen.ts'
 import type { CardConfig } from '#/types.ts'
 import { useThree } from '@react-three/fiber'
@@ -288,7 +289,10 @@ export default function Merged({ config, keep }: Props) {
     // A part hidden around a focused room would be taken for one that is
     // not plain paint. The focus hides what it has to again on its next frame.
     showOnly(scene, null)
-    const baked = bake(scene, staticIds(config, keep))
+    // A piece that may turn see-through keeps its own meshes to fade.
+    const ids = staticIds(config, keep)
+    for (const id of ghostCandidates(scene, config)) ids.delete(id)
+    const baked = bake(scene, ids)
     invalidate()
     return () => {
       for (const mesh of baked.hidden) mesh.visible = true

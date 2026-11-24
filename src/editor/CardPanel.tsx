@@ -497,6 +497,23 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
               onChange={setFilterTiles}
             />
           </label>
+          <label className="border-separator flex cursor-pointer items-center justify-between gap-4 border-t py-2.5">
+            <span className="flex min-w-0 flex-col">
+              <span className="text-[13px]">See through what is in the way</span>
+              <span className="text-label-2 text-xs">
+                Doors and tall or high pieces turn see-through while they hide a device, and a click goes through to it
+              </span>
+            </span>
+            <Switch
+              checked={config.ghost_in_way !== false}
+              accent={EDITOR_TINT_COLOR}
+              label="See through what is in the way"
+              onChange={on => {
+                const { ghost_in_way: _, ...rest } = config
+                onChange(on ? rest : { ...rest, ghost_in_way: false })
+              }}
+            />
+          </label>
           {/* Kept in this browser, not the card, so a slow computer can have it
               and a fast one not, on the same dashboard. */}
           <label className="border-separator flex cursor-pointer items-center justify-between gap-4 border-t py-2.5">
