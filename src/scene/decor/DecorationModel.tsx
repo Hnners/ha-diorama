@@ -210,6 +210,9 @@ function DecorationModel({
         ...(onClick && { pick: { click: onClick, open: onOpen ?? onClick, exact } }),
         ...(grab && { drag: grab }),
         room: item.room,
+        // The floor it stands on, which is where a piece's height counts from
+        // when a high piece may turn see-through.
+        floor: floor ?? elevationOf(room),
         ...(between && { rooms: between.rooms, between }),
       }}
       {...interactive}

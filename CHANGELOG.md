@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Fixed
+
+- Wall cabinets and other pieces hung up high now turn see-through when they hide something you can click, as tall pieces do.
+
 ## [1.22.0] - 2026-11-24
 
 ### Added
