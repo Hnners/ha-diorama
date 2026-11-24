@@ -295,6 +295,9 @@ export type CardConfig = {
   rooms?: RoomConfig[]
   devices?: DeviceConfig[]
   decorations?: DecorationConfig[]
+  // Doors and high pieces with no device go see-through while they stand
+  // between the camera and a piece with one. On unless set to false.
+  ghost_in_way?: boolean
   // Models imported into the editor's catalog, by id.
   models?: Record<string, ModelConfig>
   // Corner radius in meters applied to rooms without their own.

@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- Doors and tall or high pieces turn see-through while they hide something you can click, and a click on one goes through to what is behind it. A switch in the card settings turns it off.
+
 ## [1.21.1] - 2026-11-17
 
 ### Changed

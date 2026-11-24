@@ -15,6 +15,7 @@ import CameraRig, { type CameraHandle } from '#/scene/CameraRig.tsx'
 import Cleanup from '#/scene/cleanup.tsx'
 import Devices from '#/scene/Devices.tsx'
 import Effects from '#/scene/Effects.tsx'
+import Ghosts from '#/scene/ghosts.tsx'
 import Merged from '#/scene/Merged.tsx'
 import Passages from '#/scene/Passages.tsx'
 import PickFallback from '#/scene/pick.tsx'
@@ -212,6 +213,7 @@ export default function Scene({
           together, a room at a time. In the editor every piece is its own,
           so it can be picked and tried. */}
               {!onPickDecoration && !onTry && <Merged config={config} keep={onStairs ? stairs : undefined} />}
+              {!onPickDecoration && !onTry && <Ghosts config={config} />}
               {/* A press that misses everything looks around itself for something
           to act on, so small things are still easy to hit, and only then
           asks whether it landed on a room's floor. */}
