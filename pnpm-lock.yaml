@@ -8,7 +8,7 @@ importers:
 
   .:
     dependencies:
-      '@fontsource/big-shoulders-stencil-display':
+      '@fontsource/barlow-condensed':
         specifier: ^5.3.0
         version: 5.3.0
       '@fontsource/ibm-plex-mono':
@@ -194,8 +194,8 @@ packages:
   '@dimforge/rapier3d-compat@0.12.0':
     resolution: {integrity: sha512-uekIGetywIgopfD97oDL5PfeezkFpNhwlzlaEYNOA0N6ghdsOvh/HYjSMek5Q2O1PYvRSDFcqFVJl4r4ZBwOow==}
 
-  '@fontsource/big-shoulders-stencil-display@5.3.0':
-    resolution: {integrity: sha512-xZfOmq5/66j90rw2SipYr1skJUDrDBCcCZZY8aNU3oDpvqzHjcA1KADdl/4AMZNs7aPc61KbV5P696ggmF81Tw==}
+  '@fontsource/barlow-condensed@5.3.0':
+    resolution: {integrity: sha512-RA7MmIx0v3eQ6Gcf74qLVLOwLB0GpPOzx+eU9iG/AmCnSJGcIWYeU8y6CEMGZ210MGwGg5CZhzLkkvyZdTTk1g==}
 
   '@fontsource/ibm-plex-mono@5.3.0':
     resolution: {integrity: sha512-eTgnZjZEGk1QtD3ZstF+Vclo2HLAni8YMy34/DxllwZvyz1lR/1RF/xTiAquOBO7MvqBx8D2Ig2WCPMVfdZu7Q==}
@@ -1510,7 +1510,7 @@ snapshots:
 
   '@dimforge/rapier3d-compat@0.12.0': {}
 
-  '@fontsource/big-shoulders-stencil-display@5.3.0': {}
+  '@fontsource/barlow-condensed@5.3.0': {}
 
   '@fontsource/ibm-plex-mono@5.3.0': {}
 

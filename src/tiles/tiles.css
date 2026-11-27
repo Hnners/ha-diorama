@@ -41,10 +41,7 @@
   --_alarm-armed: var(--dio-alarm-armed, var(--fp-alarm-armed, #ff453a));
   --_alarm-disarmed: var(--dio-alarm-disarmed, var(--fp-alarm-disarmed, #30d158));
   --_font-tile: var(--dio-font-tile, var(--fp-font-tile, 'Work Sans', system-ui, sans-serif));
-  --_font-title: var(
-    --dio-font-title,
-    var(--fp-font-title, 'Big Shoulders Stencil Display', 'Arial Narrow', sans-serif)
-  );
+  --_font-title: var(--dio-font-title, var(--fp-font-title, 'Barlow Condensed', 'Arial Narrow', sans-serif));
   --_title-size: var(--dio-title-size, var(--fp-title-size, 30px));
   --_title-opacity: var(--dio-title-opacity, var(--fp-title-opacity, 0.92));
   --_icon-size: var(--dio-tile-icon-size, var(--fp-tile-icon-size, 28px));
@@ -913,7 +910,7 @@
   color: var(--dio-title-color, var(--fp-title-color, var(--primary-text-color, #fff)));
   font-family: var(--_font-title);
   font-size: var(--_title-size);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.05;
   letter-spacing: 0.04em;
   text-transform: uppercase;

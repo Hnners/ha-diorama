@@ -455,7 +455,7 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
           <SimsMark />
         </span>
         <span className="flex min-w-0 flex-col">
-          <span className="font-head text-[38px] leading-[0.95] font-extrabold tracking-[0.05em]">S.I.M.S.</span>
+          <span className="font-head text-[38px] leading-[0.95] font-bold tracking-[0.05em]">S.I.M.S.</span>
           <span className="text-label-2 truncate font-mono text-[10.5px] tracking-[0.08em] uppercase">
             Smart-home In Miniature Scale
           </span>
@@ -979,7 +979,7 @@ function Section({ title, subtitle, children }: { title: string; subtitle?: stri
   return (
     <section className="flex flex-col gap-2">
       <div className="flex flex-col gap-0.5 px-3">
-        <h3 className="font-head text-[24px] leading-none font-extrabold tracking-[0.05em] uppercase">{title}</h3>
+        <h3 className="font-head text-[24px] leading-none font-bold tracking-[0.05em] uppercase">{title}</h3>
         {subtitle && (
           <p className="text-label-2 font-mono text-[11px] leading-snug tracking-[0.06em] uppercase">{subtitle}</p>
         )}
@@ -1278,7 +1278,7 @@ function entityIcon(hass: HomeAssistant, id: string) {
 const arrow =
   'border-line border-2 text-label-2 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg transition-[color,transform] hover:text-(--primary-text-color) active:scale-90 disabled:cursor-default disabled:opacity-35 disabled:hover:text-label-2 disabled:active:scale-100'
 
-const heading = 'h-10 w-full truncate text-[30px] leading-10 font-extrabold tracking-[0.04em] uppercase font-title'
+const heading = 'h-10 w-full truncate text-[30px] leading-10 font-bold tracking-[0.04em] uppercase font-title'
 
 type RoomLists = { entities?: string[]; order?: string[]; hidden?: string[]; tiles?: TileChoices }
 

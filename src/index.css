@@ -3,16 +3,13 @@
 
 @theme {
   /* The S.I.M.S. type, the same as the M.A.S.H., C.R.A.P. and L.I.B.R.A.R.Y. add-ons:
-     Work Sans for words, IBM Plex Mono for labels and numbers, the stencil for headings. */
+     Work Sans for words, IBM Plex Mono for labels and numbers, Barlow Condensed for headings. */
   --font-sims: 'Work Sans', system-ui, sans-serif;
   --font-system: 'Work Sans', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --font-head: 'Big Shoulders Stencil Display', 'Arial Narrow', sans-serif;
+  --font-head: 'Barlow Condensed', 'Arial Narrow', sans-serif;
   /* The headings of the side panel, for the editor's headings over its widgets. */
-  --font-title: var(
-    --dio-font-title,
-    var(--fp-font-title, 'Big Shoulders Stencil Display', 'Arial Narrow', sans-serif)
-  );
+  --font-title: var(--dio-font-title, var(--fp-font-title, 'Barlow Condensed', 'Arial Narrow', sans-serif));
   --transition-duration-slow: 300ms;
 }
 
