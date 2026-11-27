@@ -7,7 +7,6 @@ import {
 import { floating, iconButton } from '#/editor/look.ts'
 import type { Floor } from '#/lib/floors.ts'
 import { cn } from '#/lib/utils.ts'
-import { EDITOR_TINT_COLOR } from '#/theme.ts'
 import { faArrowDown, faArrowUp, faLayerGroup, faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useRef, useState } from 'react'
@@ -51,7 +50,7 @@ export default function FloorPicker({ floors, active, onPick, onAdd, onOrder, on
 
   return (
     <>
-      <div className="bg-fill-strong flex items-center gap-0.5 rounded-[10px] p-0.5">
+      <div className="border-line flex items-center gap-0.5 rounded-lg border-2 p-0.5">
         {floors.map((floor, i) => {
           const on = floor.id === current
           if (renaming === floor.id)
@@ -93,10 +92,9 @@ export default function FloorPicker({ floors, active, onPick, onAdd, onOrder, on
                 setDragged(null)
               }}
               onDragEnd={() => setDragged(null)}
-              style={on ? { color: EDITOR_TINT_COLOR } : undefined}
               className={cn(
-                'flex h-8 cursor-pointer items-center rounded-lg px-2.5 text-[13px] font-medium whitespace-nowrap transition-colors select-none',
-                on && 'bg-raised shadow-[0_1px_3px_rgba(0,0,0,0.2)]',
+                'flex h-8 cursor-pointer items-center rounded-[6px] px-2.5 text-[13px] font-semibold whitespace-nowrap transition-colors select-none',
+                on && 'bg-tint-fill text-on-tint',
                 !on && 'text-label-2 hover:text-(--primary-text-color)',
                 dragged === floor.id && 'opacity-40',
               )}
@@ -186,7 +184,7 @@ function RenameField({ floor, onDone }: { floor: Floor; onDone: (name: string | 
         // The editor's own shortcuts are not for the name.
         e.stopPropagation()
       }}
-      className="bg-raised focus:ring-tint/30 h-8 rounded-lg border-none px-2.5 text-[13px] font-medium text-(--primary-text-color) outline-none focus:ring-3"
+      className="bg-raised focus:border-tint border-line h-8 rounded-lg border-2 px-2.5 text-[13px] font-medium text-(--primary-text-color) outline-none focus:ring-3"
     />
   )
 }

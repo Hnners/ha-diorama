@@ -342,7 +342,7 @@ export default function Card({ hass, config, panel = false, preview = false }: P
               )}
             </>
           ) : (
-            <div className="font-montserrat flex h-full flex-col items-center justify-center gap-1 p-4 text-center">
+            <div className="font-sims flex h-full flex-col items-center justify-center gap-1 p-4 text-center">
               <p className="text-sm font-semibold">No rooms yet</p>
               <p className="text-xs opacity-70">Add rooms to the card config to see your diorama.</p>
             </div>

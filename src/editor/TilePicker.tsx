@@ -102,7 +102,12 @@ export function TilePicker({
   const shown = showing(hass, String(auto.entity))
   const labels = labelsOf(picked[editing])
   return (
-    <div role="group" aria-label="Widgets" className="grid grid-cols-12 items-start px-1.5 pt-1.5" style={{ gap: `18px ${GAP_PX}px` }}>
+    <div
+      role="group"
+      aria-label="Widgets"
+      className="grid grid-cols-12 items-start px-1.5 pt-1.5"
+      style={{ gap: `18px ${GAP_PX}px` }}
+    >
       {options.map(option => {
         const key = setupKey(option.config)
         const at = keys.indexOf(key)
@@ -155,7 +160,7 @@ export function TilePicker({
               onClick={toggle}
               className={cn(
                 'absolute -top-1.5 -right-1.5 z-10 flex size-6 cursor-pointer items-center justify-center rounded-full shadow-[0_0_0_3px_var(--dio-surface,var(--card-background-color))] transition-[transform,opacity] outline-none hover:opacity-85 focus-visible:opacity-85 active:scale-90',
-                on ? 'bg-tint-fill text-white' : 'bg-(--dio-float) text-(--dio-float-icon)',
+                on ? 'bg-tint-fill text-on-tint' : 'bg-(--dio-float) text-(--dio-float-icon)',
                 on && picked.length === 1 && 'cursor-default',
               )}
             >

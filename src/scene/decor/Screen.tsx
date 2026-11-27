@@ -168,7 +168,7 @@ function drawOver(
   }
   if (title) {
     const size = TITLE_PX * k
-    context.font = `600 ${size}px Inter, system-ui, sans-serif`
+    context.font = `600 ${size}px "Work Sans", system-ui, sans-serif`
     context.fillStyle = '#ffffff'
     context.textBaseline = 'alphabetic'
     // Two lines at most, the second cut short, as on the card.
@@ -211,7 +211,7 @@ function drawOver(
       context.fillText(shown, pad, y)
     })
     if (subtitle) {
-      context.font = `500 ${small}px Inter, system-ui, sans-serif`
+      context.font = `500 ${small}px "Work Sans", system-ui, sans-serif`
       context.lineWidth = small * 0.16
       context.fillStyle = '#ffffff'
       // Faded, outline and all, so it reads as a note to the title.

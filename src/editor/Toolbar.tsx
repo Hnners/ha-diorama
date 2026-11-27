@@ -87,7 +87,7 @@ export default function Toolbar({
   return (
     <div className="flex items-center gap-0.5">
       {/* The tools are one control, of which one is always chosen. */}
-      <div className="bg-fill-strong flex items-center gap-0.5 rounded-[10px] p-0.5">
+      <div className="border-line flex items-center gap-0.5 rounded-lg border-2 p-0.5">
         {TOOLS.map(t => (
           <ToolButton key={t.id} action={t} active={tool === t.id} color={color} onClick={() => onTool(t.id)} />
         ))}
@@ -384,11 +384,11 @@ function ToolButton({
         type="button"
         aria-label={action.title}
         onClick={onClick}
-        style={active ? { color } : undefined}
+        style={active && toggle ? { color } : undefined}
         className={cn(
           iconButton,
-          'size-8',
-          active && !toggle && 'bg-raised hover:bg-raised active:bg-raised shadow-[0_1px_3px_rgba(0,0,0,0.2)]',
+          'size-8 rounded-[6px]',
+          active && !toggle && 'bg-tint-fill text-on-tint hover:bg-tint-fill active:bg-tint-fill',
           active && toggle && 'bg-tint/12 hover:bg-tint/18',
         )}
       >

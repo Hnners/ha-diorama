@@ -505,7 +505,7 @@ export default function DecorationPanel({
           {kind.mount !== 'wall' && (
             <div className={cn(row, 'grid-cols-[96px_1fr_56px_24px]')}>
               Turn
-              <div className="bg-fill-strong col-span-2 flex rounded-[8px] p-0.5">
+              <div className="border-line col-span-2 flex rounded-lg border-2 p-0.5">
                 {[0, 90, 180, 270].map(angle => (
                   <button
                     key={angle}
@@ -515,7 +515,7 @@ export default function DecorationPanel({
                     className={cn(
                       'flex-1 rounded-[6px] py-1 text-xs font-medium tabular-nums transition-colors',
                       (item.rotation ?? 0) === angle
-                        ? 'bg-raised text-(--primary-text-color) shadow-[0_1px_3px_rgba(0,0,0,0.2)]'
+                        ? 'bg-tint-fill text-on-tint font-semibold'
                         : 'text-label-2 hover:text-(--primary-text-color)',
                     )}
                   >
@@ -586,9 +586,9 @@ export default function DecorationPanel({
                         onFocus={() => onPointTop(top.id)}
                         onBlur={() => onPointTop(null)}
                         className={cn(
-                          'rounded-full px-2.5 py-1 text-xs font-medium transition-colors',
+                          'rounded-[5px] px-2.5 py-1 text-xs font-semibold transition-colors',
                           on
-                            ? 'text-white'
+                            ? 'text-on-tint'
                             : 'bg-fill-strong hover:bg-fill-stronger text-label-2 hover:text-(--primary-text-color)',
                         )}
                         style={on ? { backgroundColor: accent } : undefined}
@@ -1044,7 +1044,7 @@ export default function DecorationPanel({
                     {rooms.length > 0 ? (
                       <span
                         className={cn(
-                          'flex size-6 items-center justify-center rounded-full transition-colors',
+                          'flex size-6 items-center justify-center rounded-[5px] transition-colors',
                           hovered?.id === k.id ? 'bg-tint/22' : 'bg-tint/12',
                         )}
                         style={{ color: accent }}
@@ -1192,7 +1192,7 @@ export default function DecorationPanel({
                   {rooms.length > 0 ? (
                     <span
                       className={cn(
-                        'flex size-6 items-center justify-center rounded-full transition-colors',
+                        'flex size-6 items-center justify-center rounded-[5px] transition-colors',
                         hovered?.id === k.id ? 'bg-tint/22' : 'bg-tint/12',
                       )}
                       style={{ color: accent }}

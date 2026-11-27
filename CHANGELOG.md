@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Changed
+
+- The card is now called S.I.M.S. (Smart-home In Miniature Scale), and the editor, the card's settings, the floor switch and the widgets have a new look to match the M.A.S.H., C.R.A.P. and L.I.B.R.A.R.Y. add-ons: squared controls with outlines, stencil headings, Work Sans text and a plumbob green accent.
+
 ## [1.22.1] - 2026-11-24
 
 ### Fixed

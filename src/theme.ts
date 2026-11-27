@@ -76,7 +76,7 @@ export const EDGE_FADE_MASK = `url("data:image/svg+xml,${encodeURIComponent(EDGE
 // Editor
 
 // What is selected on the canvas is drawn in this, whatever the mode.
-export const EDITOR_SELECTED_COLOR = '#0a84ff'
+export const EDITOR_SELECTED_COLOR = '#6fd250'
 // The tint of the editor's controls: sliders, switches, the tool in use, the
 // buttons that add. The same blue, set in the stylesheet so it can deepen
 // over a light theme, where the bright one is too faint for text.

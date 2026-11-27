@@ -227,7 +227,7 @@ function Readout({ text, color, lit, size }: { text: string; color: string; lit:
       g.fillStyle = '#0b1013'
       g.fillRect(0, 0, canvas.width, canvas.height)
       g.fillStyle = color
-      g.font = `600 ${text.length > 6 ? 40 : 48}px Montserrat, sans-serif`
+      g.font = `600 ${text.length > 6 ? 40 : 48}px "Work Sans", sans-serif`
       g.textAlign = 'center'
       g.textBaseline = 'middle'
       g.fillText(text, canvas.width / 2, canvas.height / 2 + 2)

@@ -51,7 +51,7 @@ export function IconPicker({
   const cell = (selected: boolean) =>
     cn(
       'hover:bg-fill-strong flex aspect-square cursor-pointer items-center justify-center rounded-lg text-(--primary-text-color) transition-[background-color,transform] active:scale-90',
-      selected && 'bg-tint-fill hover:bg-tint-fill text-white',
+      selected && 'bg-tint-fill hover:bg-tint-fill text-on-tint',
     )
   const glyph = 'size-5 [--mdc-icon-size:20px] [&>svg]:size-full'
 
@@ -99,7 +99,7 @@ export function IconPicker({
               onClick={() => pick(undefined)}
               className={cn(
                 'flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 text-[13px] transition-colors',
-                value ? 'bg-fill-strong hover:bg-fill-stronger' : 'bg-tint-fill text-white',
+                value ? 'bg-fill-strong hover:bg-fill-stronger' : 'bg-tint-fill text-on-tint',
               )}
             >
               <Icon icon={fallback} className="size-4 [--mdc-icon-size:16px] [&>svg]:size-full" />

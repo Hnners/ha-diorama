@@ -9,18 +9,20 @@
 :host {
   display: block;
   height: 100%;
-  --_radius: var(--dio-tile-radius, var(--fp-tile-radius, 30px));
+  --_radius: var(--dio-tile-radius, var(--fp-tile-radius, 10px));
+  /* Buttons, pills and tracks inside a tile: squared off like the S.I.M.S. editor. */
+  --_pill: var(--dio-pill-radius, 8px);
   --_padding: var(--dio-tile-padding, var(--fp-tile-padding, 18px));
-  --_bg-active: var(--dio-tile-bg-active, var(--fp-tile-bg-active, rgba(255, 255, 255, 0.94)));
-  --_bg-inactive: var(--dio-tile-bg-inactive, var(--fp-tile-bg-inactive, rgba(118, 118, 128, 0.24)));
+  --_bg-active: var(--dio-tile-bg-active, var(--fp-tile-bg-active, rgba(242, 244, 238, 0.96)));
+  --_bg-inactive: var(--dio-tile-bg-inactive, var(--fp-tile-bg-inactive, rgba(118, 122, 128, 0.16)));
   --_blur: var(--dio-tile-blur, var(--fp-tile-blur, 24px));
   --_opacity-inactive: var(--dio-tile-opacity-inactive, var(--fp-tile-opacity-inactive, 1));
   --_opacity-unavailable: var(--dio-tile-opacity-unavailable, var(--fp-tile-opacity-unavailable, 0.45));
-  --_shadow: var(--dio-tile-shadow, var(--fp-tile-shadow, none));
+  --_shadow: var(--dio-tile-shadow, var(--fp-tile-shadow, inset 0 0 0 2px rgba(255, 255, 255, 0.08)));
   --_text-active: var(--dio-text-active, var(--fp-text-active, #1c1c1e));
   --_text-inactive: var(--dio-text-inactive, var(--fp-text-inactive, #ffffff));
   --_secondary: var(--dio-text-secondary-opacity, var(--fp-text-secondary-opacity, 0.72));
-  --_accent: var(--dio-accent, var(--fp-accent, #0a84ff));
+  --_accent: var(--dio-accent, var(--fp-accent, #6fd250));
   --_accent-light: var(--dio-accent-light, var(--fp-accent-light, #ffb340));
   --_accent-cover: var(--dio-accent-cover, var(--fp-accent-cover, #32ade6));
   --_accent-media: var(--dio-accent-media, var(--fp-accent-media, #0a9a7c));
@@ -34,8 +36,11 @@
   --_accent-locked: var(--dio-accent-locked, var(--fp-accent-locked, #ff453a));
   --_alarm-armed: var(--dio-alarm-armed, var(--fp-alarm-armed, #ff453a));
   --_alarm-disarmed: var(--dio-alarm-disarmed, var(--fp-alarm-disarmed, #30d158));
-  --_font-tile: var(--dio-font-tile, var(--fp-font-tile, 'Inter', system-ui, sans-serif));
-  --_font-title: var(--dio-font-title, var(--fp-font-title, 'Inter Tight', system-ui, sans-serif));
+  --_font-tile: var(--dio-font-tile, var(--fp-font-tile, 'Work Sans', system-ui, sans-serif));
+  --_font-title: var(
+    --dio-font-title,
+    var(--fp-font-title, 'Big Shoulders Stencil Display', 'Arial Narrow', sans-serif)
+  );
   --_title-size: var(--dio-title-size, var(--fp-title-size, 30px));
   --_title-opacity: var(--dio-title-opacity, var(--fp-title-opacity, 0.92));
   --_icon-size: var(--dio-tile-icon-size, var(--fp-tile-icon-size, 28px));
@@ -57,7 +62,8 @@
    and a tile that is on turns dark with white text, since a white one would
    not stand out from the page. */
 :host([data-light]) {
-  --_bg-inactive: var(--dio-tile-bg-inactive, var(--fp-tile-bg-inactive, rgba(120, 120, 128, 0.16)));
+  --_bg-inactive: var(--dio-tile-bg-inactive, var(--fp-tile-bg-inactive, rgba(120, 120, 128, 0.14)));
+  --_shadow: var(--dio-tile-shadow, var(--fp-tile-shadow, inset 0 0 0 2px rgba(0, 0, 0, 0.08)));
   --_text-inactive: var(--dio-text-inactive, var(--fp-text-inactive, #1c1c1e));
   --_bg-active: var(--dio-tile-bg-active, var(--fp-tile-bg-active, rgba(28, 28, 30, 0.94)));
   --_text-active: var(--dio-text-active, var(--fp-text-active, #ffffff));
@@ -650,7 +656,7 @@
   position: relative;
   flex: 1 1 auto;
   height: 32px;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: var(--_track);
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
   cursor: ew-resize;
@@ -670,7 +676,7 @@
   left: calc(3px + var(--_share) * (100% - 32px));
   width: 26px;
   height: 26px;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   /* Tinted by the light's color like the tile around it. */
   background: linear-gradient(color-mix(in srgb, var(--_tile-glow, transparent) 25%, transparent) 0 0), var(--_handle);
   box-shadow:
@@ -694,7 +700,7 @@
   gap: 4px;
   margin: -4px -4px 0 0;
   padding: 3px;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
@@ -745,7 +751,7 @@
   height: 44px;
   place-items: center;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: transparent;
   color: inherit;
   cursor: pointer;
@@ -812,7 +818,7 @@
   height: 36px;
   padding: 0 10px;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: transparent;
   color: inherit;
   font-family: inherit;
@@ -847,7 +853,7 @@
   min-width: 0;
   gap: 2px;
   padding: 3px;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
@@ -872,9 +878,10 @@
   color: var(--dio-title-color, var(--fp-title-color, var(--primary-text-color, #fff)));
   font-family: var(--_font-title);
   font-size: var(--_title-size);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   opacity: var(--_title-opacity);
 }
 
@@ -889,7 +896,7 @@
   padding: 0;
   overflow: hidden;
   border: none;
-  border-radius: 18px;
+  border-radius: 10px;
   background: var(--dio-menu-bg, var(--fp-menu-bg, rgba(44, 44, 48, 0.82)));
   color: var(--dio-menu-text, var(--fp-menu-text, #fff));
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
@@ -943,7 +950,7 @@
   width: 100%;
   padding: 10px 12px;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   background: transparent;
   color: inherit;
   font: inherit;
@@ -1237,7 +1244,7 @@
   min-width: 0;
   gap: 2px;
   padding: 3px;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
@@ -1280,7 +1287,7 @@
   align-items: center;
   height: 44px;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: 8px;
   background: color-mix(in srgb, currentColor 12%, transparent);
   cursor: ew-resize;
   touch-action: none;
@@ -1363,7 +1370,7 @@
   bottom: 5px;
   left: calc(5px + var(--_share) * (100% - 18px));
   width: 8px;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: #fff;
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.12),
@@ -1385,7 +1392,7 @@
   height: 44px;
   padding: 0 14px;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: color-mix(in srgb, currentColor 12%, transparent);
   color: inherit;
   font: inherit;
@@ -1550,7 +1557,7 @@
   min-width: 0;
   max-height: 38px;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: var(--_swatch);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 18%, transparent);
   cursor: pointer;
@@ -1606,7 +1613,7 @@
   margin: auto;
   padding: 22px 20px 20px;
   border: none;
-  border-radius: 28px;
+  border-radius: 8px;
   background: var(--dio-menu-bg, var(--fp-menu-bg, rgba(44, 44, 48, 0.86)));
   color: var(--dio-menu-text, var(--fp-menu-text, #fff));
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
@@ -1676,7 +1683,7 @@
 .dio-keypad-dot {
   width: 12px;
   height: 12px;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: currentColor;
 }
 
@@ -1693,7 +1700,7 @@
   height: 72px;
   place-items: center;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: color-mix(in srgb, currentColor 14%, transparent);
   color: inherit;
   font: inherit;
@@ -1734,7 +1741,7 @@
   height: 44px;
   padding: 0 16px;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   background: color-mix(in srgb, currentColor 12%, transparent);
   color: inherit;
   font: inherit;
@@ -2004,7 +2011,7 @@
   touch-action: none;
   width: var(--_pad);
   height: var(--_pad);
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: color-mix(in srgb, currentColor 10%, transparent);
 }
 
@@ -2047,7 +2054,7 @@
 .dio-pad > .dio-remote-key {
   position: absolute;
   inset: 0;
-  border-radius: 999px;
+  border-radius: var(--_pill);
 }
 
 /* The arrows are only a hint that the pad is swiped, dimmer than OK. */
@@ -2096,7 +2103,7 @@
 }
 
 .dio-pad-glow {
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: color-mix(in srgb, currentColor 18%, transparent);
   opacity: 0;
   pointer-events: none;
@@ -2345,7 +2352,7 @@
 
 .dio-agenda-event {
   padding: 10px 12px;
-  border-radius: 14px;
+  border-radius: 8px;
   background: var(--_event-bg);
 }
 
@@ -2383,7 +2390,7 @@
   max-width: 100%;
   overflow: hidden;
   padding: 6px 12px;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: color-mix(in srgb, currentColor 10%, transparent);
   font-size: 14px;
   font-weight: 600;
@@ -2428,7 +2435,7 @@
   height: 44px;
   padding: 0 16px;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   outline: none;
   background: color-mix(in srgb, currentColor 10%, transparent);
   color: inherit;
@@ -2515,7 +2522,7 @@
   padding: 0;
   place-items: center;
   border: 2px solid color-mix(in srgb, currentColor 40%, transparent);
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: transparent;
   color: #fff;
   cursor: pointer;
@@ -2915,7 +2922,7 @@
 .dio-dial-end {
   padding: 2px 8px;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   background: transparent;
   color: inherit;
   font: inherit;
@@ -3341,7 +3348,7 @@
   display: flex;
   gap: 4px;
   padding: 3px;
-  border-radius: 999px;
+  border-radius: var(--_pill);
   background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
