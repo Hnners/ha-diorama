@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Changed
+
+- Headings in the editor, the card's settings and the widgets now use Barlow Condensed, the same font as the M.A.S.H. add-on.
+
 ## [1.24.0] - 2026-11-27
 
 ### Changed
