@@ -25,7 +25,7 @@ export function Sticky({ children, className }: { children: ReactNode; className
 export function SelectedHeader({ title, tag, onBack }: { title: string; tag?: ReactNode; onBack: () => void }) {
   return (
     <div className="flex items-center gap-2">
-      <p className="font-head min-w-0 flex-1 truncate text-[24px] leading-none font-extrabold tracking-[0.04em] uppercase">
+      <p className="font-head min-w-0 flex-1 truncate text-[24px] leading-none font-bold tracking-[0.04em] uppercase">
         {title}
       </p>
       {tag}

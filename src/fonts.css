@@ -1,9 +1,9 @@
 /* Injected into document.head: @font-face does not apply from inside a shadow root.
    The S.I.M.S. type, shared with the M.A.S.H., C.R.A.P. and L.I.B.R.A.R.Y. add-ons:
-   Work Sans for words, IBM Plex Mono for labels and numbers, and the stencil for headings. */
+   Work Sans for words, IBM Plex Mono for labels and numbers, and Barlow Condensed for headings, as in M.A.S.H. */
 @import '@fontsource/work-sans/latin-400';
 @import '@fontsource/work-sans/latin-500';
 @import '@fontsource/work-sans/latin-600';
 @import '@fontsource/work-sans/latin-700';
 @import '@fontsource/ibm-plex-mono/latin-500';
-@import '@fontsource/big-shoulders-stencil-display/latin-800';
+@import '@fontsource/barlow-condensed/latin-700';

@@ -4,7 +4,7 @@
 
 A Home Assistant card that turns your home into a small 3D model you can click.
 
-This is a fork of [Diorama](https://github.com/CarlesRojas/ha-diorama) by Carles Rojas, with extra features on top. It goes by its own name so it is easy to tell apart from the original in the Marketplace, and it shares its look with the M.A.S.H., C.R.A.P. and L.I.B.R.A.R.Y. add-ons: dark panels, squared controls with 2px outlines, stencil headings and a plumbob green accent.
+This is a fork of [Diorama](https://github.com/CarlesRojas/ha-diorama) by Carles Rojas, with extra features on top. It goes by its own name so it is easy to tell apart from the original in the Marketplace, and it shares its look with the M.A.S.H., C.R.A.P. and L.I.B.R.A.R.Y. add-ons: dark panels, squared controls with 2px outlines, Barlow Condensed headings and a plumbob green accent.
 
 ## The diorama
 
