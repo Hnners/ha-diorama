@@ -1,0 +1,460 @@
+/* The S.I.M.S. app page, laid out and styled like the M.A.S.H. app: the same
+   charcoal panels, condensed capitals for headings, tabs and buttons, mono
+   for labels and numbers, with S.I.M.S.'s plumbob green as the accent.
+   The fonts come with the card (src/fonts.css). */
+@import '../fonts.css';
+
+:root {
+  --bg: #1a1b1d;
+  --panel: #242528;
+  --panel-2: #2e2f33;
+  --line: #3a3b3f;
+  --text: #ececec;
+  --muted: #a8a8a8;
+  --accent: #6fd250;
+  --accent-2: #8fe072;
+  --accent-ink: #1a1b1d;
+  --danger: #ff5a4f;
+  --head: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --body: Barlow, system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --r: 6px;
+  color-scheme: dark;
+
+  /* What the card and its widgets read from Home Assistant's theme on a
+     dashboard, set to the same palette. */
+  --primary-background-color: var(--bg);
+  --secondary-background-color: var(--panel-2);
+  --card-background-color: var(--panel);
+  --ha-card-background: var(--panel);
+  --primary-text-color: var(--text);
+  --secondary-text-color: var(--muted);
+  --divider-color: var(--line);
+  --primary-color: var(--accent);
+  --accent-color: var(--accent);
+  --text-primary-color: var(--accent-ink);
+  --ha-card-border-radius: var(--r);
+  --header-height: 0px;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 16px;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+[hidden] {
+  display: none !important;
+}
+
+.page {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* header, as in M.A.S.H. */
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 3px solid var(--accent);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: var(--text);
+}
+.brand-mark {
+  width: 52px;
+  height: 52px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r);
+}
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+.brand-name {
+  font-family: var(--head);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.brand-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-right: auto;
+  margin-left: 40px;
+}
+.tabs a {
+  padding: 12px 16px;
+  color: #bdbdbd;
+  text-decoration: none;
+  font-family: var(--head);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-bottom: 3px solid transparent;
+}
+.tabs a:hover {
+  color: #fff;
+}
+.tabs a.active {
+  background: var(--panel-2);
+  color: #fff;
+  border-bottom-color: var(--accent);
+  font-weight: 700;
+}
+
+/* buttons */
+.btn {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--r);
+  border: 2px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--head);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.btn:hover {
+  border-color: #5a5b60;
+  color: #fff;
+}
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.btn-primary:hover {
+  background: var(--accent-2);
+  border-color: var(--accent-2);
+  color: var(--accent-ink);
+}
+.btn-sm {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 15px;
+}
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r);
+  border: 2px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: none;
+}
+.icon-btn:hover {
+  border-color: #5a5b60;
+}
+:is(.btn, .icon-btn, .tabs a, .switch):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.muted {
+  color: var(--muted);
+}
+.mono {
+  font-family: var(--mono);
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.empty {
+  padding: 32px;
+  text-align: center;
+  background: var(--panel);
+  border-radius: var(--r);
+  border: 2px dashed var(--line);
+  color: var(--muted);
+}
+
+/* the house: the diorama and its widgets fill the page under the header */
+.house {
+  border-radius: var(--r);
+  border: 2px solid var(--line);
+  overflow: hidden;
+  padding: 12px 0 0;
+  min-height: 60vh;
+}
+.house > diorama-card {
+  display: block;
+}
+.settings {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+.settings > diorama-card-editor {
+  display: block;
+}
+.sims-card-error {
+  padding: 16px;
+  border: 2px dashed var(--line);
+  border-radius: var(--r);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* a device's details */
+.sims-modal {
+  width: min(520px, calc(100vw - 24px));
+  max-height: 90vh;
+  padding: 0;
+  border: 2px solid var(--line);
+  border-top: 4px solid var(--accent);
+  border-radius: var(--r);
+  background: var(--panel);
+  color: var(--text);
+}
+.sims-modal::backdrop {
+  background: rgba(10, 10, 11, 0.75);
+}
+.modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.modal-head h2 {
+  margin: 0;
+  font-family: var(--head);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.modal-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow-y: auto;
+}
+.state-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.state-big {
+  font-family: var(--head);
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.switch {
+  position: relative;
+  width: 64px;
+  height: 36px;
+  border-radius: var(--r);
+  border: 2px solid var(--line);
+  background: var(--panel-2);
+  cursor: pointer;
+  flex: none;
+  padding: 0;
+}
+.switch span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  background: #fff;
+  transition: transform 0.18s ease;
+}
+.switch[aria-checked='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.switch[aria-checked='true'] span {
+  transform: translateX(28px);
+  background: var(--accent-ink);
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.field > span {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--head);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.field > span b {
+  color: var(--text);
+}
+.field input[type='range'] {
+  accent-color: var(--accent);
+  width: 100%;
+}
+.attrs {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.attrs th {
+  text-align: left;
+  font-family: var(--head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 7px 10px 7px 0;
+  width: 45%;
+  vertical-align: top;
+}
+.attrs td {
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 7px 0;
+  border-top: 1px solid var(--line);
+}
+.attrs tr:first-child td {
+  border-top: 0;
+}
+.attrs th {
+  border-top: 1px solid var(--line);
+}
+.attrs tr:first-child th {
+  border-top: 0;
+}
+
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 10px 18px;
+  border-radius: var(--r);
+  font-family: var(--head);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s;
+  z-index: 50;
+  max-width: 90vw;
+}
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%);
+}
+#toast.bad {
+  background: var(--danger);
+  color: #fff;
+}
+
+@media (max-width: 700px) {
+  .page {
+    padding: 12px 10px 10px;
+    gap: 12px;
+  }
+  .brand-name {
+    font-size: 32px;
+  }
+  .brand-mark {
+    width: 44px;
+    height: 44px;
+  }
+  .brand-sub {
+    font-size: 9px;
+  }
+  .top {
+    gap: 10px;
+    padding-bottom: 10px;
+  }
+  .tabs {
+    order: 3;
+    width: 100%;
+    margin: 0;
+  }
+  .tabs a {
+    flex: 1;
+    text-align: center;
+    padding: 10px 8px;
+  }
+  #edit-house {
+    min-height: 38px;
+    padding: 0 12px;
+    font-size: 15px;
+  }
+  .house {
+    border: 0;
+    border-radius: 0;
+    margin: 0 -10px;
+  }
+}

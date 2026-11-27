@@ -1,12 +1,15 @@
 @import 'tailwindcss';
+/* The app's build starts in src/app, so the classes are looked for across
+   all of src, wherever a build starts. */
+@source './';
 @plugin '@tailwindcss/typography';
 
 @theme {
-  /* The S.I.M.S. type, the same as the M.A.S.H., C.R.A.P. and L.I.B.R.A.R.Y. add-ons:
-     Work Sans for words, IBM Plex Mono for labels and numbers, Barlow Condensed for headings. */
-  --font-sims: 'Work Sans', system-ui, sans-serif;
-  --font-system: 'Work Sans', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  /* The S.I.M.S. type, the same as the M.A.S.H. app's:
+     Barlow for words, JetBrains Mono for labels and numbers, Barlow Condensed for headings. */
+  --font-sims: Barlow, system-ui, sans-serif;
+  --font-system: Barlow, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-head: 'Barlow Condensed', 'Arial Narrow', sans-serif;
   /* The headings of the side panel, for the editor's headings over its widgets. */
   --font-title: var(--dio-font-title, var(--fp-font-title, 'Barlow Condensed', 'Arial Narrow', sans-serif));

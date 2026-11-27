@@ -25,3 +25,7 @@ dist-ssr
 
 # The card config of the author's own home, kept here to update by hand.
 home.yaml
+
+# The S.I.M.S. app's data while it runs outside Home Assistant.
+sims/data
+__pycache__

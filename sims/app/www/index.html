@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-GB" data-sims-app>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>S.I.M.S.</title>
+    <script type="module" crossorigin src="./assets/index-CUPjsVrt.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-4eO1fpR9.css">
+  </head>
+  <body>
+    <div class="page">
+      <header class="top">
+        <a class="brand" href="#house" aria-label="S.I.M.S. house">
+          <span class="brand-mark" aria-hidden="true">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linejoin="round"
+            >
+              <path d="M12 2 18 12 12 22 6 12Z" />
+              <path d="M6 12h12M12 2v20" stroke-width="1.4" />
+            </svg>
+          </span>
+          <span class="brand-text">
+            <span class="brand-name">S.I.M.S.</span>
+            <span class="brand-sub">SMART-HOME IN MINIATURE SCALE</span>
+          </span>
+        </a>
+        <nav class="tabs" aria-label="Views">
+          <a href="#house" data-tab="house">House</a>
+          <a href="#settings" data-tab="settings">Settings</a>
+        </nav>
+        <button type="button" class="btn btn-primary" id="edit-house">Edit house</button>
+      </header>
+      <main id="view">
+        <div class="empty" id="status">Connecting to Home Assistant…</div>
+      </main>
+    </div>
+    <dialog id="more-info" class="sims-modal" aria-labelledby="more-info-title"></dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

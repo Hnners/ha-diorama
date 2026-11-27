@@ -109,7 +109,14 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
     setPreviewRoom(null)
     setWidgets(on)
   }
+  // In the app the settings open under its header, which the first scroll
+  // would push off the top.
+  const first = useRef(true)
   useLayoutEffect(() => {
+    if (first.current) {
+      first.current = false
+      if (inApp) return
+    }
     if (back.current) root.current?.querySelector(back.current)?.scrollIntoView({ block: 'center' })
     else root.current?.scrollIntoView({ block: 'start' })
   }, [choosing, widgets])
@@ -450,17 +457,20 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
       data-light={light}
       className="dio-editor font-system flex flex-col gap-6 px-5 py-6 text-(--primary-text-color) antialiased"
     >
-      <div className="border-tint flex items-center gap-3 border-b-[3px] pb-3">
-        <span className="bg-tint-fill text-on-tint flex size-12 shrink-0 items-center justify-center rounded-lg">
-          <SimsMark />
-        </span>
-        <span className="flex min-w-0 flex-col">
-          <span className="font-head text-[38px] leading-[0.95] font-bold tracking-[0.05em]">S.I.M.S.</span>
-          <span className="text-label-2 truncate font-mono text-[10.5px] tracking-[0.08em] uppercase">
-            Smart-home In Miniature Scale
+      {/* The app has the same header across the top of its page. */}
+      {!inApp && (
+        <div className="border-tint flex items-center gap-3 border-b-[3px] pb-3">
+          <span className="bg-tint-fill text-on-tint flex size-12 shrink-0 items-center justify-center rounded-lg">
+            <SimsMark />
           </span>
-        </span>
-      </div>
+          <span className="flex min-w-0 flex-col">
+            <span className="font-head text-[38px] leading-[0.95] font-bold tracking-[0.05em]">S.I.M.S.</span>
+            <span className="text-label-2 truncate font-mono text-[10.5px] tracking-[0.08em] uppercase">
+              Smart-home In Miniature Scale
+            </span>
+          </span>
+        </div>
+      )}
       <section className="-mt-2 flex flex-col gap-2">
         <div className={cn(group, 'flex-row items-center gap-3')}>
           <span className="bg-tint-fill text-on-tint flex size-9 shrink-0 items-center justify-center rounded-lg">
@@ -475,7 +485,7 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
             onClick={onOpen}
             disabled={opening}
             aria-busy={opening}
-            className="bg-tint-fill border-tint-fill text-on-tint flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border-2 px-3.5 text-[13px] font-bold transition-[filter,transform] hover:brightness-[1.06] active:scale-[0.97] disabled:cursor-progress disabled:opacity-70"
+            className="bg-tint-fill border-tint-fill text-on-tint font-head flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-md border-2 px-3.5 text-[15px] font-bold tracking-[0.06em] uppercase transition-[filter,transform] hover:brightness-[1.06] active:scale-[0.97] disabled:cursor-progress disabled:opacity-70"
           >
             {opening && <FontAwesomeIcon icon={faSpinner} spin className="size-3" />}
             {opening ? 'Opening…' : 'Open editor'}
@@ -790,7 +800,7 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
                 type="button"
                 data-open="widgets"
                 onClick={() => openWidgets(true)}
-                className="bg-tint-fill border-tint-fill text-on-tint flex h-8 shrink-0 cursor-pointer items-center rounded-lg border-2 px-3.5 text-[13px] font-bold transition-[filter,transform] hover:brightness-[1.06] active:scale-[0.97]"
+                className="bg-tint-fill border-tint-fill text-on-tint font-head flex h-8 shrink-0 cursor-pointer items-center rounded-md border-2 px-3.5 text-[15px] font-bold tracking-[0.06em] uppercase transition-[filter,transform] hover:brightness-[1.06] active:scale-[0.97]"
               >
                 Edit widgets
               </button>
@@ -955,6 +965,9 @@ function compass(degrees: number) {
   return POINTS[Math.round(turns / 45) % POINTS.length]
 }
 
+// Whether this is the S.I.M.S. app's own page rather than a dashboard.
+const inApp = typeof document !== 'undefined' && document.documentElement.hasAttribute('data-sims-app')
+
 // The S.I.M.S. mark: a plumbob, the diamond over a Sim's head, as the
 // other add-ons each have a mark in their accent.
 function SimsMark() {
@@ -1027,7 +1040,7 @@ function Page({
         <button
           type="button"
           onClick={onBack}
-          className="bg-tint-fill border-tint-fill text-on-tint flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border-2 pr-4 pl-3.5 text-[13px] font-bold transition-[filter,transform] hover:brightness-110 active:scale-[0.97]"
+          className="bg-tint-fill border-tint-fill text-on-tint font-head flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-md border-2 pr-4 pl-3.5 text-[15px] font-bold tracking-[0.06em] uppercase transition-[filter,transform] hover:brightness-110 active:scale-[0.97]"
         >
           <FontAwesomeIcon icon={faArrowLeft} className="size-3.5" />
           Back
@@ -1043,7 +1056,7 @@ function Page({
           <button
             type="button"
             onClick={onDone}
-            className="bg-tint-fill border-tint-fill text-on-tint h-10 w-full cursor-pointer rounded-lg border-2 text-[14px] font-bold transition-[filter,transform] hover:brightness-110 active:scale-[0.98]"
+            className="bg-tint-fill border-tint-fill text-on-tint font-head h-10 w-full cursor-pointer rounded-md border-2 text-[15px] font-bold tracking-[0.06em] uppercase transition-[filter,transform] hover:brightness-110 active:scale-[0.98]"
           >
             Done
           </button>

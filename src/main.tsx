@@ -345,6 +345,8 @@ class DioramaCard extends ReactHost<CardConfig> {
 const SETTLE_MS = 250
 
 class DioramaEditor extends ReactHost<CardConfig> {
+  // Set by the S.I.M.S. app to open straight into the fullscreen editor.
+  openOnStart = false
   private pending: CardConfig | null = null
   private timer: ReturnType<typeof setTimeout> | undefined
 
@@ -387,6 +389,8 @@ class DioramaEditor extends ReactHost<CardConfig> {
     super.disconnectedCallback()
   }
 
+  private closed = () => this.dispatchEvent(new CustomEvent('editor-closed', { bubbles: true, composed: true }))
+
   protected view() {
     return (
       <Editor
@@ -397,6 +401,8 @@ class DioramaEditor extends ReactHost<CardConfig> {
           this.flush()
           return persistCard(this)
         }}
+        startOpen={this.openOnStart}
+        onClosed={this.closed}
       />
     )
   }

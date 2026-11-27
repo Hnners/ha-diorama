@@ -150,7 +150,7 @@ const CSS = `
   grid-column: 1 / -1;
   padding: 24px 4px;
   color: var(--primary-text-color, #fff);
-  font-family: var(--dio-font-tile, var(--fp-font-tile, 'Work Sans', system-ui, sans-serif));
+  font-family: var(--dio-font-tile, var(--fp-font-tile, Barlow, system-ui, sans-serif));
   font-size: 15px;
   text-align: center;
   opacity: 0.6;
