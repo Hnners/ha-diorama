@@ -13,13 +13,17 @@
   /* Buttons, pills and tracks inside a tile: squared off like the S.I.M.S. editor. */
   --_pill: var(--dio-pill-radius, 8px);
   --_padding: var(--dio-tile-padding, var(--fp-tile-padding, 18px));
-  --_bg-active: var(--dio-tile-bg-active, var(--fp-tile-bg-active, rgba(242, 244, 238, 0.96)));
-  --_bg-inactive: var(--dio-tile-bg-inactive, var(--fp-tile-bg-inactive, rgba(118, 122, 128, 0.16)));
+  /* Like the panels of the M.A.S.H., C.R.A.P. and L.I.B.R.A.R.Y. add-ons, a
+     tile is a dark panel whether it is on or off. On, it takes its color as
+     an outline and as a badge behind its icon, rather than turning white. */
+  --_bg-active: var(--dio-tile-bg-active, var(--fp-tile-bg-active, rgba(38, 40, 43, 0.94)));
+  --_bg-inactive: var(--dio-tile-bg-inactive, var(--fp-tile-bg-inactive, rgba(30, 31, 34, 0.8)));
   --_blur: var(--dio-tile-blur, var(--fp-tile-blur, 24px));
   --_opacity-inactive: var(--dio-tile-opacity-inactive, var(--fp-tile-opacity-inactive, 1));
   --_opacity-unavailable: var(--dio-tile-opacity-unavailable, var(--fp-tile-opacity-unavailable, 0.45));
   --_shadow: var(--dio-tile-shadow, var(--fp-tile-shadow, inset 0 0 0 2px rgba(255, 255, 255, 0.08)));
-  --_text-active: var(--dio-text-active, var(--fp-text-active, #1c1c1e));
+  --_badge-ink: var(--dio-tile-badge-ink, #11130f);
+  --_text-active: var(--dio-text-active, var(--fp-text-active, #f2f4ee));
   --_text-inactive: var(--dio-text-inactive, var(--fp-text-inactive, #ffffff));
   --_secondary: var(--dio-text-secondary-opacity, var(--fp-text-secondary-opacity, 0.72));
   --_accent: var(--dio-accent, var(--fp-accent, #6fd250));
@@ -46,7 +50,9 @@
   --_icon-size: var(--dio-tile-icon-size, var(--fp-tile-icon-size, 28px));
   --_name-size: var(--dio-tile-name-size, var(--fp-tile-name-size, 15px));
   --_state-size: var(--dio-tile-state-size, var(--fp-tile-state-size, 13px));
-  --_handle: var(--dio-slider-handle, var(--fp-slider-handle, var(--_bg-active)));
+  --_handle: var(--dio-slider-handle, var(--fp-slider-handle, #f2f4ee));
+  /* The state line, in the mono the other add-ons use for labels and numbers. */
+  --_font-label: var(--dio-font-label, 'IBM Plex Mono', ui-monospace, monospace);
   --_duration: var(--dio-tile-duration, var(--fp-tile-duration, 200ms));
   --_press: var(--dio-tile-press-scale, var(--fp-tile-press-scale, 0.96));
   --_focus: var(--dio-tile-focus-scale, var(--fp-tile-focus-scale, 1.03));
@@ -65,30 +71,37 @@
   --_bg-inactive: var(--dio-tile-bg-inactive, var(--fp-tile-bg-inactive, rgba(120, 120, 128, 0.14)));
   --_shadow: var(--dio-tile-shadow, var(--fp-tile-shadow, inset 0 0 0 2px rgba(0, 0, 0, 0.08)));
   --_text-inactive: var(--dio-text-inactive, var(--fp-text-inactive, #1c1c1e));
-  --_bg-active: var(--dio-tile-bg-active, var(--fp-tile-bg-active, rgba(28, 28, 30, 0.94)));
-  --_text-active: var(--dio-text-active, var(--fp-text-active, #ffffff));
+  --_bg-active: var(--dio-tile-bg-active, var(--fp-tile-bg-active, rgba(36, 37, 40, 0.95)));
+  --_text-active: var(--dio-text-active, var(--fp-text-active, #f2f4ee));
 }
 
 /* The accent and mode colors, toward white on a dark tile and toward
-   black on a light one, a tile that is on on a dark dashboard or one that
-   is off on a light dashboard, enough for an icon or a line to stand out
-   three to one from the tile and for words four and a half to one. */
+   black on a light one (a tile that is off on a light dashboard), enough
+   for an icon or a line to stand out three to one from the tile and for
+   words four and a half to one. Every tile that is on is dark. */
 .dio-tile {
   --_ink-to: white;
   --_deep: 20%;
   --_deep-text: 35%;
+  /* Worked out on each tile, so they take its own color: a light's amber, a
+     blind's blue. The outline of a tile that is on, and the badge behind
+     its icon. */
+  --_shadow-active: var(
+    --dio-tile-shadow-active,
+    inset 0 0 0 2px color-mix(in oklab, var(--_tile-accent, var(--_accent)) 85%, transparent)
+  );
+  --_badge: var(--dio-tile-badge, color-mix(in oklab, var(--_tile-accent, var(--_accent)) 92%, white));
 }
 
-:host(:not([data-light])) .dio-tile[data-active] {
-  --_ink-to: black;
-  --_deep: 30%;
-  --_deep-text: 40%;
-}
-
-/* The media teal is deep enough to stand out on a light tile as it is,
-   so it keeps all its color there. */
-:host(:not([data-light])) .dio-tile[data-active][style*='--_accent-media'] {
-  --_deep: 0%;
+/* A tile with no color of its own, like a thermostat that is idle, takes
+   its words' color for the badge, set here as a color, since currentColor
+   on the badge would be read from the dark ink on it. */
+.dio-tile[style*='--_tile-accent: currentColor'] {
+  --_shadow-active: var(
+    --dio-tile-shadow-active,
+    inset 0 0 0 2px color-mix(in srgb, var(--_text-active) 45%, transparent)
+  );
+  --_badge: var(--dio-tile-badge, var(--_text-active));
 }
 
 /* The glass of a light dashboard is grey, so it takes more. */
@@ -132,6 +145,23 @@
 .dio-tile[data-active] {
   background: var(--_bg-active);
   color: var(--_text-active);
+  box-shadow: var(--_shadow-active);
+}
+
+/* The icon of a tile that is on sits on a squared badge of its color, like
+   the marks in the other add-ons' headers. The badge is drawn round the
+   icon, so the layout does not move as it comes and goes. */
+.dio-tile[data-active] .dio-top > .dio-icon {
+  border-radius: 3px;
+  background: var(--_badge);
+  box-shadow: 0 0 0 6px var(--_badge);
+  color: var(--_badge-ink);
+}
+
+/* Lit by its brightness, a light's tile takes a wash of its color, so the
+   lit part stands out from the dark one beside it. */
+.dio-fill-lit .dio-tile[data-active] {
+  background-color: color-mix(in oklab, var(--_tile-accent, var(--_accent)) 24%, var(--_bg-active));
 }
 
 /* A button lights up at once when pressed and a moment later fades slowly
@@ -548,14 +578,17 @@
   font-size: var(--_name-size);
   font-weight: 600;
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .dio-state {
   overflow: hidden;
-  font-size: var(--_state-size);
+  font-family: var(--_font-label);
+  font-size: calc(var(--_state-size) - 1.5px);
   font-weight: 500;
-  line-height: 1.3;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.4;
   white-space: nowrap;
   text-overflow: ellipsis;
   opacity: var(--_secondary);
@@ -701,7 +734,8 @@
   margin: -4px -4px 0 0;
   padding: 3px;
   border-radius: var(--_pill);
-  background: color-mix(in srgb, currentColor 12%, transparent);
+  background: color-mix(in srgb, currentColor 5%, transparent);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, currentColor 16%, transparent);
 }
 
 /* On a small tile the buttons are a little smaller and keep some room
@@ -854,7 +888,8 @@
   gap: 2px;
   padding: 3px;
   border-radius: var(--_pill);
-  background: color-mix(in srgb, currentColor 12%, transparent);
+  background: color-mix(in srgb, currentColor 5%, transparent);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, currentColor 16%, transparent);
 }
 
 .dio-footer .dio-control {
@@ -1245,7 +1280,8 @@
   gap: 2px;
   padding: 3px;
   border-radius: var(--_pill);
-  background: color-mix(in srgb, currentColor 12%, transparent);
+  background: color-mix(in srgb, currentColor 5%, transparent);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, currentColor 16%, transparent);
 }
 
 .dio-feature .dio-group > .dio-control {
@@ -1481,8 +1517,8 @@
 
 /* A pill that does what a button does lights up the same way. */
 .dio-pill-action[data-flash='lit'] {
-  background-color: var(--_bg-active);
-  color: var(--_text-active);
+  background-color: var(--_badge);
+  color: var(--_badge-ink);
 }
 
 .dio-pill-action[data-flash='fading'] {
@@ -1496,11 +1532,11 @@
 }
 
 .dio-tile .dio-pill-toggle[aria-pressed='true'] > * {
-  color: var(--_text-active);
+  color: var(--_badge-ink);
 }
 
-.dio-tile[data-active] .dio-pill-toggle[aria-pressed='true'] > * {
-  color: var(--_text-inactive);
+:host([data-light]) .dio-tile:not([data-active]) .dio-pill-toggle[aria-pressed='true'] > * {
+  color: #f2f4ee;
 }
 
 /* Pressed, a wash of its own color would not show, so under the pointer
@@ -3349,7 +3385,8 @@
   gap: 4px;
   padding: 3px;
   border-radius: var(--_pill);
-  background: color-mix(in srgb, currentColor 12%, transparent);
+  background: color-mix(in srgb, currentColor 5%, transparent);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, currentColor 16%, transparent);
 }
 
 /* A player that takes none of the buttons that play has no group for them. */

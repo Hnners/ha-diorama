@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Changed
+
+- Widgets now stay dark when they are on, the way the other add-ons' panels do, and show it with an outline and a badge behind the icon in their own color instead of turning white, with the state written in small capitals.
+
 ## [1.23.0] - 2026-11-27
 
 ### Changed
