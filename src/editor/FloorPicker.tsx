@@ -93,7 +93,7 @@ export default function FloorPicker({ floors, active, onPick, onAdd, onOrder, on
               }}
               onDragEnd={() => setDragged(null)}
               className={cn(
-                'flex h-8 cursor-pointer items-center rounded-[6px] px-2.5 text-[13px] font-semibold whitespace-nowrap transition-colors select-none',
+                'font-head flex h-8 cursor-pointer items-center rounded-[4px] px-2.5 text-[15px] font-bold tracking-[0.06em] whitespace-nowrap uppercase transition-colors select-none',
                 on && 'bg-tint-fill text-on-tint',
                 !on && 'text-label-2 hover:text-(--primary-text-color)',
                 dragged === floor.id && 'opacity-40',

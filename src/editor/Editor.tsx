@@ -85,6 +85,10 @@ type Props = {
   // Saves the card to the dashboard, not only to the dialog holding it.
   // Throws when the save failed, so the editor stays open with the edits.
   onSave?: () => Promise<unknown>
+  // Opens straight into the fullscreen editor, as the S.I.M.S. app's Edit
+  // house button does, and says when it is closed again.
+  startOpen?: boolean
+  onClosed?: () => void
 }
 
 type Models = Record<string, ModelConfig> | undefined
@@ -117,7 +121,7 @@ function nextRoomId(rooms: RoomConfig[]) {
 // Where the editor keeps whether the other floors show under the plan.
 const OTHER_FLOORS_KEY = 'diorama-editor-other-floors'
 
-export default function Editor({ hass, config, onChange, onSave }: Props) {
+export default function Editor({ hass, config, onChange, onSave, startOpen, onClosed }: Props) {
   const [rooms, setRooms] = useState<RoomConfig[]>(config.rooms ?? [])
   const [devices, setDevices] = useState<DeviceConfig[]>(config.devices ?? [])
   const [decorations, setDecorations] = useState<DecorationConfig[]>(config.decorations ?? [])
@@ -1154,6 +1158,23 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
   // The back button, a phone's own too, closes the editor the same way,
   // and stays in it while there is something to save or throw away.
   useBackButton(fullscreen, close)
+
+  // The app opens the editor straight away and goes back to the house once
+  // it is closed. It waits for the house to be known before opening.
+  const started = useRef(false)
+  useEffect(() => {
+    if (!startOpen || started.current || !hass) return
+    started.current = true
+    openEditor()
+  })
+  const wasOpen = useRef(false)
+  useEffect(() => {
+    if (fullscreen) wasOpen.current = true
+    else if (wasOpen.current) {
+      wasOpen.current = false
+      onClosed?.()
+    }
+  }, [fullscreen, onClosed])
 
   const closeDraft = () => {
     if (

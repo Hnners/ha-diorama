@@ -22,4 +22,6 @@ export function closestClass(element: HTMLElement, name: string) {
 
 // Whether the element sits in a panel view, which gives its one card the
 // whole screen.
-export const inPanelView = (element: HTMLElement) => !!closest(element, 'hui-panel-view')
+// The S.I.M.S. app gives the card its whole page too.
+export const inPanelView = (element: HTMLElement) =>
+  !!closest(element, 'hui-panel-view') || document.documentElement.hasAttribute('data-sims-app')

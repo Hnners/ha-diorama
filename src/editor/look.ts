@@ -1,7 +1,8 @@
 // The class lists the editor's pieces share, so a field, a group or a
 // floating panel looks the same wherever it is. They follow the S.I.M.S.
 // look the other add-ons share (M.A.S.H., C.R.A.P., L.I.B.R.A.R.Y.): squared
-// 8px corners, 2px outlines, Work Sans words and mono labels.
+// 6px corners, 2px outlines, Barlow words, mono labels, and buttons in
+// Barlow Condensed capitals, as in the M.A.S.H. app.
 
 // A text field, a native select or a select's trigger: a sunk fill with a
 // 2px outline, which turns the accent while it has the focus.
@@ -27,11 +28,11 @@ export const note = 'text-xs leading-snug text-label-2'
 
 // An outlined button, for the actions next to a field.
 export const plainButton =
-  'flex h-8 items-center justify-center gap-1.5 rounded-lg border-2 border-line bg-transparent px-3 text-[13px] font-semibold text-(--primary-text-color) transition-colors hover:border-label-2/60 hover:bg-fill active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40'
+  'flex h-8 items-center justify-center gap-1.5 rounded-md border-2 border-line bg-transparent px-3 font-head text-[15px] font-bold tracking-[0.06em] text-(--primary-text-color) uppercase transition-colors hover:border-label-2/60 hover:bg-fill active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40'
 
 // The main action of a place: filled in the accent, with dark ink.
 export const primaryButton =
-  'flex h-8 cursor-pointer items-center justify-center gap-1.5 rounded-lg border-2 border-tint-fill bg-tint-fill px-3.5 text-[13px] font-bold text-on-tint transition-[filter,transform] hover:brightness-110 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40'
+  'flex h-8 cursor-pointer items-center justify-center gap-1.5 rounded-md border-2 border-tint-fill bg-tint-fill px-3.5 font-head text-[15px] font-bold tracking-[0.06em] text-on-tint uppercase transition-[filter,transform] hover:brightness-110 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40'
 
 // An icon alone, with a fill only under the pointer.
 export const iconButton =
@@ -39,7 +40,7 @@ export const iconButton =
 
 // The destructive action at the end of a sidebar: outlined in red.
 export const deleteButton =
-  'flex h-9 items-center justify-center gap-2 rounded-lg border-2 border-danger/70 bg-transparent text-[13px] font-semibold text-danger transition-colors hover:bg-danger/10 active:bg-danger/18'
+  'flex h-9 items-center justify-center gap-2 rounded-md border-2 border-danger/70 bg-transparent font-head text-[15px] font-bold tracking-[0.06em] text-danger uppercase transition-colors hover:bg-danger/10 active:bg-danger/18'
 
 // Anything that floats over the editor: tips, popovers, menus and dialogs.
 // A solid panel with a 2px outline and a deep shadow, like the other

@@ -40,7 +40,7 @@
   --_accent-locked: var(--dio-accent-locked, var(--fp-accent-locked, #ff453a));
   --_alarm-armed: var(--dio-alarm-armed, var(--fp-alarm-armed, #ff453a));
   --_alarm-disarmed: var(--dio-alarm-disarmed, var(--fp-alarm-disarmed, #30d158));
-  --_font-tile: var(--dio-font-tile, var(--fp-font-tile, 'Work Sans', system-ui, sans-serif));
+  --_font-tile: var(--dio-font-tile, var(--fp-font-tile, Barlow, system-ui, sans-serif));
   --_font-title: var(--dio-font-title, var(--fp-font-title, 'Barlow Condensed', 'Arial Narrow', sans-serif));
   --_title-size: var(--dio-title-size, var(--fp-title-size, 30px));
   --_title-opacity: var(--dio-title-opacity, var(--fp-title-opacity, 0.92));
@@ -49,7 +49,7 @@
   --_state-size: var(--dio-tile-state-size, var(--fp-tile-state-size, 13px));
   --_handle: var(--dio-slider-handle, var(--fp-slider-handle, #f2f4ee));
   /* The state line, in the mono the other add-ons use for labels and numbers. */
-  --_font-label: var(--dio-font-label, 'IBM Plex Mono', ui-monospace, monospace);
+  --_font-label: var(--dio-font-label, 'JetBrains Mono', ui-monospace, monospace);
   --_duration: var(--dio-tile-duration, var(--fp-tile-duration, 200ms));
   --_press: var(--dio-tile-press-scale, var(--fp-tile-press-scale, 0.96));
   --_focus: var(--dio-tile-focus-scale, var(--fp-tile-focus-scale, 1.03));

@@ -9,6 +9,15 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- S.I.M.S. is now a Home Assistant app with its own page in the sidebar, laid out like the M.A.S.H. app with House and Settings tabs and an Edit house button, and it brings over the house from the dashboard card the first time it opens.
+- Tapping a device in the app opens its details, with a switch, brightness and its other controls.
+
+### Changed
+
+- Everything uses the M.A.S.H. app's type: Barlow, Barlow Condensed capitals for headings and buttons, and JetBrains Mono for labels.
+
 ## [1.24.1] - 2026-11-27
 
 ### Changed

@@ -2,9 +2,9 @@
 
 # S.I.M.S. (Smart-home In Miniature Scale)
 
-A Home Assistant card that turns your home into a small 3D model you can click.
+A Home Assistant app that turns your home into a small 3D model you can click, with its own page in the sidebar.
 
-This is a fork of [Diorama](https://github.com/CarlesRojas/ha-diorama) by Carles Rojas, with extra features on top. It goes by its own name so it is easy to tell apart from the original in the Marketplace, and it shares its look with the M.A.S.H., C.R.A.P. and L.I.B.R.A.R.Y. add-ons: dark panels, squared controls with 2px outlines, Barlow Condensed headings and a plumbob green accent.
+This is a fork of [Diorama](https://github.com/CarlesRojas/ha-diorama) by Carles Rojas, with extra features on top. It goes by its own name so it is easy to tell apart from the original, and it runs as an app laid out and styled like the M.A.S.H. app: a header with tabs, charcoal panels, Barlow Condensed capitals for headings and buttons, and a plumbob green accent.
 
 ## The diorama
 
@@ -28,26 +28,30 @@ Everything is built inside Home Assistant, in the card's own full-screen editor.
 
 ## Install
 
-S.I.M.S. needs Home Assistant 2024.6 or newer.
+1. In Home Assistant go to **Settings → Apps → App store**, open the **⋮** menu and choose **Repositories**.
+2. Add `https://github.com/Hnners/ha-diorama` and close the dialog.
+3. Find **S.I.M.S.** in the store, install it, turn on **Show in sidebar**, and start it.
 
-1. In Home Assistant open **HACS**, open the three-dot menu in the top right and choose **Custom repositories**.
-2. Paste `https://github.com/Hnners/ha-diorama`, pick the **Dashboard** type and add it.
-3. Search for **S.I.M.S.** in HACS and download it. HACS registers the card's resource for you.
-4. Reload the browser.
-5. Edit a dashboard, choose **Add card** and search for **S.I.M.S.**.
+The first time it opens, S.I.M.S. brings over the house from a S.I.M.S. (Diorama) card on any of your dashboards, if there is one. After that the house is kept in the app itself, so it is part of Home Assistant's backups, and the dashboard card is no longer needed.
 
-Updates arrive through HACS like any other card. If a new version does not show up after updating, clear the browser cache. The card logs its version in the browser console on load, so a stale copy is easy to spot.
+The app has three parts:
 
-<details>
-<summary>Install by hand, without HACS</summary>
+- **House**: the 3D model with its widgets beside it. Tap a device to see it and control it.
+- **Edit house**: the full-screen editor, to draw rooms, furnish them and place devices.
+- **Settings**: everything else, like the sun, the floors and which widgets show.
 
-1. Download `card.js` from the [latest release](https://github.com/Hnners/ha-diorama/releases/latest) into `config/www/diorama/card.js`.
-2. In **Settings > Dashboards**, open the three-dot menu, choose **Resources** and add `/local/diorama/card.js` as a **JavaScript module**.
-3. Edit a dashboard, choose **Add card** and search for **S.I.M.S.**.
+Updates come through **Settings → Updates** like any other app.
 
-When you update, bump a `?v=` query on the resource URL so browsers pick up the new file.
+### Building the app
 
-</details>
+The app's page is built from this repo with `pnpm build:app`, into `sims/app/www`. The release workflow does this, sets the app's version and commits the result, so Home Assistant offers the update. To work on it with a real Home Assistant:
+
+```bash
+pnpm build:app
+cd sims
+pip install -r requirements.txt
+HA_URL=http://homeassistant.local:8123 HA_TOKEN=<long-lived token> SIMS_DATA=./data uvicorn app.main:app --port 8099
+```
 
 ## Start building
 
