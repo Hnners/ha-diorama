@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.23.0] - 2026-11-27
+
 ### Changed
 
 - The card is now called S.I.M.S. (Smart-home In Miniature Scale), and the editor, the card's settings, the floor switch and the widgets have a new look to match the M.A.S.H., C.R.A.P. and L.I.B.R.A.R.Y. add-ons: squared controls with outlines, stencil headings, Work Sans text and a plumbob green accent.
@@ -876,7 +878,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.22.1...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.23.0...HEAD
+[1.23.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.22.1...v1.23.0
 [1.22.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.22.0...v1.22.1
 [1.22.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.21.1...v1.22.0
 [1.21.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.21.0...v1.21.1
