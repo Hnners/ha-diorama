@@ -1,3 +1,4 @@
+import fontsCss from '#/fonts.css?inline'
 import { entityArea } from '#/devices/catalog.ts'
 import { injectProperties, ReactHost } from '#/host.tsx'
 import { onRoomFilter, roomFilter } from '#/lib/roomFilter.ts'
@@ -56,18 +57,17 @@ export type GridOptions = {
   fixed?: boolean
 }
 
-const FONTS_ID = 'dio-tiles-fonts'
-const FONTS_URL =
-  'https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Inter+Tight:wght@500..800&display=swap'
+// The card's own S.I.M.S. fonts, bundled, so a tile has them even on a
+// dashboard with no diorama and with no connection to a font service.
+const FONTS_ID = 'diorama-fonts'
 
 // Like the card's own fonts, these must be in the document to apply.
 function injectFonts() {
   if (document.getElementById(FONTS_ID)) return
-  const link = document.createElement('link')
-  link.id = FONTS_ID
-  link.rel = 'stylesheet'
-  link.href = FONTS_URL
-  document.head.appendChild(link)
+  const style = document.createElement('style')
+  style.id = FONTS_ID
+  style.textContent = fontsCss
+  document.head.appendChild(style)
 }
 
 // Tiles with no area are told of once, in one list, the first time a room

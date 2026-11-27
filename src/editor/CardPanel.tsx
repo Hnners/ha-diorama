@@ -450,9 +450,20 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
       data-light={light}
       className="dio-editor font-system flex flex-col gap-6 px-5 py-6 text-(--primary-text-color) antialiased"
     >
-      <Section title="Home Assistant but its Sims now">
+      <div className="border-tint flex items-center gap-3 border-b-[3px] pb-3">
+        <span className="bg-tint-fill text-on-tint flex size-12 shrink-0 items-center justify-center rounded-lg">
+          <SimsMark />
+        </span>
+        <span className="flex min-w-0 flex-col">
+          <span className="font-head text-[38px] leading-[0.95] font-extrabold tracking-[0.05em]">S.I.M.S.</span>
+          <span className="text-label-2 truncate font-mono text-[10.5px] tracking-[0.08em] uppercase">
+            Smart-home In Miniature Scale
+          </span>
+        </span>
+      </div>
+      <section className="-mt-2 flex flex-col gap-2">
         <div className={cn(group, 'flex-row items-center gap-3')}>
-          <span className="bg-tint-fill flex size-9 shrink-0 items-center justify-center rounded-[10px] text-white">
+          <span className="bg-tint-fill text-on-tint flex size-9 shrink-0 items-center justify-center rounded-lg">
             <FontAwesomeIcon icon={faPenRuler} className="size-4" />
           </span>
           <span className="flex min-w-0 flex-1 flex-col">
@@ -464,13 +475,13 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
             onClick={onOpen}
             disabled={opening}
             aria-busy={opening}
-            className="bg-tint-fill flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3.5 text-[13px] font-semibold text-white transition-[filter,transform] hover:brightness-[1.06] active:scale-[0.97] disabled:cursor-progress disabled:opacity-70"
+            className="bg-tint-fill border-tint-fill text-on-tint flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border-2 px-3.5 text-[13px] font-bold transition-[filter,transform] hover:brightness-[1.06] active:scale-[0.97] disabled:cursor-progress disabled:opacity-70"
           >
             {opening && <FontAwesomeIcon icon={faSpinner} spin className="size-3" />}
             {opening ? 'Opening…' : 'Open editor'}
           </button>
         </div>
-      </Section>
+      </section>
 
       <Section title="In the card">
         <div className={cn(group, 'gap-0 py-0')}>
@@ -487,7 +498,7 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
             <span className="flex min-w-0 flex-col">
               <span className="text-[13px]">Hide other rooms' widgets</span>
               <span className="text-label-2 text-xs">
-                With a room in view, the Diorama widgets on the dashboard from other areas hide
+                With a room in view, the S.I.M.S. widgets on the dashboard from other areas hide
               </span>
             </span>
             <Switch
@@ -768,7 +779,7 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
           )}
           {sidePanel && (
             <div className="border-separator flex items-center gap-3 border-t py-3">
-              <span className="bg-tint-fill flex size-9 shrink-0 items-center justify-center rounded-[10px] text-white">
+              <span className="bg-tint-fill text-on-tint flex size-9 shrink-0 items-center justify-center rounded-lg">
                 <FontAwesomeIcon icon={faTableCellsLarge} className="size-4" />
               </span>
               <span className="flex min-w-0 flex-1 flex-col">
@@ -779,7 +790,7 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
                 type="button"
                 data-open="widgets"
                 onClick={() => openWidgets(true)}
-                className="bg-tint-fill flex h-8 shrink-0 cursor-pointer items-center rounded-full px-3.5 text-[13px] font-semibold text-white transition-[filter,transform] hover:brightness-[1.06] active:scale-[0.97]"
+                className="bg-tint-fill border-tint-fill text-on-tint flex h-8 shrink-0 cursor-pointer items-center rounded-lg border-2 px-3.5 text-[13px] font-bold transition-[filter,transform] hover:brightness-[1.06] active:scale-[0.97]"
               >
                 Edit widgets
               </button>
@@ -888,7 +899,9 @@ function Footer() {
   return (
     <footer className="flex flex-col gap-6 pt-2">
       <div className="flex flex-col items-center gap-0.5">
-        <span className="text-label-2 text-[13px] font-semibold">Home Assistant but its Sims now</span>
+        <span className="text-label-2 font-mono text-[11px] tracking-[0.08em] uppercase">
+          S.I.M.S. · Smart-home In Miniature Scale
+        </span>
         <button type="button" onClick={tap} className="text-label-2 cursor-default text-xs tabular-nums select-none">
           v{__CARD_VERSION__}
         </button>
@@ -942,12 +955,34 @@ function compass(degrees: number) {
   return POINTS[Math.round(turns / 45) % POINTS.length]
 }
 
+// The S.I.M.S. mark: a plumbob, the diamond over a Sim's head, as the
+// other add-ons each have a mark in their accent.
+function SimsMark() {
+  return (
+    <svg
+      width="26"
+      height="26"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 2 18 12 12 22 6 12Z" />
+      <path d="M6 12h12M12 2v20" strokeWidth="1.4" />
+    </svg>
+  )
+}
+
 function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-2">
       <div className="flex flex-col gap-0.5 px-3">
-        <h3 className="text-label-2 text-[13px] font-semibold">{title}</h3>
-        {subtitle && <p className="text-label-2 text-xs leading-snug">{subtitle}</p>}
+        <h3 className="font-head text-[24px] leading-none font-extrabold tracking-[0.05em] uppercase">{title}</h3>
+        {subtitle && (
+          <p className="text-label-2 font-mono text-[11px] leading-snug tracking-[0.06em] uppercase">{subtitle}</p>
+        )}
       </div>
       {children}
     </section>
@@ -992,7 +1027,7 @@ function Page({
         <button
           type="button"
           onClick={onBack}
-          className="bg-tint-fill flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-full pr-4 pl-3.5 text-[13px] font-semibold text-white transition-[filter,transform] hover:brightness-110 active:scale-[0.97]"
+          className="bg-tint-fill border-tint-fill text-on-tint flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border-2 pr-4 pl-3.5 text-[13px] font-bold transition-[filter,transform] hover:brightness-110 active:scale-[0.97]"
         >
           <FontAwesomeIcon icon={faArrowLeft} className="size-3.5" />
           Back
@@ -1008,7 +1043,7 @@ function Page({
           <button
             type="button"
             onClick={onDone}
-            className="bg-tint-fill h-10 w-full cursor-pointer rounded-full text-[14px] font-semibold text-white transition-[filter,transform] hover:brightness-110 active:scale-[0.98]"
+            className="bg-tint-fill border-tint-fill text-on-tint h-10 w-full cursor-pointer rounded-lg border-2 text-[14px] font-bold transition-[filter,transform] hover:brightness-110 active:scale-[0.98]"
           >
             Done
           </button>
@@ -1241,9 +1276,9 @@ function entityIcon(hass: HomeAssistant, id: string) {
 
 // A room's or the home's heading over its widgets, large as in the panel.
 const arrow =
-  'bg-fill text-label-2 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition-[color,transform] hover:text-(--primary-text-color) active:scale-90 disabled:cursor-default disabled:opacity-35 disabled:hover:text-label-2 disabled:active:scale-100'
+  'border-line border-2 text-label-2 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg transition-[color,transform] hover:text-(--primary-text-color) active:scale-90 disabled:cursor-default disabled:opacity-35 disabled:hover:text-label-2 disabled:active:scale-100'
 
-const heading = 'h-10 w-full truncate text-[26px] leading-10 font-bold tracking-[-0.02em] font-title'
+const heading = 'h-10 w-full truncate text-[30px] leading-10 font-extrabold tracking-[0.04em] uppercase font-title'
 
 type RoomLists = { entities?: string[]; order?: string[]; hidden?: string[]; tiles?: TileChoices }
 

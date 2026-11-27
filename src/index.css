@@ -2,11 +2,17 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
-  --font-montserrat: 'Montserrat', sans-serif;
-  /* The editor is set in the system's own interface font. */
-  --font-system: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* The S.I.M.S. type, the same as the M.A.S.H., C.R.A.P. and L.I.B.R.A.R.Y. add-ons:
+     Work Sans for words, IBM Plex Mono for labels and numbers, the stencil for headings. */
+  --font-sims: 'Work Sans', system-ui, sans-serif;
+  --font-system: 'Work Sans', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-head: 'Big Shoulders Stencil Display', 'Arial Narrow', sans-serif;
   /* The headings of the side panel, for the editor's headings over its widgets. */
-  --font-title: var(--dio-font-title, var(--fp-font-title, 'Inter Tight', system-ui, sans-serif));
+  --font-title: var(
+    --dio-font-title,
+    var(--fp-font-title, 'Big Shoulders Stencil Display', 'Arial Narrow', sans-serif)
+  );
   --transition-duration-slow: 300ms;
 }
 
@@ -24,8 +30,11 @@
   --color-primary-foreground: var(--text-primary-color, #fff);
   --color-destructive: var(--error-color, #db4437);
   --color-border: var(--divider-color, #e0e0e0);
-  --radius-md: 8px;
-  --radius-sm: 6px;
+  --radius-md: 6px;
+  --radius-sm: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 10px;
 
   /* The editor's palette, set on the editor's root below. */
   --color-fill: var(--dio-fill);
@@ -37,6 +46,8 @@
   --color-danger: var(--dio-danger);
   --color-success: var(--dio-success);
   --color-tint-fill: var(--dio-tint-fill);
+  --color-on-tint: var(--dio-on-tint);
+  --color-line: var(--dio-line);
   --color-danger-fill: var(--dio-danger-fill);
   --color-raised: var(--dio-raised);
 }
@@ -51,12 +62,16 @@
   --dio-fill-stronger: color-mix(in srgb, var(--primary-text-color, #212121) 15%, transparent);
   --dio-separator: color-mix(in srgb, var(--primary-text-color, #212121) 11%, transparent);
   --dio-label-2: color-mix(in srgb, var(--primary-text-color, #212121) 68%, transparent);
-  --dio-tint: #0a84ff;
-  --dio-danger: #ff453a;
-  --dio-success: #30d158;
-  /* Behind white text a shade deeper, for the same contrast. */
-  --dio-tint-fill: #0a6cdf;
-  --dio-danger-fill: #e0241b;
+  /* The S.I.M.S. accent: plumbob green. Filled buttons carry dark ink on it,
+     the way the other add-ons' accents do. */
+  --dio-tint: #6fd250;
+  --dio-danger: #ff6a5c;
+  --dio-success: #6fd250;
+  --dio-tint-fill: #6fd250;
+  --dio-on-tint: #0c1a07;
+  --dio-danger-fill: #e0352b;
+  /* The 2px outline every button, field and panel has, as in the other add-ons. */
+  --dio-line: color-mix(in srgb, var(--primary-text-color, #212121) 16%, transparent);
   /* The chosen segment of a segmented control, lifted off its track. */
   --dio-raised: color-mix(in srgb, var(--primary-text-color, #e1e1e1) 24%, var(--card-background-color, #1c1c1c));
   /* A button floating on a widget's corner: a grey between the text and
@@ -66,11 +81,13 @@
   --dio-float-icon: color-mix(in srgb, var(--primary-text-color, #e1e1e1) 90%, var(--dio-surface, #1c1c1c));
 }
 .dio-editor[data-light] {
-  --dio-tint: #0066cc;
+  --dio-tint: #2a7a1b;
   --dio-danger: #d70015;
-  --dio-success: #1f7f38;
-  --dio-tint-fill: #0066cc;
+  --dio-success: #2a7a1b;
+  --dio-tint-fill: #5cc23f;
+  --dio-on-tint: #0c1a07;
   --dio-danger-fill: #d70015;
+  --dio-line: color-mix(in srgb, var(--primary-text-color, #212121) 22%, transparent);
   --dio-raised: var(--card-background-color, #fff);
   --dio-float: color-mix(in srgb, var(--primary-text-color, #212121) 44%, var(--dio-surface, #fff));
   --dio-float-icon: var(--dio-surface, #fff);
@@ -110,7 +127,7 @@
    ends at the thumb's middle, which travels half a thumb in from each end.
    --dio-share is how far along the value is, from 0 to 1. */
 .dio-slider {
-  --dio-thumb: 22px;
+  --dio-thumb: 12px;
   --dio-reach: calc(var(--dio-thumb) / 2 + (100% - var(--dio-thumb)) * var(--dio-share, 0));
   appearance: none;
   width: 100%;
@@ -121,47 +138,45 @@
 }
 .dio-slider::-webkit-slider-runnable-track {
   height: 4px;
-  border-radius: 999px;
+  border-radius: 2px;
   background: linear-gradient(to right, var(--dio-tint) var(--dio-reach), var(--dio-fill-stronger) var(--dio-reach));
 }
 .dio-slider::-moz-range-track {
   height: 4px;
-  border-radius: 999px;
+  border-radius: 2px;
   background: var(--dio-fill-stronger);
 }
 .dio-slider::-moz-range-progress {
   height: 4px;
-  border-radius: 999px;
+  border-radius: 2px;
   background: var(--dio-tint);
 }
+/* A squared-off handle in the accent, edged in the panel's colour, like a fader. */
 .dio-slider::-webkit-slider-thumb {
   appearance: none;
-  width: var(--dio-thumb);
-  height: 14px;
-  margin-top: -5px;
-  border-radius: 999px;
-  background: #fff;
-  box-shadow:
-    0 0 0 0.5px rgb(0 0 0 / 0.12),
-    0 1px 3px rgb(0 0 0 / 0.28);
+  width: 12px;
+  height: 22px;
+  margin-top: -9px;
+  border-radius: 3px;
+  background: var(--dio-tint);
+  border: 2px solid var(--card-background-color, #1c1c1c);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
   transition: transform 150ms ease-out;
 }
 .dio-slider::-moz-range-thumb {
-  width: var(--dio-thumb);
-  height: 14px;
-  border: 0;
-  border-radius: 999px;
-  background: #fff;
-  box-shadow:
-    0 0 0 0.5px rgb(0 0 0 / 0.12),
-    0 1px 3px rgb(0 0 0 / 0.28);
+  width: 12px;
+  height: 22px;
+  border: 2px solid var(--card-background-color, #1c1c1c);
+  border-radius: 3px;
+  background: var(--dio-tint);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
   transition: transform 150ms ease-out;
 }
 .dio-slider:active::-webkit-slider-thumb {
-  transform: scale(1.15);
+  transform: scaleY(1.12);
 }
 .dio-slider:active::-moz-range-thumb {
-  transform: scale(1.15);
+  transform: scaleY(1.12);
 }
 .dio-slider:disabled {
   opacity: 0.4;

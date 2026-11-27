@@ -4,7 +4,7 @@ import DecorationPanel from '#/editor/DecorationPanel.tsx'
 import Scene, { type CameraHandle } from '#/scene/Scene.tsx'
 import Overlay from '#/editor/Overlay.tsx'
 import RoomInfo from '#/editor/RoomInfo.tsx'
-import { field, plainButton } from '#/editor/look.ts'
+import { field, plainButton, primaryButton } from '#/editor/look.ts'
 import Toolbar from '#/editor/Toolbar.tsx'
 import FloorPicker from '#/editor/FloorPicker.tsx'
 import {
@@ -1466,12 +1466,7 @@ export default function Editor({ hass, config, onChange, onSave }: Props) {
                 <FontAwesomeIcon icon={faFloppyDisk} className="size-3" />
                 {saving === 'save' ? 'Saving' : 'Save'}
               </button>
-              <button
-                type="button"
-                onClick={saveAndClose}
-                disabled={saving !== null}
-                className="bg-tint-fill flex h-8 items-center gap-1.5 rounded-lg px-3.5 text-[13px] font-semibold text-white shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[filter,transform] hover:brightness-[1.06] active:scale-[0.98] active:brightness-95 disabled:opacity-50"
-              >
+              <button type="button" onClick={saveAndClose} disabled={saving !== null} className={primaryButton}>
                 <FontAwesomeIcon icon={faCheck} className="size-3" />
                 {saving === 'close' ? 'Saving' : 'Save & Close'}
               </button>
@@ -1698,7 +1693,7 @@ function PreviewButton({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        'dio-floating border-separator flex h-7 items-center gap-1.5 rounded-full border bg-(--card-background-color)/75 px-3 text-xs font-medium text-(--primary-text-color) shadow-[0_2px_10px_-2px_rgba(0,0,0,0.25)] backdrop-blur-xl backdrop-saturate-150 transition-[background-color,transform] hover:bg-(--card-background-color)/95 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45',
+        'dio-floating border-line flex h-7 items-center gap-1.5 rounded-lg border-2 bg-(--card-background-color)/85 px-2.5 text-xs font-semibold text-(--primary-text-color) shadow-[0_2px_10px_-2px_rgba(0,0,0,0.25)] backdrop-blur-xl backdrop-saturate-150 transition-[background-color,transform] hover:bg-(--card-background-color)/95 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45',
         done && 'text-success',
       )}
     >

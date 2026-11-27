@@ -1,10 +1,10 @@
-<img src="docs/images/icon.svg" width="128" alt="A lit opal globe table lamp in a wooden cradle, the Home Assistant but its Sims now icon">
+<img src="docs/images/icon.svg" width="128" alt="A lit opal globe table lamp in a wooden cradle, the S.I.M.S. icon">
 
-# Home Assistant but its Sims now
+# S.I.M.S. (Smart-home In Miniature Scale)
 
 A Home Assistant card that turns your home into a small 3D model you can click.
 
-This is a fork of [Diorama](https://github.com/CarlesRojas/ha-diorama) by Carles Rojas, with extra features on top. It goes by its own name so it is easy to tell apart from the original in the Marketplace.
+This is a fork of [Diorama](https://github.com/CarlesRojas/ha-diorama) by Carles Rojas, with extra features on top. It goes by its own name so it is easy to tell apart from the original in the Marketplace, and it shares its look with the M.A.S.H., C.R.A.P. and L.I.B.R.A.R.Y. add-ons: dark panels, squared controls with 2px outlines, stencil headings and a plumbob green accent.
 
 ## The diorama
 
@@ -28,13 +28,13 @@ Everything is built inside Home Assistant, in the card's own full-screen editor.
 
 ## Install
 
-Home Assistant but its Sims now needs Home Assistant 2024.6 or newer.
+S.I.M.S. needs Home Assistant 2024.6 or newer.
 
 1. In Home Assistant open **HACS**, open the three-dot menu in the top right and choose **Custom repositories**.
 2. Paste `https://github.com/Hnners/ha-diorama`, pick the **Dashboard** type and add it.
-3. Search for **Home Assistant but its Sims now** in HACS and download it. HACS registers the card's resource for you.
+3. Search for **S.I.M.S.** in HACS and download it. HACS registers the card's resource for you.
 4. Reload the browser.
-5. Edit a dashboard, choose **Add card** and search for **Home Assistant but its Sims now**.
+5. Edit a dashboard, choose **Add card** and search for **S.I.M.S.**.
 
 Updates arrive through HACS like any other card. If a new version does not show up after updating, clear the browser cache. The card logs its version in the browser console on load, so a stale copy is easy to spot.
 
@@ -43,7 +43,7 @@ Updates arrive through HACS like any other card. If a new version does not show 
 
 1. Download `card.js` from the [latest release](https://github.com/Hnners/ha-diorama/releases/latest) into `config/www/diorama/card.js`.
 2. In **Settings > Dashboards**, open the three-dot menu, choose **Resources** and add `/local/diorama/card.js` as a **JavaScript module**.
-3. Edit a dashboard, choose **Add card** and search for **Home Assistant but its Sims now**.
+3. Edit a dashboard, choose **Add card** and search for **S.I.M.S.**.
 
 When you update, bump a `?v=` query on the resource URL so browsers pick up the new file.
 

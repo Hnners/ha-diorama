@@ -222,14 +222,14 @@ const CARDS: Card[] = [
     type: 'dio-title',
     element: TitleCard,
     domains: null,
-    name: 'Diorama Room Title',
+    name: 'S.I.M.S. Room Title',
     description: 'Section heading that follows the room filter',
   },
   {
     type: 'dio-toggle',
     element: entityCard(TOGGLE_DOMAINS, Toggle, ['confirm']),
     domains: TOGGLE_DOMAINS,
-    name: 'Diorama Toggle',
+    name: 'S.I.M.S. Toggle',
     twice: true,
     twiceOnly: ['media_player'],
     description: 'Light, switch, fan, valve or anything else on or off',
@@ -238,7 +238,7 @@ const CARDS: Card[] = [
     type: 'dio-button',
     element: entityCard(BUTTON_DOMAINS, Button, ['confirm']),
     domains: BUTTON_DOMAINS,
-    name: 'Diorama Button',
+    name: 'S.I.M.S. Button',
     repeats: ['button'],
     twice: true,
     description: 'Button, script or scene widget',
@@ -248,7 +248,7 @@ const CARDS: Card[] = [
     element: entityCard<CoverConfig>(COVER_DOMAINS, Cover, ['invert'], true),
     wide: true,
     domains: COVER_DOMAINS,
-    name: 'Diorama Cover',
+    name: 'S.I.M.S. Cover',
     repeats: ['open-close'],
     controls: 'Buttons',
     description: 'Blind or screen widget with up, stop and down',
@@ -258,7 +258,7 @@ const CARDS: Card[] = [
     element: entityCard<VacuumConfig>(VACUUM_DOMAINS, Vacuum, ['battery_entity'], true),
     wide: true,
     domains: VACUUM_DOMAINS,
-    name: 'Diorama Vacuum',
+    name: 'S.I.M.S. Vacuum',
     repeats: ['commands'],
     controls: 'Buttons',
     description: 'Robot vacuum widget',
@@ -267,7 +267,7 @@ const CARDS: Card[] = [
     type: 'dio-select',
     element: entityCard<SelectConfig>(SELECT_DOMAINS, Select, ['tap_behavior']),
     domains: SELECT_DOMAINS,
-    name: 'Diorama Option List',
+    name: 'S.I.M.S. Option List',
     repeats: ['select-options'],
     description: 'Option widget with a menu',
   },
@@ -276,7 +276,7 @@ const CARDS: Card[] = [
     element: entityCard(CLIMATE_DOMAINS, Climate, [], true),
     wide: true,
     domains: CLIMATE_DOMAINS,
-    name: 'Diorama Thermostat',
+    name: 'S.I.M.S. Thermostat',
     controls: 'Temperature and Modes',
     description: 'Thermostat or water heater widget with its temperature and modes',
   },
@@ -285,7 +285,7 @@ const CARDS: Card[] = [
     element: entityCard(MEDIA_DOMAINS, Media, [], true),
     wide: true,
     domains: MEDIA_DOMAINS,
-    name: 'Diorama Media Player',
+    name: 'S.I.M.S. Media Player',
     repeats: ['playback'],
     controls: 'Buttons',
     description: 'Speaker or TV widget with play, pause and tracks',
@@ -293,7 +293,7 @@ const CARDS: Card[] = [
   {
     type: 'dio-lock',
     element: entityCard(LOCK_DOMAINS, Lock),
-    name: 'Diorama Lock',
+    name: 'S.I.M.S. Lock',
     description: 'Lock widget',
     domains: LOCK_DOMAINS,
   },
@@ -301,14 +301,14 @@ const CARDS: Card[] = [
     type: 'dio-entity',
     element: entityCard('any', Entity),
     domains: 'any',
-    name: 'Diorama Any Entity',
+    name: 'S.I.M.S. Any Entity',
     description: 'Any entity, like a sensor, with its state',
   },
   {
     type: 'dio-weather',
     element: WeatherCard,
     domains: WEATHER_DOMAINS,
-    name: 'Diorama Weather',
+    name: 'S.I.M.S. Weather',
     description: 'The weather now and the next hours',
     variants: ['Hourly Weather', 'Daily Weather', 'Small Weather', 'Large Weather'],
     suggest: (hass, entityId) => {
@@ -332,7 +332,7 @@ const CARDS: Card[] = [
   {
     type: 'dio-camera',
     element: CameraCard,
-    name: 'Diorama Camera',
+    name: 'S.I.M.S. Camera',
     description: 'Camera or image picture widget',
     domains: CAMERA_DOMAINS,
   },
@@ -341,7 +341,7 @@ const CARDS: Card[] = [
     element: panelCard(['alarm_control_panel'], AlarmPanel, { columns: 'full', rows: 5 }, 5),
     extra: true,
     domains: ['alarm_control_panel'],
-    name: 'Diorama Alarm Keypad',
+    name: 'S.I.M.S. Alarm Keypad',
     description: 'The alarm with a button for each mode and a keypad for its code',
   },
   {
@@ -356,7 +356,7 @@ const CARDS: Card[] = [
     ),
     extra: true,
     domains: DIAL_DOMAINS,
-    name: 'Diorama Big Dial',
+    name: 'S.I.M.S. Big Dial',
     description: 'A thermostat, water heater, humidifier or light on a big ring you drag',
     suggest: (hass, entityId) => {
       const entity = hass.states[entityId]
@@ -381,7 +381,7 @@ const CARDS: Card[] = [
     ),
     extra: true,
     domains: MEDIA_DOMAINS,
-    name: 'Diorama Now Playing',
+    name: 'S.I.M.S. Now Playing',
     description: 'What is playing, with its art, how far in it is, its buttons and volume',
     variants: ['Now Playing with Art as Icon'],
     // Only for a player that plays, pauses, skips or changes its volume,
@@ -411,7 +411,7 @@ const CARDS: Card[] = [
     ),
     extra: true,
     domains: MEDIA_DOMAINS,
-    name: 'Diorama Media and Remote',
+    name: 'S.I.M.S. Media and Remote',
     description: 'What is playing and its buttons, with the remote under them while it is on',
     // Only for a player that plays and whose remote keys it knows.
     suggest: (hass, entityId) =>
@@ -424,7 +424,7 @@ const CARDS: Card[] = [
     element: RemoteCard,
     extra: true,
     domains: ['remote', 'media_player'],
-    name: 'Diorama TV Remote',
+    name: 'S.I.M.S. TV Remote',
     description: 'Arrows, OK, back, home, mute and volume for a TV or a streaming box',
     // Only for a TV or a box whose keys it knows, by its own integration or
     // another on the same device.
@@ -436,7 +436,7 @@ const CARDS: Card[] = [
     element: panelCard<CalendarConfig>(['calendar'], Calendar, { columns: 'full', rows: 6 }, 6, ['calendar']),
     extra: true,
     domains: ['calendar'],
-    name: 'Diorama Calendar',
+    name: 'S.I.M.S. Calendar',
     description: 'The coming events of one calendar or more, day by day',
     variants: ["Today's Calendar"],
     suggest: (_, entityId) => [
@@ -449,7 +449,7 @@ const CARDS: Card[] = [
     element: panelCard(['todo'], Todo, { columns: 'full', rows: 'auto' }, 5),
     extra: true,
     domains: ['todo'],
-    name: 'Diorama To-do List',
+    name: 'S.I.M.S. To-do List',
     description: 'A list to add to and tick off',
   },
   {
@@ -457,7 +457,7 @@ const CARDS: Card[] = [
     element: panelCard<GraphConfig>(GRAPH_DOMAINS, Graph, { columns: 12, rows: 4 }, 4, ['graph']),
     extra: true,
     domains: GRAPH_DOMAINS,
-    name: 'Diorama History Graph',
+    name: 'S.I.M.S. History Graph',
     description: 'The history of a reading, or the times something was on',
     variants: ['Daily Bar Graph'],
     suggest: (hass, entityId) => {
@@ -477,7 +477,7 @@ const CARDS: Card[] = [
     element: panelCard<GaugeConfig>(GAUGE_DOMAINS, Gauge, { columns: 6, rows: 2 }, 2, ['gauge']),
     extra: true,
     domains: GAUGE_DOMAINS,
-    name: 'Diorama Ring Gauge',
+    name: 'S.I.M.S. Ring Gauge',
     description: 'A reading on a ring',
     suggest: (hass, entityId) =>
       isNumeric(hass.states[entityId]) ? [{ config: { type: 'custom:dio-gauge', entity: entityId } }] : null,
@@ -487,7 +487,7 @@ const CARDS: Card[] = [
     element: panelCard<MapConfig>(MAP_DOMAINS, MapCard, { columns: 12, rows: 4 }, 4, ['map']),
     extra: true,
     domains: MAP_DOMAINS,
-    name: 'Diorama Map',
+    name: 'S.I.M.S. Map',
     description: 'Where a person, a tracker or a zone is',
     variants: ['Map on Top'],
     suggest: (_, entityId) => [
@@ -606,7 +606,7 @@ function suggestions(card: Card, hass: HomeAssistant, entityId: string): Suggest
 }
 
 // A card's name without ours before it, as in Toggle.
-const shortName = (card: Card) => card.name.replace(/^Diorama (Any )?/, '')
+const shortName = (card: Card) => card.name.replace(/^S\.I\.M\.S\. (Any )?/, '')
 
 // Domains whose state alone says nothing, like a calendar's on or off, so
 // Diorama Entity is never offered for them.

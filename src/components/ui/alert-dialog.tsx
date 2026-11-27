@@ -74,11 +74,11 @@ export function AlertDialogFooter({ children }: { children: ReactNode }) {
 }
 
 const button =
-  'inline-flex h-10 cursor-pointer items-center justify-center rounded-xl px-4 text-[15px] font-semibold transition-[background-color,filter,transform] outline-none active:scale-[0.98]'
+  'inline-flex h-10 cursor-pointer items-center justify-center rounded-lg border-2 px-4 text-[15px] font-semibold transition-[background-color,filter,transform] outline-none active:scale-[0.98]'
 
 export function AlertDialogCancel({ children, onClick }: { children: ReactNode; onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} className={cn(button, 'bg-fill-strong hover:bg-fill-stronger')}>
+    <button type="button" onClick={onClick} className={cn(button, 'border-line hover:bg-fill bg-transparent')}>
       {children}
     </button>
   )
@@ -106,8 +106,8 @@ export function AlertDialogAction({
         button,
         'disabled:pointer-events-none disabled:opacity-40',
         variant === 'destructive'
-          ? 'bg-danger-fill text-white hover:brightness-[1.06]'
-          : 'bg-tint-fill text-white hover:brightness-[1.06]',
+          ? 'border-danger-fill bg-danger-fill text-white hover:brightness-[1.06]'
+          : 'border-tint-fill bg-tint-fill text-on-tint font-bold hover:brightness-110',
         className,
       )}
     >

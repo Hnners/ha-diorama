@@ -322,7 +322,7 @@ export function DragBadge({ travel, dragged }: { travel: Travel; dragged: number
           borderRadius: 999,
           background: 'rgba(0, 0, 0, 0.65)',
           color: '#fff',
-          font: '600 12px/1.4 Montserrat, system-ui, sans-serif',
+          font: '600 12px/1.4 "Work Sans", system-ui, sans-serif',
           whiteSpace: 'nowrap',
           userSelect: 'none',
         }}

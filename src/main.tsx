@@ -405,9 +405,9 @@ class DioramaEditor extends ReactHost<CardConfig> {
 // Says which version is loaded, the way most custom cards do, so a stale
 // card.js in the browser's cache is easy to spot.
 console.info(
-  `%c DIORAMA %c v${__CARD_VERSION__} `,
-  'color: white; background: #3f5f7a; font-weight: bold; border-radius: 4px 0 0 4px',
-  'color: #3f5f7a; background: #e6eef5; font-weight: bold; border-radius: 0 4px 4px 0',
+  `%c S.I.M.S. %c v${__CARD_VERSION__} `,
+  'color: #0c1a07; background: #6fd250; font-weight: bold; border-radius: 4px 0 0 4px',
+  'color: #6fd250; background: #1a1b1d; font-weight: bold; border-radius: 0 4px 4px 0',
 )
 
 // The floor and wall patterns start on their way as the card loads, read
@@ -428,8 +428,8 @@ window.customCards = window.customCards ?? []
 if (!window.customCards.some(card => card.type === CARD_TYPE))
   window.customCards.push({
     type: CARD_TYPE,
-    name: 'Home Assistant but its Sims now',
-    description: 'Your home as a 3D model, with your devices in it',
+    name: 'S.I.M.S.',
+    description: 'Smart-home In Miniature Scale: your home as a 3D model, with your devices in it',
     preview: true,
   })
 

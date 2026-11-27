@@ -599,7 +599,7 @@ const offered = customCards
   }))
   .filter(({ found }) => found.length > 0)
 const picked = offered.find(({ custom }) => custom.type === params.get('card')) ?? offered[0]
-const short = (name: string) => name.replace('Diorama ', '')
+const short = (name: string) => name.replace('S.I.M.S. ', '')
 
 const ink = light ? '#1c1c1e' : '#fff'
 document.body.style.cssText = `margin:0;min-height:100vh;font-family:system-ui;background:${
@@ -758,7 +758,11 @@ if (params.get('showcase')) {
   thermostat.state = 'cool'
   Object.assign(thermostat.attributes, { hvac_action: 'cooling', current_temperature: 25.5, temperature: 23 })
   // A light group with most of the flat's lights on.
-  for (const [id, name] of [['light.kitchen', 'Kitchen'], ['light.hall', 'Hall'], ['light.bedroom', 'Bedroom']])
+  for (const [id, name] of [
+    ['light.kitchen', 'Kitchen'],
+    ['light.hall', 'Hall'],
+    ['light.bedroom', 'Bedroom'],
+  ])
     states[id] = state(id, 'on', { friendly_name: name, brightness: 200, supported_color_modes: ['brightness'] })
   states['light.all'] = state('light.all', 'on', {
     friendly_name: 'All Lights',

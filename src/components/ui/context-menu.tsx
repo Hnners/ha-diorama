@@ -99,7 +99,7 @@ export function ContextMenuItem({
       disabled={disabled}
       onClick={onSelect}
       className={cn(
-        'group/item hover:bg-tint-fill focus:bg-tint-fill relative flex h-7 w-full cursor-default items-center gap-2 rounded-md px-2 text-left text-[13px] outline-none select-none hover:text-white focus:text-white',
+        'group/item hover:bg-tint-fill hover:text-on-tint focus:bg-tint-fill focus:text-on-tint relative flex h-7 w-full cursor-default items-center gap-2 rounded-md px-2 text-left text-[13px] outline-none select-none hover:text-white focus:text-white',
         'disabled:pointer-events-none disabled:opacity-40',
         variant === 'destructive' && 'text-danger hover:bg-danger-fill focus:bg-danger-fill',
         className,
@@ -107,7 +107,7 @@ export function ContextMenuItem({
     >
       {children}
       {shortcut && (
-        <span className="text-label-2 ml-auto pl-4 text-xs tracking-widest group-hover/item:text-white/80 group-focus/item:text-white/80">
+        <span className="text-label-2 group-hover/item:text-on-tint/80 group-focus/item:text-on-tint/80 ml-auto pl-4 text-xs tracking-widest">
           {shortcut}
         </span>
       )}

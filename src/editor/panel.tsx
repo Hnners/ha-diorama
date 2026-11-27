@@ -25,7 +25,9 @@ export function Sticky({ children, className }: { children: ReactNode; className
 export function SelectedHeader({ title, tag, onBack }: { title: string; tag?: ReactNode; onBack: () => void }) {
   return (
     <div className="flex items-center gap-2">
-      <p className="min-w-0 flex-1 truncate text-[17px] font-semibold tracking-tight">{title}</p>
+      <p className="font-head min-w-0 flex-1 truncate text-[24px] leading-none font-extrabold tracking-[0.04em] uppercase">
+        {title}
+      </p>
       {tag}
       <button
         type="button"
@@ -33,7 +35,7 @@ export function SelectedHeader({ title, tag, onBack }: { title: string; tag?: Re
         onClick={onBack}
         className={cn(
           iconButton,
-          'bg-fill-strong text-label-2 size-7 shrink-0 rounded-full hover:text-(--primary-text-color)',
+          'border-line text-label-2 size-7 shrink-0 border-2 hover:text-(--primary-text-color)',
         )}
       >
         <FontAwesomeIcon icon={faXmark} className="size-3" />
@@ -68,7 +70,7 @@ export function Signals({ signals, accent, size = 'md' }: { signals: Signal[]; a
         <span
           key={s}
           title={SIGNAL_HINTS[s]}
-          className="flex items-center gap-1.5 rounded-full bg-[color-mix(in_srgb,currentColor_13%,transparent)] px-2.5 py-1 text-xs font-medium"
+          className="flex items-center gap-1.5 rounded-[5px] bg-[color-mix(in_srgb,currentColor_13%,transparent)] px-2 py-1 text-xs font-medium"
           style={{ color: accent }}
         >
           <FontAwesomeIcon icon={SIGNAL_ICONS[s]} className="size-3" />
@@ -122,15 +124,15 @@ export function Switch({
       aria-label={label}
       onClick={() => onChange(!checked)}
       className={cn(
-        'relative h-[22px] w-[38px] shrink-0 justify-self-start rounded-full transition-colors duration-200',
-        !checked && 'bg-fill-stronger',
+        'relative h-[22px] w-[40px] shrink-0 justify-self-start rounded-[6px] border-2 transition-colors duration-200',
+        !checked && 'border-line bg-fill-stronger',
       )}
-      style={checked ? { backgroundColor: accent } : undefined}
+      style={checked ? { backgroundColor: accent, borderColor: accent } : undefined}
     >
       <span
         className={cn(
-          'absolute top-[2px] left-[2px] size-[18px] rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2),0_0_1px_rgba(0,0,0,0.2)] transition-transform duration-200 ease-out',
-          checked && 'translate-x-4',
+          'absolute top-[1px] left-[1px] size-[16px] rounded-[4px] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.3)] transition-transform duration-200 ease-out',
+          checked && 'translate-x-[18px]',
         )}
       />
     </button>
