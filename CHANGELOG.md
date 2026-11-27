@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.24.0] - 2026-11-27
+
 ### Changed
 
 - Widgets now stay dark when they are on, the way the other add-ons' panels do, and show it with an outline and a badge behind the icon in their own color instead of turning white, with the state written in small capitals.
@@ -882,7 +884,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.23.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.24.0...HEAD
+[1.24.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.23.0...v1.24.0
 [1.23.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.22.1...v1.23.0
 [1.22.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.22.0...v1.22.1
 [1.22.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.21.1...v1.22.0
