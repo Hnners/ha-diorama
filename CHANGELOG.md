@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.25.0] - 2026-11-27
+
 ### Added
 
 - S.I.M.S. is now a Home Assistant app with its own page in the sidebar, laid out like the M.A.S.H. app with House and Settings tabs and an Edit house button, and it brings over the house from the dashboard card the first time it opens.
@@ -899,7 +901,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.24.1...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.25.0...HEAD
+[1.25.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.24.1...v1.25.0
 [1.24.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.24.0...v1.24.1
 [1.24.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.23.0...v1.24.0
 [1.23.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.22.1...v1.23.0
