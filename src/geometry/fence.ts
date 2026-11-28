@@ -20,6 +20,17 @@ export function fenceGeometry(outline: Point[], heights: number[], others: Point
   const position: number[] = []
   const normal: number[] = []
   const uv: number[] = []
+  // What the walls' shader reads to sink a wall facing the camera, so the
+  // fence sinks with them: the way the run faces out, which corners are on
+  // top and how high they may stand, and the faces on top, which keep their
+  // pattern as they are.
+  const wallOwn: number[] = []
+  const wallRise: number[] = []
+  const wallShape: number[] = []
+  const wallExtra: number[] = []
+  // Of the box being drawn: the way it faces out and its full height.
+  let faceOut: Point = [0, 1]
+  let full = 0
 
   // One flat face from four corners, given as plan points with heights.
   const quad = (c: [number, number, number][], n: [number, number, number], t: [number, number][]) => {
@@ -35,6 +46,11 @@ export function fenceGeometry(outline: Point[], heights: number[], others: Point
       position.push(c[k][0], c[k][2], -c[k][1])
       normal.push(n[0], n[2], -n[1])
       uv.push(t[k][0], t[k][1])
+      const top = c[k][2] > 0
+      wallOwn.push(faceOut[0], faceOut[1], 1)
+      wallRise.push(0, 0, 0)
+      wallShape.push(top ? 1 : 0, 0, 0, full)
+      wallExtra.push(-1, n[2] > 0.5 ? 1 : 0)
     }
   }
 
@@ -42,6 +58,8 @@ export function fenceGeometry(outline: Point[], heights: number[], others: Point
   // the space along `inward`, and `h` high. Its long sides take the pattern
   // along the run, starting at `s`.
   const box = (p: Point, u: Point, inward: Point, len: number, depth: number, h: number, s: number) => {
+    faceOut = [-inward[0], -inward[1]]
+    full = h
     const at = (t: number, d: number): Point => [p[0] + u[0] * t + inward[0] * d, p[1] + u[1] * t + inward[1] * d]
     const a0 = at(0, 0)
     const a1 = at(len, 0)
@@ -162,5 +180,9 @@ export function fenceGeometry(outline: Point[], heights: number[], others: Point
   geometry.setAttribute('position', new Float32BufferAttribute(position, 3))
   geometry.setAttribute('normal', new Float32BufferAttribute(normal, 3))
   geometry.setAttribute('uv', new Float32BufferAttribute(uv, 2))
+  geometry.setAttribute('wallOwn', new Float32BufferAttribute(wallOwn, 3))
+  geometry.setAttribute('wallRise', new Float32BufferAttribute(wallRise, 3))
+  geometry.setAttribute('wallShape', new Float32BufferAttribute(wallShape, 4))
+  geometry.setAttribute('wallExtra', new Float32BufferAttribute(wallExtra, 2))
   return geometry
 }

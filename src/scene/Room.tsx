@@ -172,6 +172,11 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
     return makeFence(inset(ensureCounterClockwise(room.points), gap / 2), built, homeRooms, gap)
   }, [room.fence?.heights, room.points, room.id, room.floor_id, rooms, storey, gap])
   useEffect(() => () => fenceGeometry?.dispose(), [fenceGeometry])
+  // It sinks as it faces the camera, as the walls do.
+  const fenceMesh = useRef<Mesh>(null)
+  useLayoutEffect(() => {
+    if (heights && fenceMesh.current) animateWalls(fenceMesh.current, heights)
+  })
 
   const floor = room.floor ? FLOOR_MATERIALS[room.floor.material] : undefined
   // The presence filter fades over the floor and away again.
@@ -220,7 +225,7 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
         </mesh>
       )}
       {fenceGeometry && (
-        <mesh geometry={fenceGeometry} castShadow receiveShadow raycast={() => null}>
+        <mesh ref={fenceMesh} geometry={fenceGeometry} castShadow receiveShadow raycast={() => null}>
           <SurfaceMaterial
             kind="cladding"
             color={room.fence?.color ?? FENCE_COLOR}
