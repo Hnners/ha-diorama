@@ -29,6 +29,7 @@ import { entityGone } from '#/devices/catalog.ts'
 import { initialTry, toggleTry, type TryState, type TryStates } from '#/editor/tryState.ts'
 import { deviceTry } from '#/scene/Devices.tsx'
 import { DEFAULT_FLOOR_MATERIAL, SCENE_BACKGROUND_CSS, WALL_COLOR } from '#/theme.ts'
+import { wallsOf } from '#/scene/walls.ts'
 import { useBackButton } from '#/lib/backButton.ts'
 import { useFlash } from '#/lib/flash.ts'
 import { cn } from '#/lib/utils.ts'
@@ -822,6 +823,19 @@ export default function Editor({ hass, config, onChange, onSave, startOpen, onCl
       }),
     )
 
+  // The outside of a room's walls, its own or, both left out, the home's.
+  // The home's walls with every gap filled in, for a room's own to start from.
+  const homeWalls = wallsOf(config)
+
+  const setOutsideWalls = (roomId: string, kind: RoomConfig['outside_walls'], color: string | undefined) =>
+    commit(
+      rooms.map(r => {
+        if (r.id !== roomId) return r
+        const { outside_walls: _kind, outside_color: _color, ...rest } = r
+        return { ...rest, ...(kind ? { outside_walls: kind } : {}), ...(color ? { outside_color: color } : {}) }
+      }),
+    )
+
   // A room as an outside space, with no walls, or a room again.
   const setOutdoor = (roomId: string, outdoor: boolean) =>
     commit(
@@ -1422,6 +1436,10 @@ export default function Editor({ hass, config, onChange, onSave, startOpen, onCl
         onWallColor={setWallColor}
         onWallColors={setWallColors}
         onOutdoor={setOutdoor}
+        outside={
+          homeWalls ? { kind: homeWalls.outside, color: homeWalls.outsideColor, inside: homeWalls.color } : undefined
+        }
+        onOutsideWalls={setOutsideWalls}
         decorations={floorDecorations}
         onArrow={setArrow}
         onSaveCamera={saveRoomCamera}

@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- Rooms can have a grass floor, and each room can have its own outside walls, brick, plain or new wood panelling, chosen in its settings, for a garden shed or a summer house.
+
 ## [1.27.2] - 2026-11-28
 
 ### Fixed

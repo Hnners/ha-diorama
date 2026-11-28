@@ -139,6 +139,10 @@ export type RoomConfig = {
   // edge from the first point to the second, and so on round. A wall with
   // none takes the room's color.
   wall_colors?: (string | null)[]
+  // The outside of this room's walls, in place of the home's: brick, plain
+  // or timber panelling, as for a garden shed, and the color it is tinted.
+  outside_walls?: 'brick' | 'plain' | 'wood'
+  outside_color?: string
 }
 
 // The side panel's section for the whole home.
@@ -277,8 +281,9 @@ export type WallsConfig = {
   thickness?: number
   // The walls' color inside the rooms, for a room without its own.
   color?: string
-  // The outside of the home: brick, the default, or plain in its color.
-  outside?: 'brick' | 'plain'
+  // The outside of the home: brick, the default, plain in its color, or
+  // timber panelling.
+  outside?: 'brick' | 'plain' | 'wood'
   outside_color?: string
   // The outside walls at the back of the home, away from the camera, stand
   // to full height, and the rest stay at `height`. Where a tall wall meets a

@@ -25,6 +25,16 @@ export const TALL_WALL_RADIUS_M = 0.25
 // for the walls inside.
 export const BRICK_COLOR = '#b5674c'
 export const WALL_COLOR = '#ece6dc'
+// Timber cladding stained a mid brown, for a shed or a garden room.
+export const CLADDING_COLOR = '#9c7150'
+// The outside of a room's walls: what each looks like, with the color it is
+// tinted by until told otherwise.
+export const OUTSIDE_WALLS = {
+  brick: { label: 'Brick', color: BRICK_COLOR },
+  plain: { label: 'Plain', color: WALL_COLOR },
+  wood: { label: 'Wood panelling', color: CLADDING_COLOR },
+} as const
+export type OutsideWalls = keyof typeof OUTSIDE_WALLS
 // Rounding of the room corners, seen from above: the same as the edge's, and
 // like it only for the corners that touch no other room.
 export const ROOM_CORNER_RADIUS_M = ROOM_SLAB_EDGE_RADIUS_M
@@ -210,4 +220,5 @@ export const FLOOR_MATERIALS: Record<string, { label: string; color: string; sur
   terracotta: { label: 'Terracotta', color: '#c4764f', surface: 'terracotta' },
   carpet: { label: 'Carpet', color: '#9fb3c8', surface: 'carpet' },
   concrete: { label: 'Concrete', color: '#b3b3b0', surface: 'concrete' },
+  grass: { label: 'Grass', color: '#7aa650', surface: 'grass' },
 }
