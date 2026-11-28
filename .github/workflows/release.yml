@@ -1,10 +1,10 @@
 # Publishes a release. Run it by hand from the Actions tab, on main.
 #
 # It raises the version in package.json, moves the Unreleased section of
-# CHANGELOG.md under the new version, builds dist/card.js with that version
-# baked in, commits both files, tags the commit vX.Y.Z and publishes a
-# GitHub release with card.js attached and the changelog section as notes.
-# HACS picks the new release up from there.
+# CHANGELOG.md under the new version, builds the S.I.M.S. app's page with
+# that version baked in, commits it all, tags the commit vX.Y.Z and
+# publishes a GitHub release with the changelog section as notes. Home
+# Assistant offers the app's update from there.
 name: Release
 
 on:
@@ -53,10 +53,10 @@ jobs:
         id: bump
         run: pnpm release --bump "${{ inputs.bump }}" --version "${{ inputs.version }}" --notes release-notes.md
 
-      - name: Lint and build card.js
+      - name: Lint and type check
         run: |
           pnpm lint
-          pnpm build
+          pnpm exec tsc -b
 
       # The S.I.M.S. app: its page is built into the app's folder, which Home
       # Assistant builds the app from, and the app takes the same version, so
@@ -84,6 +84,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "v${{ steps.bump.outputs.version }}" dist/card.js \
+          gh release create "v${{ steps.bump.outputs.version }}" \
             --title "v${{ steps.bump.outputs.version }}" \
             --notes-file release-notes.md

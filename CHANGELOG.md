@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Removed
+
+- S.I.M.S. is now only an app: the dashboard card is no longer published for the Marketplace, and the app no longer brings a house over from a dashboard card.
+
 ## [1.26.2] - 2026-11-28
 
 ### Changed

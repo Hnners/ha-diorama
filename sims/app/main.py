@@ -41,7 +41,6 @@ HA_WS = HA_URL.replace("http://", "ws://").replace("https://", "wss://") + "/web
     else HA_URL.replace("http://", "ws://").replace("https://", "wss://") + "/api/websocket"
 HA_API = HA_URL + "/api"
 
-CARD_TYPES = {"custom:diorama-card", "custom:floorplan-3d"}
 
 app = FastAPI(title="S.I.M.S.", docs_url=None, redoc_url=None)
 # The page is a few megabytes of script, which squeezes to about a third.
@@ -67,23 +66,6 @@ async def ha_ws_session():
     return ws, reply.get("ha_version", "")
 
 
-async def ha_call(messages):
-    """Sends websocket commands one after another and returns their results."""
-    ws, _ = await ha_ws_session()
-    try:
-        results = []
-        for i, message in enumerate(messages, start=1):
-            await ws.send(json.dumps({**message, "id": i}))
-            while True:
-                reply = json.loads(await ws.recv())
-                if reply.get("id") == i and reply.get("type") == "result":
-                    results.append(reply.get("result") if reply.get("success") else None)
-                    break
-        return results
-    finally:
-        await ws.close()
-
-
 # --------------------------------------------------------------- the house
 
 def read_house():
@@ -103,49 +85,13 @@ def write_house(config):
     os.replace(tmp, HOUSE)
 
 
-def cards_in(node):
-    """Every diorama card in a dashboard config, however deep it is nested."""
-    if isinstance(node, dict):
-        if node.get("type") in CARD_TYPES:
-            yield node
-        for value in node.values():
-            yield from cards_in(value)
-    elif isinstance(node, list):
-        for value in node:
-            yield from cards_in(value)
-
-
-async def find_dashboard_house():
-    """The biggest diorama card on any dashboard, to start the app from the house already built there."""
-    dashboards = (await ha_call([{"type": "lovelace/dashboards/list"}]))[0] or []
-    paths = [None] + [d.get("url_path") for d in dashboards if d.get("mode") == "storage"]
-    best, where = None, None
-    configs = await ha_call([{"type": "lovelace/config", **({"url_path": p} if p else {})} for p in paths])
-    for path, config in zip(paths, configs):
-        for card in cards_in(config or {}):
-            size = len(card.get("rooms") or []) * 1000 + len(json.dumps(card))
-            if best is None or size > best[0]:
-                best, where = (size, card), path or "lovelace"
-    return (best[1], where) if best else (None, None)
-
-
 @app.get("/api/house")
 async def get_house():
     house = read_house()
     if house is not None:
-        return {"config": house, "imported_from": None}
-    # The first time, the house is brought over from the dashboard card.
-    try:
-        card, where = await find_dashboard_house()
-    except Exception as e:  # HA unreachable: start empty rather than fail
-        log.warning("could not look for a dashboard card: %s", e)
-        card, where = None, None
-    if card:
-        card = {**card, "type": "custom:diorama-card", "side_panel": True}
-        write_house(card)
-        log.info("imported the house from dashboard %s", where)
-        return {"config": card, "imported_from": where}
-    return {"config": {"type": "custom:diorama-card", "rooms": [], "side_panel": True}, "imported_from": None}
+        return {"config": house}
+    # A new house starts empty, with the widgets beside it.
+    return {"config": {"type": "custom:diorama-card", "rooms": [], "side_panel": True}}
 
 
 @app.put("/api/house")
@@ -167,17 +113,6 @@ async def put_house(request: Request):
         raise HTTPException(400, "That does not look like a house")
     write_house(config)
     return {"ok": True}
-
-
-@app.post("/api/house/import")
-async def reimport():
-    """Brings the house over from the dashboard card again, replacing the app's copy."""
-    card, where = await find_dashboard_house()
-    if not card:
-        raise HTTPException(404, "No S.I.M.S. card found on any dashboard")
-    card = {**card, "type": "custom:diorama-card", "side_panel": True}
-    write_house(card)
-    return {"config": card, "imported_from": where}
 
 
 @app.get("/api/me")
