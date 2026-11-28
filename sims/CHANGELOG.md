@@ -9,6 +9,12 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.27.0] - 2026-11-28
+
+### Removed
+
+- S.I.M.S. is now only an app: the dashboard card is no longer published for the Marketplace, and the app no longer brings a house over from a dashboard card.
+
 ## [1.26.2] - 2026-11-28
 
 ### Changed
@@ -923,7 +929,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.26.2...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.27.0...HEAD
+[1.27.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.26.2...v1.27.0
 [1.26.2]: https://github.com/CarlesRojas/ha-diorama/compare/v1.26.1...v1.26.2
 [1.26.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.26.0...v1.26.1
 [1.26.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.25.0...v1.26.0
