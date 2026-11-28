@@ -86,6 +86,17 @@ function forget(element: CardElement | null) {
 let stage: HTMLElement | null = null
 let panel: HTMLElement | null = null
 
+// The house takes the height of the window below the header, kept so as
+// the window or the header changes size.
+function fitHouse() {
+  if (!stage || stage.hidden) return
+  const top = stage.getBoundingClientRect().top + window.scrollY
+  const bottom = parseFloat(getComputedStyle(document.querySelector('.page')!).paddingBottom) || 0
+  stage.style.setProperty('--top-h', `${Math.round(top + bottom)}px`)
+}
+window.addEventListener('resize', fitHouse)
+new ResizeObserver(fitHouse).observe(document.querySelector('.top')!)
+
 function showHouse() {
   forget(editor)
   editor = null
@@ -97,10 +108,12 @@ function showHouse() {
     stage.className = 'house'
     stage.append(houseCard)
     view.replaceChildren(stage)
+    fitHouse()
   } else houseCard.setConfig(house!)
   const background = backgroundOf(house!.background, true)
   stage!.style.background = background ?? ''
   stage!.hidden = false
+  fitHouse()
 }
 
 function showSettings(openEditor = false) {

@@ -9,6 +9,14 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- In the S.I.M.S. app every widget that switches something has a power button that turns it on and off, and a tap anywhere else on a widget opens its details.
+
+### Changed
+
+- The S.I.M.S. app's device details pop up with a short animation, the switch slides and the state flips over as the device turns on or off, and both the details and the house now grow and shrink with the window.
+
 ## [1.25.0] - 2026-11-27
 
 ### Added

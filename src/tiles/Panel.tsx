@@ -22,6 +22,8 @@ type Props = {
   // set, or nothing when null.
   onTap?: (() => void) | null
   toggles?: boolean
+  // A power button for what a tap does, in the S.I.M.S. app.
+  power?: boolean
   // Buttons and selectors in the top right corner.
   controls?: ReactNode
   className?: string

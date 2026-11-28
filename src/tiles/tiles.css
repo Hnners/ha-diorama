@@ -821,6 +821,35 @@
   outline-offset: -2px;
 }
 
+/* The power button the S.I.M.S. app puts on a widget that switches
+   something. Lit in the widget's color while it is on, with a short pulse
+   as it turns on. */
+.dio-control.dio-power {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.15s ease;
+}
+.dio-control.dio-power-on {
+  background: var(--_tile-accent, var(--dio-tint, #6fd250));
+  color: var(--_badge-ink, #1a1b1d);
+  box-shadow: 0 0 14px -2px var(--_tile-glow, var(--_tile-accent, #6fd250));
+  animation: dio-power-on 0.45s ease-out;
+}
+@keyframes dio-power-on {
+  0% {
+    transform: scale(0.8);
+    box-shadow: 0 0 0 0 var(--_tile-glow, var(--_tile-accent, #6fd250));
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 8px transparent;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 /* The minus and plus of a thermostat, with what it aims for between them. */
 /* As wide as the widest temperature it shows, like 99.5°, so it
    keeps its width as the number changes. */

@@ -14,10 +14,22 @@ type ControlProps = {
   // Off for now, like the modes of an armed alarm.
   disabled?: boolean
   style?: CSSProperties
+  // Drawn filled, as most controls are, unless set false.
+  filled?: boolean
 }
 
 // One round button inside a wide tile. Pressing it never presses the tile.
-export function Control({ icon, label, onPress, className, role, checked, disabled, style }: ControlProps) {
+export function Control({
+  icon,
+  label,
+  onPress,
+  className,
+  role,
+  checked,
+  disabled,
+  style,
+  filled = true,
+}: ControlProps) {
   return (
     <button
       {...insideTile}
@@ -34,7 +46,7 @@ export function Control({ icon, label, onPress, className, role, checked, disabl
         onPress()
       }}
     >
-      <Icon icon={icon} on />
+      <Icon icon={icon} on={filled} />
     </button>
   )
 }
