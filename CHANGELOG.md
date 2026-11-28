@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Fixed
+
+- Save & Close in the S.I.M.S. app's house editor now closes the editor instead of opening it straight back up.
+
 ## [1.26.0] - 2026-11-28
 
 ### Added
