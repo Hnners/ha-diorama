@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.31.0] - 2026-11-28
+
 ### Added
 
 - Every color picker in the editor has a palette button beside it to save favourite colors and pick them again anywhere, kept with the house.
@@ -963,7 +965,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.30.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.31.0...HEAD
+[1.31.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.30.0...v1.31.0
 [1.30.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.29.0...v1.30.0
 [1.29.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.28.0...v1.29.0
 [1.28.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.27.2...v1.28.0
