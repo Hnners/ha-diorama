@@ -1,4 +1,5 @@
 import { Select } from '#/components/ui/select.tsx'
+import ColorWell from '#/editor/ColorWell.tsx'
 import { decorationKind } from '#/decoration/catalog.ts'
 import { ResetButton, SelectedHeader, Slider, Switch } from '#/editor/panel.tsx'
 import { neighboursOf } from '#/geometry/passages.ts'
@@ -21,7 +22,7 @@ import { entityName } from '#/devices/catalog.ts'
 import { PRESENCE_COLOR, PRESENCE_STRENGTH } from '#/scene/presence.ts'
 import { useFlash } from '#/lib/flash.ts'
 import { cn } from '#/lib/utils.ts'
-import { colorWell, deleteButton, field, group, groupTitle, note, plainButton, row } from '#/editor/look.ts'
+import { deleteButton, field, group, groupTitle, note, plainButton, row } from '#/editor/look.ts'
 import { faCamera, faCheck, faDoorOpen, faEye, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -286,12 +287,10 @@ export default function RoomInfo({
         {walls && onWallColor && !room.outdoor && (
           <label className={cn(row, 'grid-cols-[96px_1fr_24px]')}>
             Walls
-            <input
-              type="color"
-              className={colorWell}
+            <ColorWell
               aria-label="Wall color"
               value={room.wall_color ?? walls}
-              onChange={e => onWallColor(room.id, e.target.value)}
+              onChange={v => onWallColor(room.id, v)}
             />
             <ResetButton
               label="Walls"
@@ -324,9 +323,7 @@ export default function RoomInfo({
             {(room.outside_walls || room.outside_color) && (
               <label className={cn(row, 'grid-cols-[96px_1fr_24px]')}>
                 Outside color
-                <input
-                  type="color"
-                  className={colorWell}
+                <ColorWell
                   aria-label="Outside wall color"
                   value={
                     room.outside_color ??
@@ -336,7 +333,7 @@ export default function RoomInfo({
                         ? outside.inside
                         : OUTSIDE_WALLS[room.outside_walls].color)
                   }
-                  onChange={e => onOutsideWalls(room.id, room.outside_walls, e.target.value)}
+                  onChange={v => onOutsideWalls(room.id, room.outside_walls, v)}
                 />
                 <ResetButton
                   label="Outside color"
@@ -436,14 +433,10 @@ export default function RoomInfo({
               </label>
               <label className={cn(row, 'grid-cols-[96px_1fr_24px]')}>
                 Color
-                <input
-                  type="color"
-                  className={colorWell}
+                <ColorWell
                   aria-label="Fence color"
                   value={room.fence?.color ?? FENCE_COLOR}
-                  onChange={e =>
-                    onFence(room.id, { heights: room.fence?.heights ?? [], ...room.fence, color: e.target.value })
-                  }
+                  onChange={v => onFence(room.id, { heights: room.fence?.heights ?? [], ...room.fence, color: v })}
                 />
                 <ResetButton
                   label="Fence color"
@@ -484,12 +477,10 @@ export default function RoomInfo({
                       <span className="truncate">{label}</span>
                       <span className="text-label-2 text-[11px] tabular-nums">{length.toFixed(2)} m</span>
                     </span>
-                    <input
-                      type="color"
-                      className={colorWell}
+                    <ColorWell
                       aria-label={`${label} wall color`}
                       value={own ?? room.wall_color ?? walls}
-                      onChange={e => set(e.target.value)}
+                      onChange={v => set(v)}
                     />
                     <ResetButton label={`${label} wall`} changed={own !== undefined} onReset={() => set(undefined)} />
                   </label>
@@ -503,11 +494,9 @@ export default function RoomInfo({
           <>
             <label className={cn(row, 'grid-cols-[96px_1fr_24px]')}>
               Tint
-              <input
-                type="color"
-                className={colorWell}
+              <ColorWell
                 value={room.floor.color ?? FLOOR_MATERIALS[room.floor.material]?.color ?? '#ffffff'}
-                onChange={e => onFloor(room.id, { ...room.floor!, color: e.target.value })}
+                onChange={v => onFloor(room.id, { ...room.floor!, color: v })}
               />
               <ResetButton label="Tint" changed={room.floor.color !== undefined} onReset={() => resetFloor('color')} />
             </label>
@@ -532,11 +521,9 @@ export default function RoomInfo({
           <>
             <label className={cn(row, 'grid-cols-[96px_1fr_24px]')}>
               Filter
-              <input
-                type="color"
-                className={colorWell}
+              <ColorWell
                 value={presence.color ?? PRESENCE_COLOR}
-                onChange={e => onPresence(room.id, { ...presence, color: e.target.value })}
+                onChange={v => onPresence(room.id, { ...presence, color: v })}
               />
               <ResetButton
                 label="Filter"

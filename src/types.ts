@@ -299,6 +299,8 @@ export type WallsConfig = {
 
 export type CardConfig = {
   type: string
+  // Colors saved as favourites, offered by every color well in the editor.
+  palette?: string[]
   // The floors of the home, for a home of more than one. Without them, or
   // with one, every room is on the same floor.
   floors?: FloorConfig[]

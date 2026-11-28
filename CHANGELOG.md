@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- Every color picker in the editor has a palette button beside it to save favourite colors and pick them again anywhere, kept with the house.
+
 ## [1.30.0] - 2026-11-28
 
 ### Added

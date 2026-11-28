@@ -1,8 +1,9 @@
 import { DECORATION_KINDS } from '#/decoration/catalog.ts'
+import ColorWell from '#/editor/ColorWell.tsx'
 import { FAMILY_LABELS } from '#/decoration/icons.ts'
 import { MODEL_COLOR } from '#/decoration/models.ts'
 import { heavyNote, sizeNote } from '#/editor/importModel.ts'
-import { colorWell, field, group, groupTitle, note, plainButton, row } from '#/editor/look.ts'
+import { field, group, groupTitle, note, plainButton, row } from '#/editor/look.ts'
 import { ResetButton, Slider } from '#/editor/panel.tsx'
 import { simplifyModel, type Simplified } from '#/editor/simplify.ts'
 import { Select } from '#/components/ui/select.tsx'
@@ -141,12 +142,10 @@ export default function ModelSettings({ id, model, onUpdateModel, full = false }
                         }
                       />
                       {mode === 'own' ? (
-                        <input
-                          type="color"
-                          className={colorWell}
+                        <ColorWell
                           aria-label={`${part.name} glow`}
-                          value={set}
-                          onChange={e => setGlowColor(e.target.value)}
+                          value={set ?? '#ffffff'}
+                          onChange={v => setGlowColor(v)}
                         />
                       ) : (
                         <span />
@@ -209,12 +208,10 @@ function StartingLook({ id, model, onUpdateModel }: Props) {
             <span className="truncate" title={part.name}>
               {part.name}
             </span>
-            <input
-              type="color"
-              className={colorWell}
+            <ColorWell
               aria-label={`${part.name} color`}
               value={own ?? MODEL_COLOR}
-              onChange={e => onUpdateModel(id, { colors: { ...model.colors, [part.name]: e.target.value } })}
+              onChange={v => onUpdateModel(id, { colors: { ...model.colors, [part.name]: v } })}
             />
             <ResetButton
               label={part.name}
