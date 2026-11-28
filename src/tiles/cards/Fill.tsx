@@ -306,6 +306,7 @@ export function FillTile({
             glow={ahead ? glow : undefined}
             state={state}
             controls={controls}
+            power={!readOnly}
           />
         </div>
         <div className="dio-fill-band-ink">
@@ -318,6 +319,7 @@ export function FillTile({
             accent={accent}
             state={state}
             controls={controls}
+            power={!readOnly}
           />
         </div>
       </div>
@@ -347,6 +349,7 @@ export function FillTile({
         state={state}
         onTap={onTap}
         controls={controls}
+        power={!readOnly}
       />
       {!readOnly && <StepTicks step={step} />}
       {!readOnly && (
@@ -367,6 +370,7 @@ export function FillTile({
           glow={glow}
           state={state}
           controls={controls}
+          power={!readOnly}
         />
         {!readOnly && <StepTicks step={step} />}
         {!readOnly && (

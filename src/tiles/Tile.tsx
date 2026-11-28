@@ -4,6 +4,7 @@ import { addsRow, besideIcon, Feature, featureState, isWide } from '#/tiles/feat
 import type { Preview } from '#/tiles/features/parts.tsx'
 import { useTileGestures } from '#/tiles/gestures.ts'
 import type { TileConfig } from '#/tiles/host.tsx'
+import { Control } from '#/tiles/Control.tsx'
 import { Icon } from '#/tiles/Icon.tsx'
 import { defaultIcon } from '#/tiles/icons.ts'
 import type { EntityState } from '#/types.ts'
@@ -38,6 +39,10 @@ type Props = {
   state: ReactNode
   // What a tap does when the config sets no tap_action.
   onTap?: () => void
+  // A power button in the corner that does what a tap does, as the S.I.M.S.
+  // app puts on every widget that turns something on and off, where a tap
+  // opens the device's details instead. Left out, it follows the role.
+  power?: boolean
   // A switch says whether it is on to a screen reader. A button says it
   // only when it stays pressed, like a cover that is open.
   role?: 'button' | 'switch'
@@ -76,8 +81,7 @@ function useFits(enabled: boolean) {
     const box = ref.current
     const top = box?.parentElement
     const icon = top?.firstElementChild
-    const settle = (next: Fit) =>
-      setFit(fit => (fit.kind === next.kind && fit.size === next.size ? fit : next))
+    const settle = (next: Fit) => setFit(fit => (fit.kind === next.kind && fit.size === next.size ? fit : next))
     const check = () => {
       if (!enabled || !box || !top || !(icon instanceof HTMLElement)) return settle(ALL)
       // The width the buttons need at their own size, whatever they are
@@ -172,14 +176,22 @@ export function Tile({
   controls,
   aside,
   unknownIsUnavailable = true,
+  power,
 }: Props) {
   const unavailable = !entity || entity.state === 'unavailable' || (unknownIsUnavailable && entity.state === 'unknown')
+  // In the app a tap opens the device's details, unless the widget says
+  // otherwise, and a switch gets a power button for what a tap did.
+  const app = inApp()
+  const powered = app && (power ?? role === 'switch') && !unavailable && !config.tap_action
+  const details = () => moreInfo(env.host, config.entity)
   const { pressed, handlers } = useTileGestures({
     haptics: config.haptic !== false,
     onTap:
-      unavailable || (!onTap && !config.tap_action)
-        ? undefined
-        : () => runAction(env, config.tap_action, () => onTap?.()),
+      app && !config.tap_action && (powered || toggles)
+        ? details
+        : unavailable || (!onTap && !config.tap_action)
+          ? undefined
+          : () => runAction(env, config.tap_action, () => onTap?.()),
     onHold: () => runAction(env, config.hold_action, () => moreInfo(env.host, config.entity)),
   })
   // Where a feature beside the icon is being moved to, shown on the tile
@@ -198,12 +210,22 @@ export function Tile({
   }, [preview])
   const beside = besideIcon(config.feature) && !unavailable
   const wide = isWide(config, entity)
-  const [corner, fit] = useFits(!beside && !!controls && !unavailable)
+  const hasCorner = !!controls || (inApp() && (power ?? role === 'switch') && !config.tap_action)
+  const [cornerBox, fit] = useFits(!beside && hasCorner && !unavailable)
   const [besideBox, makesWay] = useMakesWay(beside)
   const said = (active && !unavailable && featureState(config.feature, entity!)) || state
   const shown = unavailable ? 'Unavailable' : preview ? preview.state : (config.state_text ?? said)
   const name = entityName(config, entity)
   const on = active && !unavailable
+  const powerButton = powered ? <PowerButton key="power" on={on && !looksOff} onPress={() => onTap?.()} /> : null
+  const corner = powerButton ? (
+    <>
+      {powerButton}
+      {controls}
+    </>
+  ) : (
+    controls
+  )
   const text = (
     <div className="dio-text">
       <div className="dio-name">{name}</div>
@@ -257,15 +279,15 @@ export function Tile({
             <Feature env={env} config={config} entity={entity!} onPreview={setPreview} />
           </div>
         ) : (
-          controls &&
+          corner &&
           !unavailable && (
             <div
-              ref={corner}
+              ref={cornerBox}
               className="dio-controls"
               data-crowded={fit.kind === 'crowded' || undefined}
               style={fit.kind === 'crowded' ? ({ '--_control': `${fit.size}px` } as CSSProperties) : undefined}
             >
-              {controls}
+              {corner}
             </div>
           )
         )}
@@ -284,6 +306,23 @@ export function Tile({
         </div>
       )}
     </div>
+  )
+}
+
+// Whether the tile is on the S.I.M.S. app's own page.
+const inApp = () => document.documentElement.hasAttribute('data-sims-app')
+
+// The power button the app puts in the corner of a widget that switches
+// something on and off. Lit in the widget's color while it is on.
+function PowerButton({ on, onPress }: { on: boolean; onPress: () => void }) {
+  return (
+    <Control
+      icon="ph:power"
+      label={on ? 'Turn off' : 'Turn on'}
+      className={cn('dio-power', on && 'dio-power-on')}
+      filled={on}
+      onPress={onPress}
+    />
   )
 }
 

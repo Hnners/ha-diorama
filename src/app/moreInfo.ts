@@ -99,11 +99,18 @@ function buttonsFor(entity: EntityState): Button[] {
 
 let current: { hass: HomeAssistant; id: string } | null = null
 
+// What counts as on, for the glow and the switch.
+const isOn = (entity: EntityState) =>
+  !['off', 'unavailable', 'unknown', 'closed', 'locked', 'idle', 'standby', 'docked', 'paused'].includes(
+    entity.state,
+  ) && entity.state !== '0'
+
 function draw() {
   if (!current) return
   const { hass, id } = current
   const entity = hass.states[id]
   const box = dialog()
+  box.toggleAttribute('data-on', !!entity && isOn(entity))
   if (!entity) {
     box.innerHTML = `<div class="modal-head"><h2 id="more-info-title">${esc(id)}</h2><button type="button" class="icon-btn" data-close aria-label="Close">✕</button></div><div class="modal-body"><p class="muted">This device is not in Home Assistant any more.</p></div>`
     return
@@ -134,7 +141,7 @@ function draw() {
     .filter(key => !HIDDEN.has(key) && entity.attributes[key] !== null && typeof entity.attributes[key] !== 'object')
     .map(key => `<tr><th>${esc(key.replace(/_/g, ' '))}</th><td>${esc(formatAttribute(entity, key))}</td></tr>`)
     .join('')
-  box.innerHTML = `
+  const html = `
     <div class="modal-head">
       <div class="modal-title">
         <span class="eyebrow mono">${esc(domain.replace(/_/g, ' '))}</span>
@@ -153,6 +160,48 @@ function draw() {
       ${buttons ? `<div class="row">${buttons}</div>` : ''}
       ${attributes ? `<table class="attrs">${attributes}</table>` : ''}
     </div>`
+  // Drawn afresh when it opens on a device, and after that changed in
+  // place, so the switch slides and the state flips rather than jumping.
+  if (box.dataset.entity !== id || !box.querySelector('.modal-body')) {
+    box.dataset.entity = id
+    box.innerHTML = html
+    return
+  }
+  const next = document.createElement('div')
+  next.innerHTML = html
+  const state = box.querySelector<HTMLElement>('.state-big')
+  const nextState = next.querySelector<HTMLElement>('.state-big')
+  if (state && nextState && state.textContent !== nextState.textContent) {
+    state.textContent = nextState.textContent
+    state.classList.remove('flip')
+    void state.offsetWidth
+    state.classList.add('flip')
+  }
+  const since = box.querySelector('.state-row .muted')
+  const nextSince = next.querySelector('.state-row .muted')
+  if (since && nextSince) since.textContent = nextSince.textContent
+  const flip = box.querySelector<HTMLElement>('[data-toggle]')
+  const nextFlip = next.querySelector<HTMLElement>('[data-toggle]')
+  if (flip && nextFlip) {
+    flip.setAttribute('aria-checked', nextFlip.getAttribute('aria-checked')!)
+    flip.setAttribute('aria-label', nextFlip.getAttribute('aria-label')!)
+  }
+  // The rest below the state, swapped only where it changed.
+  const body = box.querySelector('.modal-body')!
+  const nextBody = next.querySelector('.modal-body')!
+  const rest = (el: Element) => [...el.children].filter(child => !child.classList.contains('state-row'))
+  const now = rest(body)
+  const then = rest(nextBody)
+  if (now.length !== then.length || now.some((child, i) => child.tagName !== then[i].tagName)) {
+    now.forEach(child => child.remove())
+    body.append(...then)
+  } else
+    now.forEach((child, i) => {
+      if (child.outerHTML !== then[i].outerHTML) child.replaceWith(then[i])
+    })
+  const title = box.querySelector('#more-info-title')
+  const nextTitle = next.querySelector('#more-info-title')
+  if (title && nextTitle && title.textContent !== nextTitle.textContent) title.textContent = nextTitle.textContent
 }
 
 function call(service: string, data: Record<string, unknown> = {}) {
@@ -169,7 +218,12 @@ function wire() {
   box.addEventListener('click', event => {
     const target = event.target as HTMLElement
     if (target === box || target.closest('[data-close]')) return box.close()
-    if (target.closest('[data-toggle]')) {
+    const flip = target.closest<HTMLElement>('[data-toggle]')
+    if (flip) {
+      // Slid over straight away, and put right when Home Assistant answers.
+      const on = flip.getAttribute('aria-checked') !== 'true'
+      flip.setAttribute('aria-checked', String(on))
+      box.toggleAttribute('data-on', on)
       const [domain] = current!.id.split('.', 1)
       call(`${domain === 'light' || domain === 'switch' || domain === 'fan' ? domain : 'homeassistant'}.toggle`)
     }
@@ -185,7 +239,10 @@ function wire() {
     const label = input?.closest('label')?.querySelector('b')
     if (input && label) label.textContent = `${input.value}%`
   })
-  box.addEventListener('close', () => (current = null))
+  box.addEventListener('close', () => {
+    current = null
+    delete box.dataset.entity
+  })
 }
 
 export function openMoreInfo(hass: HomeAssistant, id: string) {

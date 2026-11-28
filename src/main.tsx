@@ -316,7 +316,9 @@ class DioramaCard extends ReactHost<CardConfig> {
   // In a sections view with a set number of rows, the diorama fills the
   // height the grid gives it rather than keeping its shape and spilling out.
   private shaped(config: CardConfig) {
-    const fit = !inPanelView(this) && !!closestClass(this, 'fit-rows')
+    // The S.I.M.S. app has the house fill the window below its header.
+    const fit =
+      document.documentElement.hasAttribute('data-sims-app') || (!inPanelView(this) && !!closestClass(this, 'fit-rows'))
     this.style.display = fit ? 'block' : ''
     this.style.height = fit ? '100%' : ''
     if (!fit) return config
@@ -326,7 +328,7 @@ class DioramaCard extends ReactHost<CardConfig> {
 
   protected view() {
     if (this.picked) return <img src={pickerPicture} alt="" className="block h-full min-h-40 w-full object-cover" />
-    if (this._config!.side_panel) return <WithSidePanel hass={this._hass} config={this._config!} />
+    if (this._config!.side_panel) return <WithSidePanel hass={this._hass} config={this.shaped(this._config!)} />
     return (
       <Card
         hass={this._hass}

@@ -310,6 +310,7 @@ export default function Dial({ env, config }: { env: TileEnv; config: TileConfig
     state: formatState(env.hass, entity),
     controls,
     toggles,
+    power: toggles,
     active: on,
     accent: m?.color,
     glow: on && m && m.color !== 'currentColor' ? m.color : undefined,
