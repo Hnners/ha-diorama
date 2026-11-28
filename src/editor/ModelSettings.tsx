@@ -1,4 +1,4 @@
-import { deviceKinds } from '#/decoration/catalog.ts'
+import { DECORATION_KINDS } from '#/decoration/catalog.ts'
 import { FAMILY_LABELS } from '#/decoration/icons.ts'
 import { MODEL_COLOR } from '#/decoration/models.ts'
 import { heavyNote, sizeNote } from '#/editor/importModel.ts'
@@ -69,25 +69,29 @@ export default function ModelSettings({ id, model, onUpdateModel, full = false }
             onChange={v => onUpdateModel(id, { mount: v as ModelConfig['mount'] })}
           />
         </label>
-        {/* The built-in piece the model stands in for. It takes that piece's
-            devices, icon, widget and controls. */}
+        {/* The built-in piece the model stands in for: its category. It
+            takes that piece's devices, icon, widget and controls, hangs the
+            way it does, and is offered as a style of it. */}
         <label className={cn(row, 'grid-cols-[96px_1fr]')}>
-          Works as
+          Category
           <Select
-            aria-label="Works as"
+            aria-label="Category"
             value={model.acts_as ?? ''}
-            placeholder="Just furniture"
+            placeholder="None"
             searchPlaceholder="Search pieces"
             options={[
-              { value: '', label: 'Just furniture' },
-              ...deviceKinds().map(k => ({
+              { value: '', label: 'None' },
+              ...DECORATION_KINDS.map(k => ({
                 value: k.id,
                 label: k.label,
                 area: FAMILY_LABELS[k.family] ?? k.family,
                 keywords: FAMILY_LABELS[k.family],
               })),
             ]}
-            onChange={v => onUpdateModel(id, { acts_as: v || undefined })}
+            onChange={v => {
+              const like = v ? DECORATION_KINDS.find(k => k.id === v) : undefined
+              onUpdateModel(id, like ? { acts_as: v, mount: like.mount } : { acts_as: undefined })
+            }}
           />
         </label>
         {/* The parts that light up, like a lamp's shade. Ticking one lets
@@ -155,10 +159,12 @@ export default function ModelSettings({ id, model, onUpdateModel, full = false }
           </div>
         </div>
         <p className={note}>
-          Every piece of this model changes with its name, mount, what it works as and its glowing parts. A glowing part
-          lights up in the light’s color as Home Assistant sets it, in its own color, or in one chosen for it. Working
-          as a built-in piece, it is offered the same devices and shows the same icon, widget and controls. A model with
-          a glowing part and nothing else set works as a lamp.{full ? '' : ` ${sizeNote(model)}`}
+          Every piece of this model changes with its name, mount, category and its glowing parts. Put in a category, it
+          hangs the way that piece does and shows in the Style list of every piece of it, so a ceiling light already
+          placed can be switched to it. A glowing part lights up in the light’s color as Home Assistant sets it, in its
+          own color, or in one chosen for it. Working as a built-in piece, it is offered the same devices and shows the
+          same icon, widget and controls. A model with a glowing part and nothing else set works as a lamp.
+          {full ? '' : ` ${sizeNote(model)}`}
         </p>
         {!full && heavy && <p className="text-xs leading-snug text-[var(--warning-color,#ffa600)]">{heavy}</p>}
       </div>

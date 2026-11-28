@@ -1,5 +1,6 @@
 import {
   adjustedCount,
+  behaviour,
   countValue,
   cycleLength,
   DECORATION_KINDS,
@@ -211,6 +212,11 @@ export default function DecorationPanel({
   }
   const item = selected ? decorations.find(d => d.id === selected) : undefined
   const kind = item ? decorationKind(item.kind) : undefined
+  // The built-in piece it is or works as, and the models of mine filed
+  // under it, which its style can switch between.
+  const category = kind ? behaviour(kind) : undefined
+  const sameCategory =
+    category && category.family !== MODEL_FAMILY ? modelKinds(models).filter(k => k.like === category.id) : []
 
   const editingModel = editing ? models?.[editing] : undefined
   if (!item && editing && editingModel) {
@@ -352,27 +358,48 @@ export default function DecorationPanel({
         <div className={group}>
           {/* Which style of the kind this one is. A pendant is listed once in
             the catalog and says here which of them it is. */}
-          {kind.variants && kind.variants.length > 1 && (
+          {/* My models put in the same category show here too, so a ceiling
+            light placed from the catalog can become one of them and back. */}
+          {isModelKind(kind) || (kind.variants && kind.variants.length > 1) || sameCategory.length > 0 ? (
             <label className={cn(row, 'grid-cols-[96px_1fr_24px]')}>
               Style
               <Select
                 aria-label="Style"
-                value={decorationVariant(kind, item.variant)?.id ?? ''}
-                options={kind.variants.map(v => ({ value: v.id, label: v.label }))}
-                onChange={v => onUpdate(item.id, { variant: v, params: withoutStyleDefaults(kind, item.params, v) })}
+                value={isModelKind(kind) ? kind.id : (decorationVariant(kind, item.variant)?.id ?? '')}
+                options={[
+                  ...(category!.variants && category!.variants.length > 0
+                    ? category!.variants.map(v => ({ value: v.id, label: v.label, area: category!.label }))
+                    : category !== kind
+                      ? [{ value: '', label: category!.label, area: category!.label }]
+                      : []),
+                  ...sameCategory.map(k => ({ value: k.id, label: k.label, area: 'My models' })),
+                ]}
+                onChange={v => {
+                  if (v.startsWith('model:')) {
+                    // The model takes the piece's place, keeping where it
+                    // stands and what it stands for, at its own size.
+                    if (v !== item.kind) onUpdate(item.id, { kind: v, variant: undefined, params: undefined })
+                  } else if (kind !== category)
+                    onUpdate(item.id, { kind: category!.id, variant: v || undefined, params: undefined })
+                  else onUpdate(item.id, { variant: v, params: withoutStyleDefaults(kind, item.params, v) })
+                }}
               />
               <ResetButton
                 label="Style"
-                changed={decorationVariant(kind, item.variant)?.id !== kind.variants[0].id}
+                changed={kind !== category || decorationVariant(kind, item.variant)?.id !== kind.variants?.[0]?.id}
                 onReset={() =>
-                  onUpdate(item.id, {
-                    variant: undefined,
-                    params: withoutStyleDefaults(kind, item.params, kind.variants![0].id),
-                  })
+                  kind !== category
+                    ? onUpdate(item.id, { kind: category!.id, variant: undefined, params: undefined })
+                    : onUpdate(item.id, {
+                        variant: undefined,
+                        params: kind.variants?.[0]
+                          ? withoutStyleDefaults(kind, item.params, kind.variants[0].id)
+                          : undefined,
+                      })
                 }
               />
             </label>
-          )}
+          ) : null}
 
           {styleParams(kind, item.variant, item.params).map(p => {
             // Read through the catalog, so a size saved before this slider's
