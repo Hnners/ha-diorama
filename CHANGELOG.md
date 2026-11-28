@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.26.0] - 2026-11-28
+
 ### Added
 
 - In the S.I.M.S. app every widget that switches something has a power button that turns it on and off, and a tap anywhere else on a widget opens its details.
@@ -909,7 +911,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.25.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.26.0...HEAD
+[1.26.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.25.0...v1.26.0
 [1.25.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.24.1...v1.25.0
 [1.24.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.24.0...v1.24.1
 [1.24.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.23.0...v1.24.0
