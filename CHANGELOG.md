@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Changed
+
+- The S.I.M.S. app uses the full width of the window on wide screens.
+
 ## [1.26.1] - 2026-11-28
 
 ### Fixed
