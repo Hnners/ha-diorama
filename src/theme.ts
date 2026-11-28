@@ -35,6 +35,11 @@ export const OUTSIDE_WALLS = {
   wood: { label: 'Wood panelling', color: CLADDING_COLOR },
 } as const
 export type OutsideWalls = keyof typeof OUTSIDE_WALLS
+// A garden fence: how tall it stands when first put up, and its boards,
+// stained a touch darker than a shed.
+export const FENCE_HEIGHT_M = 1.8
+export const FENCE_SLAT_M = 0.125
+export const FENCE_COLOR = '#a87b55'
 // Rounding of the room corners, seen from above: the same as the edge's, and
 // like it only for the corners that touch no other room.
 export const ROOM_CORNER_RADIUS_M = ROOM_SLAB_EDGE_RADIUS_M
