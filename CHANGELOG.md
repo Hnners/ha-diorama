@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.31.1] - 2026-11-28
+
 ### Changed
 
 - Fences sink on the sides facing you and rise at the back as the view turns, the same as the house walls.
@@ -969,7 +971,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.31.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.31.1...HEAD
+[1.31.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.31.0...v1.31.1
 [1.31.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.30.0...v1.31.0
 [1.30.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.29.0...v1.30.0
 [1.29.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.28.0...v1.29.0
