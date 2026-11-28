@@ -1,8 +1,11 @@
 import { SLAB_BEVEL_SEGMENTS, SLAB_CURVE_SEGMENTS } from '#/constants.ts'
 import SurfaceMaterial from '#/scene/SurfaceMaterial.tsx'
+import { fenceGeometry as makeFence } from '#/geometry/fence.ts'
 import type { SurfaceKind } from '#/materials/textures.ts'
 import {
   BRICK_COLOR,
+  FENCE_COLOR,
+  FENCE_SLAT_M,
   FLOOR_MATERIALS,
   FLOOR_PATTERN_SHIFT_M,
   OUTSIDE_WALLS,
@@ -151,6 +154,25 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
         : OUTSIDE_WALLS[room.outside_walls].color
       : (walls?.outsideColor ?? BRICK_COLOR))
 
+  // A fence round an outside space, on the edges it is set on, kept off
+  // wherever a room of the home runs along the edge.
+  const fenceGeometry = useMemo(() => {
+    const heights = room.fence?.heights
+    if (!heights?.some(h => (h ?? 0) > 0)) return null
+    const n = room.points.length
+    const flipped = signedArea(room.points) < 0
+    // In the order the outline is built in, as for the walls' colors.
+    const built = Array.from({ length: n }, (_, k) => heights[flipped ? (((n - 2 - k) % n) + n) % n : k] ?? 0)
+    const homeRooms = rooms
+      .filter(
+        o =>
+          o.id !== room.id && !o.outdoor && (o.storey ?? 0) === storey && (o.floor_id ?? '') === (room.floor_id ?? ''),
+      )
+      .map(o => inset(ensureCounterClockwise(o.points), gap / 2))
+    return makeFence(inset(ensureCounterClockwise(room.points), gap / 2), built, homeRooms, gap)
+  }, [room.fence?.heights, room.points, room.id, room.floor_id, rooms, storey, gap])
+  useEffect(() => () => fenceGeometry?.dispose(), [fenceGeometry])
+
   const floor = room.floor ? FLOOR_MATERIALS[room.floor.material] : undefined
   // The presence filter fades over the floor and away again.
   const shown = useEased(occupied ? 1 : 0, 4)
@@ -195,6 +217,15 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
               color={outsideColor}
             />
           )}
+        </mesh>
+      )}
+      {fenceGeometry && (
+        <mesh geometry={fenceGeometry} castShadow receiveShadow raycast={() => null}>
+          <SurfaceMaterial
+            kind="cladding"
+            color={room.fence?.color ?? FENCE_COLOR}
+            scale={(room.fence?.slat ?? FENCE_SLAT_M) / FENCE_SLAT_M}
+          />
         </mesh>
       )}
     </mesh>

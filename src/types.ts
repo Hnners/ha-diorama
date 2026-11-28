@@ -143,6 +143,11 @@ export type RoomConfig = {
   // or timber panelling, as for a garden shed, and the color it is tinted.
   outside_walls?: 'brick' | 'plain' | 'wood'
   outside_color?: string
+  // A timber fence round an outside space: its height in meters on each
+  // edge it stands on, by edge as for `wall_colors`, nothing for none. It
+  // gives way to the home's walls where a room runs along the edge.
+  // `slat` is how tall each board is, and `color` the stain.
+  fence?: { heights: (number | null)[]; slat?: number; color?: string }
 }
 
 // The side panel's section for the whole home.

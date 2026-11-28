@@ -836,6 +836,16 @@ export default function Editor({ hass, config, onChange, onSave, startOpen, onCl
       }),
     )
 
+  // The fence round an outside space, or none.
+  const setFence = (roomId: string, fence: RoomConfig['fence']) =>
+    commit(
+      rooms.map(r => {
+        if (r.id !== roomId) return r
+        const { fence: _dropped, ...rest } = r
+        return fence ? { ...rest, fence } : rest
+      }),
+    )
+
   // A room as an outside space, with no walls, or a room again.
   const setOutdoor = (roomId: string, outdoor: boolean) =>
     commit(
@@ -1440,6 +1450,7 @@ export default function Editor({ hass, config, onChange, onSave, startOpen, onCl
           homeWalls ? { kind: homeWalls.outside, color: homeWalls.outsideColor, inside: homeWalls.color } : undefined
         }
         onOutsideWalls={setOutsideWalls}
+        onFence={setFence}
         decorations={floorDecorations}
         onArrow={setArrow}
         onSaveCamera={saveRoomCamera}

@@ -5,6 +5,9 @@ import { neighboursOf } from '#/geometry/passages.ts'
 import {
   EDITOR_TINT_COLOR,
   FLOOR_MATERIALS,
+  FENCE_COLOR,
+  FENCE_HEIGHT_M,
+  FENCE_SLAT_M,
   OUTSIDE_WALLS,
   type OutsideWalls,
   ROOM_COLORS,
@@ -53,6 +56,8 @@ type Props = {
   // The home's outside walls and their color, and setting this room's own.
   outside?: { kind: OutsideWalls; color: string; inside: string }
   onOutsideWalls?: (roomId: string, kind: OutsideWalls | undefined, color: string | undefined) => void
+  // The fence round an outside space, or none.
+  onFence?: (roomId: string, fence: RoomConfig['fence']) => void
   // Every piece of the home, to tell which rooms beside this one a door
   // leads into.
   decorations: DecorationConfig[]
@@ -130,6 +135,7 @@ export default function RoomInfo({
   onOutdoor,
   outside,
   onOutsideWalls,
+  onFence,
   decorations,
   onArrow,
   onSaveCamera,
@@ -340,6 +346,117 @@ export default function RoomInfo({
               </label>
             )}
           </>
+        )}
+        {/* A fence round an outside space, on the sides picked, each as
+            high as it is set. Where the home's walls run along a side they
+            stand in its place. */}
+        {room.outdoor && onFence && (
+          <details className="group/fence" open={!!room.fence}>
+            <summary className={cn(row, 'cursor-pointer list-none grid-cols-[1fr_auto] text-[13px]')}>
+              Fence
+              <span className="text-label-2 text-xs">
+                {(() => {
+                  const on = (room.fence?.heights ?? []).filter(h => (h ?? 0) > 0).length
+                  return on ? `${on} of ${room.points.length} sides` : 'None'
+                })()}
+              </span>
+            </summary>
+            <div className="flex flex-col gap-1 pt-1">
+              {wallSides(room.points).map(({ label, length }, i) => {
+                const height = room.fence?.heights?.[i] ?? 0
+                const set = (h: number | undefined) => {
+                  const heights = Array.from({ length: room.points.length }, (_, k) => room.fence?.heights?.[k] ?? null)
+                  heights[i] = h ?? null
+                  const { heights: _old, ...rest } = room.fence ?? { heights: [] }
+                  onFence(room.id, heights.some(Boolean) || Object.keys(rest).length ? { ...rest, heights } : undefined)
+                }
+                return (
+                  <div key={i} className="flex flex-col gap-1">
+                    <label className={cn(row, 'cursor-pointer grid-cols-[1fr_auto]')}>
+                      <span className="flex min-w-0 flex-col leading-tight">
+                        <span className="truncate">{label}</span>
+                        <span className="text-label-2 text-[11px] tabular-nums">{length.toFixed(2)} m</span>
+                      </span>
+                      <Switch
+                        checked={height > 0}
+                        accent={accent}
+                        label={`Fence along ${label}`}
+                        onChange={on => set(on ? FENCE_HEIGHT_M : undefined)}
+                      />
+                    </label>
+                    {height > 0 && (
+                      <label className={cn(row, 'grid-cols-[96px_1fr_56px_24px]')}>
+                        Height
+                        <Slider
+                          min={0.3}
+                          max={2.5}
+                          step={0.05}
+                          value={height}
+                          aria-label={`${label} fence height`}
+                          onChange={e => set(Number(e.target.value))}
+                        />
+                        <span className="text-label-2 text-right text-xs tabular-nums">{height.toFixed(2)} m</span>
+                        <ResetButton
+                          label={`${label} fence height`}
+                          changed={height !== FENCE_HEIGHT_M}
+                          onReset={() => set(FENCE_HEIGHT_M)}
+                        />
+                      </label>
+                    )}
+                  </div>
+                )
+              })}
+              <label className={cn(row, 'grid-cols-[96px_1fr_56px_24px]')}>
+                Slat width
+                <Slider
+                  min={0.05}
+                  max={0.3}
+                  step={0.005}
+                  value={room.fence?.slat ?? FENCE_SLAT_M}
+                  aria-label="Fence slat width"
+                  onChange={e =>
+                    onFence(room.id, {
+                      heights: room.fence?.heights ?? [],
+                      ...room.fence,
+                      slat: Number(e.target.value),
+                    })
+                  }
+                />
+                <span className="text-label-2 text-right text-xs tabular-nums">
+                  {Math.round((room.fence?.slat ?? FENCE_SLAT_M) * 100)} cm
+                </span>
+                <ResetButton
+                  label="Fence slat width"
+                  changed={room.fence?.slat !== undefined}
+                  onReset={() => {
+                    const { slat: _slat, ...rest } = room.fence ?? { heights: [] }
+                    onFence(room.id, rest)
+                  }}
+                />
+              </label>
+              <label className={cn(row, 'grid-cols-[96px_1fr_24px]')}>
+                Color
+                <input
+                  type="color"
+                  className={colorWell}
+                  aria-label="Fence color"
+                  value={room.fence?.color ?? FENCE_COLOR}
+                  onChange={e =>
+                    onFence(room.id, { heights: room.fence?.heights ?? [], ...room.fence, color: e.target.value })
+                  }
+                />
+                <ResetButton
+                  label="Fence color"
+                  changed={room.fence?.color !== undefined}
+                  onReset={() => {
+                    const { color: _color, ...rest } = room.fence ?? { heights: [] }
+                    onFence(room.id, rest)
+                  }}
+                />
+              </label>
+              <p className={note}>Where a room of the home runs along a side, its wall stands there instead.</p>
+            </div>
+          </details>
         )}
         {/* Each wall on its own, named for the side of the room it is on. A
             wall left alone takes the room's color above. */}

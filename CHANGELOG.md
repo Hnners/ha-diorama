@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- Outside spaces can have a timber fence on any of their sides, each side its own height, with the slat width and stain set in the space's settings; where the house runs along a side its wall stands there instead.
+
 ## [1.28.0] - 2026-11-28
 
 ### Added
