@@ -91,7 +91,7 @@ export const DAYLIGHT_EASE_S = 1.2
 // Editor
 
 // Grid step for snapping.
-export const EDITOR_GRID_M = 0.2
+export const EDITOR_GRID_M = 0.1
 // The step instead while Shift is held, for drawing and placing to the
 // centimeter.
 export const EDITOR_FINE_GRID_M = 0.01
