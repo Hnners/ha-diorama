@@ -1,4 +1,5 @@
 import { behaviour, itemLevels, type DecorationKind } from '#/decoration/catalog.ts'
+import ColorWell from '#/editor/ColorWell.tsx'
 import { Slider, Switch } from '#/editor/panel.tsx'
 import {
   isPositioned,
@@ -10,7 +11,7 @@ import {
   type Tint,
   type TryState,
 } from '#/editor/tryState.ts'
-import { colorWell, group, groupTitle, note, plainButton, row } from '#/editor/look.ts'
+import { group, groupTitle, note, plainButton, row } from '#/editor/look.ts'
 import { cn } from '#/lib/utils.ts'
 import { faHandPointer } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -170,12 +171,7 @@ export default function TrySection({ kind, state, start, accent, onChange }: Pro
           {s.tint?.mode === 'color' && (
             <label className={cn(row, 'grid-cols-[96px_1fr]')}>
               Color
-              <input
-                type="color"
-                className={colorWell}
-                value={s.tint.hex}
-                onChange={e => set({ tint: { mode: 'color', hex: e.target.value } })}
-              />
+              <ColorWell value={s.tint.hex} onChange={v => set({ tint: { mode: 'color', hex: v } })} />
             </label>
           )}
         </>

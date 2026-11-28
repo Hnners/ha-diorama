@@ -15,6 +15,7 @@ import {
   withoutStyleDefaults,
   type DecorationKind,
 } from '#/decoration/catalog.ts'
+import ColorWell from '#/editor/ColorWell.tsx'
 import { levelsAt, topsFor } from '#/decoration/surfaces.ts'
 import { isModelKind, MODEL_FAMILY, modelIdOf, modelKind, modelKindId, modelKinds } from '#/decoration/models.ts'
 import { importFiles, importLink } from '#/editor/importModel.ts'
@@ -39,7 +40,7 @@ import {
 import { cn } from '#/lib/utils.ts'
 import { deviceSignals, levelChannels } from '#/signals.ts'
 import { EDITOR_BOUND_COLOR, EDITOR_TINT_COLOR, LIGHT_GLOW_COLOR, ROOM_COLORS } from '#/theme.ts'
-import { colorWell, deleteButton, field, group, groupTitle, iconButton, note, plainButton, row } from '#/editor/look.ts'
+import { deleteButton, field, group, groupTitle, iconButton, note, plainButton, row } from '#/editor/look.ts'
 import type { DecorationConfig, DeviceConfig, HomeAssistant, ModelConfig, RoomConfig } from '#/types.ts'
 import { decorationIcon, FAMILY_LABELS } from '#/decoration/icons.ts'
 import {
@@ -666,11 +667,9 @@ export default function DecorationPanel({
           {Object.entries(kindColors(kind, item.variant)).map(([slot, fallback]) => (
             <label key={slot} className={cn(row, 'grid-cols-[96px_1fr_24px] capitalize')}>
               {slot}
-              <input
-                type="color"
-                className={colorWell}
+              <ColorWell
                 value={item.colors?.[slot] ?? fallback}
-                onChange={e => onUpdate(item.id, { colors: { ...item.colors, [slot]: e.target.value } })}
+                onChange={v => onUpdate(item.id, { colors: { ...item.colors, [slot]: v } })}
               />
               <ResetButton
                 label={slot}
@@ -692,13 +691,11 @@ export default function DecorationPanel({
             <p className={groupTitle}>Light</p>
             <label className={cn(row, 'grid-cols-[96px_1fr_24px]', deviceColored && 'opacity-40')}>
               Color
-              <input
-                type="color"
-                className={colorWell}
+              <ColorWell
                 aria-label="Light color"
                 disabled={deviceColored}
                 value={item.light_color ?? LIGHT_GLOW_COLOR}
-                onChange={e => onUpdate(item.id, { light_color: e.target.value })}
+                onChange={v => onUpdate(item.id, { light_color: v })}
               />
               <ResetButton
                 label="Light color"

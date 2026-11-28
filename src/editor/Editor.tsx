@@ -1,4 +1,5 @@
 import Canvas from '#/editor/Canvas.tsx'
+import { PaletteContext } from '#/editor/ColorWell.tsx'
 import CardPanel from '#/editor/CardPanel.tsx'
 import DecorationPanel from '#/editor/DecorationPanel.tsx'
 import Scene, { type CameraHandle } from '#/scene/Scene.tsx'
@@ -1498,224 +1499,243 @@ export default function Editor({ hass, config, onChange, onSave, startOpen, onCl
     />
   )
 
+  // The saved colors every color well offers, kept with the house.
+  const palette = {
+    colors: config.palette ?? [],
+    onChange: (colors: string[]) => {
+      const { palette: _old, ...rest } = config
+      onChange(colors.length ? { ...rest, palette: colors } : rest)
+    },
+  }
+
   if (fullscreen) {
     return (
-      <Overlay>
-        <div
-          data-light={hass?.themes?.darkMode === false || undefined}
-          className="dio-editor font-system flex h-full flex-col gap-3 bg-(--card-background-color) px-4 pt-3 pb-4 text-(--primary-text-color) antialiased outline-none"
-        >
-          <div className="flex h-10 items-center justify-between">
-            {toolbar}
-            <div className="flex items-center gap-2">
-              <button type="button" onClick={close} disabled={saving !== null} className={plainButton}>
-                <FontAwesomeIcon icon={faXmark} className="size-3" />
-                Close
-              </button>
-              <button type="button" onClick={save} disabled={saving !== null} className={plainButton}>
-                <FontAwesomeIcon icon={faFloppyDisk} className="size-3" />
-                {saving === 'save' ? 'Saving' : 'Save'}
-              </button>
-              <button type="button" onClick={saveAndClose} disabled={saving !== null} className={primaryButton}>
-                <FontAwesomeIcon icon={faCheck} className="size-3" />
-                {saving === 'close' ? 'Saving' : 'Save & Close'}
-              </button>
-            </div>
-          </div>
-          <div className="flex min-h-0 flex-1 gap-1">
-            <div ref={plan} className="flex min-w-0 flex-1 flex-col">
-              <div className="flex min-h-0" style={{ flex: showPreview ? 1 - previewShare : 1 }}>
-                {canvas}
+      <PaletteContext.Provider value={palette}>
+        <Overlay>
+          <div
+            data-light={hass?.themes?.darkMode === false || undefined}
+            className="dio-editor font-system flex h-full flex-col gap-3 bg-(--card-background-color) px-4 pt-3 pb-4 text-(--primary-text-color) antialiased outline-none"
+          >
+            <div className="flex h-10 items-center justify-between">
+              {toolbar}
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={close} disabled={saving !== null} className={plainButton}>
+                  <FontAwesomeIcon icon={faXmark} className="size-3" />
+                  Close
+                </button>
+                <button type="button" onClick={save} disabled={saving !== null} className={plainButton}>
+                  <FontAwesomeIcon icon={faFloppyDisk} className="size-3" />
+                  {saving === 'save' ? 'Saving' : 'Save'}
+                </button>
+                <button type="button" onClick={saveAndClose} disabled={saving !== null} className={primaryButton}>
+                  <FontAwesomeIcon icon={faCheck} className="size-3" />
+                  {saving === 'close' ? 'Saving' : 'Save & Close'}
+                </button>
               </div>
-              {showPreview && (
-                <>
-                  {/* Drag to share the column between the plan and the view. */}
-                  <div
-                    className="group flex h-4 shrink-0 cursor-row-resize touch-none items-center justify-center"
-                    onPointerDown={e => {
-                      if (e.button !== 0) return
-                      e.currentTarget.setPointerCapture(e.pointerId)
-                      previewDrag.current = {
-                        startY: e.clientY,
-                        share: previewShare,
-                        height: plan.current?.clientHeight ?? window.innerHeight,
-                      }
-                    }}
-                    onPointerMove={e => {
-                      const d = previewDrag.current
-                      if (!d || d.height <= 0) return
-                      const next = d.share - (e.clientY - d.startY) / d.height
-                      const min = EDITOR_PREVIEW_MIN_PX / d.height
-                      setPreviewShare(Math.min(Math.max(next, min), 1 - min))
-                    }}
-                    onPointerUp={e => {
-                      previewDrag.current = null
-                      e.currentTarget.releasePointerCapture(e.pointerId)
-                    }}
-                  >
-                    <span className="bg-fill-stronger group-hover:bg-label-2 h-[5px] w-10 rounded-full transition-colors" />
-                  </div>
-                  <div
-                    className="ring-separator relative min-h-0 overflow-hidden rounded-2xl ring-1"
-                    style={{ flex: previewShare, background: SCENE_BACKGROUND_CSS }}
-                  >
-                    {/* The view the card opens with: saved from where the
+            </div>
+            <div className="flex min-h-0 flex-1 gap-1">
+              <div ref={plan} className="flex min-w-0 flex-1 flex-col">
+                <div className="flex min-h-0" style={{ flex: showPreview ? 1 - previewShare : 1 }}>
+                  {canvas}
+                </div>
+                {showPreview && (
+                  <>
+                    {/* Drag to share the column between the plan and the view. */}
+                    <div
+                      className="group flex h-4 shrink-0 cursor-row-resize touch-none items-center justify-center"
+                      onPointerDown={e => {
+                        if (e.button !== 0) return
+                        e.currentTarget.setPointerCapture(e.pointerId)
+                        previewDrag.current = {
+                          startY: e.clientY,
+                          share: previewShare,
+                          height: plan.current?.clientHeight ?? window.innerHeight,
+                        }
+                      }}
+                      onPointerMove={e => {
+                        const d = previewDrag.current
+                        if (!d || d.height <= 0) return
+                        const next = d.share - (e.clientY - d.startY) / d.height
+                        const min = EDITOR_PREVIEW_MIN_PX / d.height
+                        setPreviewShare(Math.min(Math.max(next, min), 1 - min))
+                      }}
+                      onPointerUp={e => {
+                        previewDrag.current = null
+                        e.currentTarget.releasePointerCapture(e.pointerId)
+                      }}
+                    >
+                      <span className="bg-fill-stronger group-hover:bg-label-2 h-[5px] w-10 rounded-full transition-colors" />
+                    </div>
+                    <div
+                      className="ring-separator relative min-h-0 overflow-hidden rounded-2xl ring-1"
+                      style={{ flex: previewShare, background: SCENE_BACKGROUND_CSS }}
+                    >
+                      {/* The view the card opens with: saved from where the
                         camera stands, flown back to, or forgotten. Named
                         buttons in the corner, over the view. */}
-                    <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5">
-                      <PreviewButton
-                        icon={faXmark}
-                        label="Forget view"
-                        title="Forget the saved view and go back to the one the card comes with, the whole plan framed"
-                        disabled={!openingView}
-                        onClick={clearMainView}
-                      />
-                      <PreviewButton
-                        icon={faEye}
-                        label="Fly to view"
-                        title="Fly the camera to the view the card opens with"
-                        onClick={showMainView}
-                      />
-                      <PreviewButton
-                        icon={mainViewSaved ? faCheck : faCamera}
-                        label={
-                          mainViewSaved ? 'View saved' : openingView ? 'Replace opening view' : 'Save opening view'
+                      <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5">
+                        <PreviewButton
+                          icon={faXmark}
+                          label="Forget view"
+                          title="Forget the saved view and go back to the one the card comes with, the whole plan framed"
+                          disabled={!openingView}
+                          onClick={clearMainView}
+                        />
+                        <PreviewButton
+                          icon={faEye}
+                          label="Fly to view"
+                          title="Fly the camera to the view the card opens with"
+                          onClick={showMainView}
+                        />
+                        <PreviewButton
+                          icon={mainViewSaved ? faCheck : faCamera}
+                          label={
+                            mainViewSaved ? 'View saved' : openingView ? 'Replace opening view' : 'Save opening view'
+                          }
+                          title={
+                            openingView
+                              ? 'Replace the view the card opens with by where the camera stands now'
+                              : 'Open the card with the view the camera has now'
+                          }
+                          done={mainViewSaved}
+                          onClick={saveMainView}
+                        />
+                      </div>
+                      <Scene
+                        hass={home ?? hass}
+                        config={floorView({ ...config, rooms, devices, decorations, floors }, activeFloor)}
+                        floor={activeFloor}
+                        sky={hour}
+                        wheelZoom
+                        onPickDecoration={pickDecoration}
+                        cameraRef={camera}
+                        tries={tries}
+                        onTry={stepTry}
+                        onPickRoom={id => pickRoom({ roomId: id, vertex: null })}
+                        selected={
+                          selectedDecoration
+                            ? `decoration:${selectedDecoration}`
+                            : selection.roomId
+                              ? `room:${selection.roomId}`
+                              : null
                         }
-                        title={
-                          openingView
-                            ? 'Replace the view the card opens with by where the camera stands now'
-                            : 'Open the card with the view the camera has now'
-                        }
-                        done={mainViewSaved}
-                        onClick={saveMainView}
+                        onPickNothing={() => {
+                          setSelection({ roomId: null, vertex: null })
+                          setSelectedDecoration(null)
+                        }}
                       />
                     </div>
-                    <Scene
-                      hass={home ?? hass}
-                      config={floorView({ ...config, rooms, devices, decorations, floors }, activeFloor)}
-                      floor={activeFloor}
-                      sky={hour}
-                      wheelZoom
-                      onPickDecoration={pickDecoration}
-                      cameraRef={camera}
-                      tries={tries}
-                      onTry={stepTry}
-                      onPickRoom={id => pickRoom({ roomId: id, vertex: null })}
-                      selected={
-                        selectedDecoration
-                          ? `decoration:${selectedDecoration}`
-                          : selection.roomId
-                            ? `room:${selection.roomId}`
-                            : null
-                      }
-                      onPickNothing={() => {
-                        setSelection({ roomId: null, vertex: null })
-                        setSelectedDecoration(null)
-                      }}
-                    />
-                  </div>
-                </>
-              )}
+                  </>
+                )}
+              </div>
+              {/* Drag to resize the sidebar, between a minimum and half the window. */}
+              <div
+                className="group flex w-4 shrink-0 cursor-col-resize touch-none items-center justify-center"
+                onPointerDown={e => {
+                  if (e.button !== 0) return
+                  e.currentTarget.setPointerCapture(e.pointerId)
+                  sidebarDrag.current = { startX: e.clientX, width: sidebarWidth }
+                }}
+                onPointerMove={e => {
+                  const d = sidebarDrag.current
+                  if (!d) return
+                  const next = d.width - (e.clientX - d.startX)
+                  setSidebarWidth(Math.min(Math.max(next, EDITOR_SIDEBAR_MIN_PX), window.innerWidth / 2))
+                }}
+                onPointerUp={e => {
+                  sidebarDrag.current = null
+                  e.currentTarget.releasePointerCapture(e.pointerId)
+                }}
+              >
+                <span className="bg-fill-stronger group-hover:bg-label-2 h-10 w-[5px] rounded-full transition-colors" />
+              </div>
+              <div
+                ref={sidebar}
+                onScroll={e => {
+                  if (catalogShown) catalogScroll.current = e.currentTarget.scrollTop
+                }}
+                className="flex shrink-0 flex-col gap-3 overflow-y-auto pr-1 pl-1"
+                style={{ width: sidebarWidth }}
+              >
+                {roomInfo ?? panels}
+              </div>
             </div>
-            {/* Drag to resize the sidebar, between a minimum and half the window. */}
-            <div
-              className="group flex w-4 shrink-0 cursor-col-resize touch-none items-center justify-center"
-              onPointerDown={e => {
-                if (e.button !== 0) return
-                e.currentTarget.setPointerCapture(e.pointerId)
-                sidebarDrag.current = { startX: e.clientX, width: sidebarWidth }
-              }}
-              onPointerMove={e => {
-                const d = sidebarDrag.current
-                if (!d) return
-                const next = d.width - (e.clientX - d.startX)
-                setSidebarWidth(Math.min(Math.max(next, EDITOR_SIDEBAR_MIN_PX), window.innerWidth / 2))
-              }}
-              onPointerUp={e => {
-                sidebarDrag.current = null
-                e.currentTarget.releasePointerCapture(e.pointerId)
-              }}
-            >
-              <span className="bg-fill-stronger group-hover:bg-label-2 h-10 w-[5px] rounded-full transition-colors" />
-            </div>
-            <div
-              ref={sidebar}
-              onScroll={e => {
-                if (catalogShown) catalogScroll.current = e.currentTarget.scrollTop
-              }}
-              className="flex shrink-0 flex-col gap-3 overflow-y-auto pr-1 pl-1"
-              style={{ width: sidebarWidth }}
-            >
-              {roomInfo ?? panels}
-            </div>
-          </div>
-          {/* Deleting a floor with rooms on it takes a lot that cannot be
+            {/* Deleting a floor with rooms on it takes a lot that cannot be
             brought back, so it is asked in red, and only goes once the
             floor's name is typed in. */}
-          <AlertDialog danger open={doomed !== undefined} onOpenChange={open => !open && setFloorToDelete(null)}>
-            <AlertDialogHeader>
-              <FontAwesomeIcon icon={faTriangleExclamation} className={cn(MUTED_DANGER_TEXT, 'mx-auto mb-1 size-7')} />
-              <AlertDialogTitle danger>Delete {doomed?.name}?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Its {count(doomedRooms.length, 'room')} and the {count(doomedPieces, 'piece')} in them are deleted with
-                it, and the devices bound to those pieces are let go. This cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <label className="text-label-2 mt-4 flex flex-col gap-1.5 text-left text-xs">
-              Type {doomed?.name} to delete it
-              <input
-                aria-label="Floor name to confirm"
-                autoFocus
-                value={floorTyped}
-                onChange={e => setFloorTyped(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && doomed && floorTyped.trim() === doomed.name) deleteFloor(doomed.id)
-                }}
-                className={cn(field, 'h-9')}
-              />
-            </label>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setFloorToDelete(null)}>Keep it</AlertDialogCancel>
-              <AlertDialogAction
-                variant="destructive"
-                className={MUTED_DANGER_FILL}
-                disabled={!doomed || floorTyped.trim() !== doomed.name}
-                onClick={() => doomed && deleteFloor(doomed.id)}
-              >
-                Delete floor
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialog>
-          {/* Inside the editor, so it wears the editor's colors. */}
-          <AlertDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Save changes?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Discarding them takes the rooms back to how they were when you opened the editor. This cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogAction
-                className="col-span-2"
-                onClick={() => {
-                  setConfirmDiscard(false)
-                  void saveAndClose()
-                }}
-              >
-                Save & Close
-              </AlertDialogAction>
-              <AlertDialogCancel onClick={() => setConfirmDiscard(false)}>Keep editing</AlertDialogCancel>
-              <AlertDialogAction variant="destructive" onClick={discard}>
-                Discard
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialog>
-        </div>
-      </Overlay>
+            <AlertDialog danger open={doomed !== undefined} onOpenChange={open => !open && setFloorToDelete(null)}>
+              <AlertDialogHeader>
+                <FontAwesomeIcon
+                  icon={faTriangleExclamation}
+                  className={cn(MUTED_DANGER_TEXT, 'mx-auto mb-1 size-7')}
+                />
+                <AlertDialogTitle danger>Delete {doomed?.name}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Its {count(doomedRooms.length, 'room')} and the {count(doomedPieces, 'piece')} in them are deleted
+                  with it, and the devices bound to those pieces are let go. This cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <label className="text-label-2 mt-4 flex flex-col gap-1.5 text-left text-xs">
+                Type {doomed?.name} to delete it
+                <input
+                  aria-label="Floor name to confirm"
+                  autoFocus
+                  value={floorTyped}
+                  onChange={e => setFloorTyped(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && doomed && floorTyped.trim() === doomed.name) deleteFloor(doomed.id)
+                  }}
+                  className={cn(field, 'h-9')}
+                />
+              </label>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setFloorToDelete(null)}>Keep it</AlertDialogCancel>
+                <AlertDialogAction
+                  variant="destructive"
+                  className={MUTED_DANGER_FILL}
+                  disabled={!doomed || floorTyped.trim() !== doomed.name}
+                  onClick={() => doomed && deleteFloor(doomed.id)}
+                >
+                  Delete floor
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialog>
+            {/* Inside the editor, so it wears the editor's colors. */}
+            <AlertDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Save changes?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Discarding them takes the rooms back to how they were when you opened the editor. This cannot be
+                  undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction
+                  className="col-span-2"
+                  onClick={() => {
+                    setConfirmDiscard(false)
+                    void saveAndClose()
+                  }}
+                >
+                  Save & Close
+                </AlertDialogAction>
+                <AlertDialogCancel onClick={() => setConfirmDiscard(false)}>Keep editing</AlertDialogCancel>
+                <AlertDialogAction variant="destructive" onClick={discard}>
+                  Discard
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialog>
+          </div>
+        </Overlay>
+      </PaletteContext.Provider>
     )
   }
 
-  return <CardPanel hass={hass} config={config} onChange={onChange} opening={opening} onOpen={openEditor} />
+  return (
+    <PaletteContext.Provider value={palette}>
+      <CardPanel hass={hass} config={config} onChange={onChange} opening={opening} onOpen={openEditor} />
+    </PaletteContext.Provider>
+  )
 }
 
 // A named button in the corner of the 3D view. Greyed out when there is no

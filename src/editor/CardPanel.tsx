@@ -1,4 +1,5 @@
 import { Select } from '#/components/ui/select.tsx'
+import ColorWell from '#/editor/ColorWell.tsx'
 import { aspectRatioNumber } from '#/lib/aspect.ts'
 import { hasFloors } from '#/lib/floors.ts'
 import { BACKGROUNDS, DEFAULT_BACKGROUND, PLAIN_SWATCH, THEME_BACKGROUND } from '#/lib/background.ts'
@@ -6,7 +7,7 @@ import { setDevSettings, useDevSettings } from '#/lib/devSettings.ts'
 import { setPreviewRoom } from '#/lib/previewRoom.ts'
 import { screenName, thisScreen, withScreen } from '#/lib/screen.ts'
 import { cn } from '#/lib/utils.ts'
-import { field, group, groupTitle, note, colorWell } from '#/editor/look.ts'
+import { field, group, groupTitle, note } from '#/editor/look.ts'
 import ControlsGuide from '#/editor/ControlsGuide.tsx'
 import { ResetButton, Slider, Switch } from '#/editor/panel.tsx'
 import { SUN_DIRECTION_DEG } from '#/constants.ts'
@@ -583,12 +584,10 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
               />
               <label className="grid grid-cols-[minmax(0,1fr)_96px_24px] items-center gap-2 pt-1 text-[13px]">
                 Inside
-                <input
-                  type="color"
-                  className={colorWell}
+                <ColorWell
                   aria-label="Wall color inside"
                   value={walls.color ?? WALL_COLOR}
-                  onChange={e => setWall('color', e.target.value)}
+                  onChange={v => setWall('color', v)}
                 />
                 <ResetButton
                   label="Wall color inside"
@@ -612,15 +611,13 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
               </label>
               <label className="grid grid-cols-[minmax(0,1fr)_96px_24px] items-center gap-2 text-[13px]">
                 {outside === 'brick' ? 'Brick color' : outside === 'wood' ? 'Panelling color' : 'Outside color'}
-                <input
-                  type="color"
-                  className={colorWell}
+                <ColorWell
                   aria-label="Wall color outside"
                   value={
                     walls.outside_color ??
                     (outside === 'plain' ? (walls.color ?? WALL_COLOR) : OUTSIDE_WALLS[outside].color)
                   }
-                  onChange={e => setWall('outside_color', e.target.value)}
+                  onChange={v => setWall('outside_color', v)}
                 />
                 <ResetButton
                   label="Wall color outside"
