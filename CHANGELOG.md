@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Added
+
+- An imported model can be put in a category, like Ceiling light, which sets how it hangs and lists it in the Style menu of every piece of that kind, so a piece already placed can be switched to the model and back.
+
 ## [1.29.0] - 2026-11-28
 
 ### Added
