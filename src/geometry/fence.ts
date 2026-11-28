@@ -28,6 +28,7 @@ export function fenceGeometry(outline: Point[], heights: number[], others: Point
   const wallRise: number[] = []
   const wallShape: number[] = []
   const wallExtra: number[] = []
+  const wallRuns: number[] = []
   // Of the box being drawn: the way it faces out and its full height.
   let faceOut: Point = [0, 1]
   let full = 0
@@ -51,6 +52,7 @@ export function fenceGeometry(outline: Point[], heights: number[], others: Point
       wallRise.push(0, 0, 0)
       wallShape.push(top ? 1 : 0, 0, 0, full)
       wallExtra.push(-1, n[2] > 0.5 ? 1 : 0)
+      wallRuns.push(-1, -1)
     }
   }
 
@@ -184,5 +186,6 @@ export function fenceGeometry(outline: Point[], heights: number[], others: Point
   geometry.setAttribute('wallRise', new Float32BufferAttribute(wallRise, 3))
   geometry.setAttribute('wallShape', new Float32BufferAttribute(wallShape, 4))
   geometry.setAttribute('wallExtra', new Float32BufferAttribute(wallExtra, 2))
+  geometry.setAttribute('wallRuns', new Float32BufferAttribute(wallRuns, 2))
   return geometry
 }

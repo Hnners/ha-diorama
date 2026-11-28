@@ -9,6 +9,14 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Changed
+
+- Only the tall walls joined to the back of the home stand up as the view turns, so no piece of wall is left standing tall on its own in the middle.
+
+### Fixed
+
+- A cupboard or bay standing out of the back of the home rises with the walls either side, instead of leaving a slot between them.
+
 ## [1.31.1] - 2026-11-28
 
 ### Changed
