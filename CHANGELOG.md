@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.30.0] - 2026-11-28
+
 ### Added
 
 - An imported model can be put in a category, like Ceiling light, which sets how it hangs and lists it in the Style menu of every piece of that kind, so a piece already placed can be switched to the model and back.
@@ -957,7 +959,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.29.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.30.0...HEAD
+[1.30.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.29.0...v1.30.0
 [1.29.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.28.0...v1.29.0
 [1.28.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.27.2...v1.28.0
 [1.27.2]: https://github.com/CarlesRojas/ha-diorama/compare/v1.27.1...v1.27.2
