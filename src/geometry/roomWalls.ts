@@ -259,6 +259,19 @@ export function roomWallGeometry(
     const w = outline[(k + 1) % n]
     return (q[0] - p[0]) * (w[1] - q[1]) - (q[1] - p[1]) * (w[0] - q[0]) > 0
   }
+  // Whether the outline turns right at a corner, into the room. The two
+  // walls there stand either side of the corner and leave the square
+  // between their ends open, so the wall coming in runs on through it by
+  // its thickness, and the wall going out starts behind it.
+  const reflex = (k: number) => {
+    const p = outline[(k - 1 + n) % n]
+    const q = outline[k]
+    const w = outline[(k + 1) % n]
+    const lp = Math.hypot(q[0] - p[0], q[1] - p[1])
+    const lw = Math.hypot(w[0] - q[0], w[1] - q[1])
+    if (lp < 1e-3 || lw < 1e-3) return false
+    return ((q[0] - p[0]) * (w[1] - q[1]) - (q[1] - p[1]) * (w[0] - q[0])) / (lp * lw) < -1e-6
+  }
 
   // How far along the outline each edge starts, so the pattern runs on round
   // a corner.
@@ -475,7 +488,10 @@ export function roomWallGeometry(
         ])
       }
       if (s0 > 1e-4) cap(first, back, 0)
-      else if (!convex(i)) cap(first, back, endGroup(0))
+      // Into the room, the wall before runs on over this end.
+      else if (reflex(i)) {
+        // Nothing to close.
+      } else if (!convex(i)) cap(first, back, endGroup(0))
       // At a corner round the outside of the room, a little inside it: the
       // next wall covers it while it stands as tall, and where that one is
       // lower it closes this one's end.
@@ -500,7 +516,9 @@ export function roomWallGeometry(
       keep = cutStretches(keep, from, to)
       gaps.push({ from, to, sill: o.sill, top: o.top })
     }
-    for (const [s0, s1] of keep) band(s0, s1, -FOOT_M, {})
+    // Through the square left open at a corner turning into the room.
+    const runOn = reflex((i + 1) % n) ? thickness : 0
+    for (const [s0, s1] of keep) band(s0, s1 >= len - 1e-4 ? s1 + runOn : s1, -FOOT_M, {})
     for (const g of gaps) {
       // A window keeps the wall under its sill.
       if (g.sill > 0.01) band(g.from, g.to, -FOOT_M, { max: g.sill })

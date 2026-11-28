@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Fixed
+
+- Walls close up properly at a corner that turns into a room, such as round a cupboard built into it, instead of leaving a notch in the top.
+
 ## [1.27.1] - 2026-11-28
 
 ### Changed
