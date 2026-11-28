@@ -1449,7 +1449,9 @@ export default function Canvas({
 function Grid({ view, width, height }: { view: View; width: number; height: number }) {
   const [minX, maxY] = toPlan(view, [0, 0])
   const [maxX, minY] = toPlan(view, [width, height])
-  const step = view.scale >= 30 ? EDITOR_GRID_M : view.scale >= 6 ? 1 : 5
+  // The snapping step once zoomed in far enough to see it, and a coarser
+  // line before that so the grid never turns into a wash.
+  const step = view.scale >= 60 ? EDITOR_GRID_M : view.scale >= 30 ? 0.2 : view.scale >= 6 ? 1 : 5
   const lines: React.ReactNode[] = []
   for (let x = Math.floor(minX / step) * step; x <= maxX; x += step) {
     const major = Math.abs(x - Math.round(x)) < 1e-6
