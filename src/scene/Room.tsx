@@ -22,6 +22,7 @@ import { elevationOf } from '#/geometry/elevation.ts'
 import { slabGeometry, touchesNeighbour } from '#/geometry/slab.ts'
 import { roomWallGeometry, type WallOpening } from '#/geometry/roomWalls.ts'
 import { animateWalls } from '#/scene/wallShader.ts'
+import { wallRunsOf } from '#/scene/wallRuns.ts'
 import { WallHeights, type Walls } from '#/scene/walls.ts'
 import type { Point, RoomConfig } from '#/types.ts'
 import { memo, useContext, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
@@ -126,7 +127,20 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
     // An outside space has no walls of its own.
     if (!walls || room.outdoor) return null
     const outline = inset(ensureCounterClockwise(room.points), gap / 2)
-    const tall = walls.tall && heights ? { ...walls.tall, floor: [outline, ...others] } : null
+    // Its runs of the home's outside numbered for the whole floor, so only
+    // the ones joined to the back stand tall.
+    const registry = heights ? wallRunsOf.get(heights) : undefined
+    const floorKey = `${room.floor_id ?? ''}|${storey}`
+    const runs = registry && {
+      index: (a: Point, b: Point, out: Point, len: number) => registry.index(floorKey, a, b, out, len),
+      set short(v: number) {
+        registry.short = v
+      },
+      get short() {
+        return registry.short
+      },
+    }
+    const tall = walls.tall && heights ? { ...walls.tall, floor: [outline, ...others], runs } : null
     return roomWallGeometry(outline, openings ?? [], {
       height: walls.height,
       thickness: walls.thickness,
@@ -135,7 +149,7 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
       colors: edgeColors,
       tall,
     })
-  }, [walls, room.outdoor, room.points, gap, openings, others, edgeColors, heights])
+  }, [walls, room.outdoor, room.points, room.floor_id, storey, gap, openings, others, edgeColors, heights])
   const wallMesh = useRef<Mesh>(null)
   // Its materials, and the ones its shadows are drawn with, set their heights
   // from the camera. Done again whenever a material is made anew.

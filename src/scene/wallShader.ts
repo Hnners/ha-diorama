@@ -1,5 +1,5 @@
 import type { Material } from 'three'
-import { MeshDepthMaterial, MeshDistanceMaterial, RGBADepthPacking, Vector2 } from 'three'
+import { MeshDepthMaterial, MeshDistanceMaterial, RGBADepthPacking, Vector2, Vector4 } from 'three'
 
 // The walls' heights, set on the graphics card from the camera on every
 // frame. Each corner of a wall's top carries, from roomWalls.ts, which way its
@@ -13,29 +13,47 @@ export type WallUniforms = {
   uWallToCamera: { value: Vector2 }
   uWallLow: { value: number }
   uWallHigh: { value: number }
+  // How much each run of the home's outside may stand tall, four to a
+  // vector, by the number the run is given in wallRuns.ts: only the runs
+  // joined to the back of the home do, so no piece stands tall on its own.
+  uWallAllow: { value: Vector4[] }
 }
+
+// How many runs of outside wall the allowances have room for.
+export const WALL_RUNS = 256
 
 export const wallUniforms = (low: number, high: number): WallUniforms => ({
   uWallToCamera: { value: new Vector2(0, 1) },
   uWallLow: { value: low },
   uWallHigh: { value: high },
+  uWallAllow: { value: Array.from({ length: WALL_RUNS / 4 }, () => new Vector4(1, 1, 1, 1)) },
 })
 
 // How much a wall faces the camera before it starts to sink, and over how
 // much of a turn it goes from full height to low: the back and the sides of
 // the home stand tall, the front sinks.
-const FACING = 0.3
-const SPREAD = 0.15
+export const FACING = 0.3
+export const SPREAD = 0.15
 
 const HEAD = /* glsl */ `
 attribute vec3 wallOwn;
 attribute vec3 wallRise;
 attribute vec4 wallShape;
 attribute vec2 wallExtra;
+attribute vec2 wallRuns;
 uniform vec2 uWallToCamera;
+uniform vec4 uWallAllow[${WALL_RUNS / 4}];
 uniform float uWallLow;
 uniform float uWallHigh;
 varying float vWallKeep;
+// How much a run may stand tall, all of it for none.
+float wallAllowOf(float i) {
+  if (i < -0.5) return 1.0;
+  int k = int(i + 0.5);
+  vec4 v = uWallAllow[k / 4];
+  int c = k - (k / 4) * 4;
+  return c == 0 ? v.x : c == 1 ? v.y : c == 2 ? v.z : v.w;
+}
 float wallRiseOf(vec3 e) {
   if (e.z < 0.5) return 0.0;
   return 1.0 - smoothstep(${(FACING - SPREAD).toFixed(3)}, ${(FACING + SPREAD).toFixed(3)}, dot(e.xy, uWallToCamera));
@@ -44,8 +62,8 @@ float wallRiseOf(vec3 e) {
 
 // The height of this corner's top, and what is kept of a lintel.
 const TOP = /* glsl */ `
-  float wallRo = wallRiseOf(vec3(wallOwn.xy, min(wallOwn.z, 1.0)));
-  float wallRn = wallRiseOf(wallRise);
+  float wallRo = wallRiseOf(vec3(wallOwn.xy, min(wallOwn.z, 1.0))) * wallAllowOf(wallRuns.x);
+  float wallRn = wallRiseOf(wallRise) * wallAllowOf(wallRuns.y);
   // A short wall between two tall ones stands only as tall as the lower.
   float wallTop = wallOwn.z > 1.5
     ? mix(uWallLow, uWallHigh, min(wallRo, wallRn))
