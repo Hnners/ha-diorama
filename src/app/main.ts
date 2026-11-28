@@ -116,6 +116,23 @@ function showHouse() {
   fitHouse()
 }
 
+// Back to the house once the editor has closed. The editor takes its own
+// entry off the history as it closes, so this waits for that step back to
+// land first. Going to the house before it would have the step back land
+// on Edit house again and open the editor straight back up.
+function backToHouse() {
+  let done = false
+  const go = () => {
+    if (done) return
+    done = true
+    window.removeEventListener('popstate', go)
+    history.replaceState(history.state, '', '#house')
+    route()
+  }
+  window.addEventListener('popstate', go)
+  setTimeout(go, 400)
+}
+
 function showSettings(openEditor = false) {
   forget(editor)
   panel?.remove()
@@ -132,7 +149,7 @@ function showSettings(openEditor = false) {
   })
   element.addEventListener('editor-closed', () => {
     void flushSave()
-    if (openEditor) location.hash = '#house'
+    if (openEditor) backToHouse()
   })
   panel = document.createElement('section')
   panel.className = 'settings'
