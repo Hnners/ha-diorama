@@ -9,6 +9,10 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+### Changed
+
+- Fences sink on the sides facing you and rise at the back as the view turns, the same as the house walls.
+
 ## [1.31.0] - 2026-11-28
 
 ### Added
