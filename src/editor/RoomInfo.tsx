@@ -5,6 +5,8 @@ import { neighboursOf } from '#/geometry/passages.ts'
 import {
   EDITOR_TINT_COLOR,
   FLOOR_MATERIALS,
+  OUTSIDE_WALLS,
+  type OutsideWalls,
   ROOM_COLORS,
   ROOM_ELEVATION_MAX_M,
   ROOM_ELEVATION_MIN_M,
@@ -48,6 +50,9 @@ type Props = {
   onWallColor?: (roomId: string, color: string | undefined) => void
   onWallColors?: (roomId: string, colors: RoomConfig['wall_colors']) => void
   onOutdoor?: (roomId: string, outdoor: boolean) => void
+  // The home's outside walls and their color, and setting this room's own.
+  outside?: { kind: OutsideWalls; color: string; inside: string }
+  onOutsideWalls?: (roomId: string, kind: OutsideWalls | undefined, color: string | undefined) => void
   // Every piece of the home, to tell which rooms beside this one a door
   // leads into.
   decorations: DecorationConfig[]
@@ -123,6 +128,8 @@ export default function RoomInfo({
   onWallColor,
   onWallColors,
   onOutdoor,
+  outside,
+  onOutsideWalls,
   decorations,
   onArrow,
   onSaveCamera,
@@ -286,6 +293,53 @@ export default function RoomInfo({
               onReset={() => onWallColor(room.id, undefined)}
             />
           </label>
+        )}
+        {/* The outside of its walls, where they face out of the home: the
+            home's, or its own, like timber panelling round a shed. */}
+        {outside && onOutsideWalls && !room.outdoor && (
+          <>
+            <label className={cn(row, 'grid-cols-[96px_1fr_24px]')}>
+              Outside
+              <Select
+                aria-label="Outside of the walls"
+                value={room.outside_walls ?? ''}
+                options={[
+                  { value: '', label: `Home (${OUTSIDE_WALLS[outside.kind].label})` },
+                  ...Object.entries(OUTSIDE_WALLS).map(([id, o]) => ({ value: id, label: o.label })),
+                ]}
+                onChange={v => onOutsideWalls(room.id, (v || undefined) as OutsideWalls | undefined, undefined)}
+              />
+              <ResetButton
+                label="Outside walls"
+                changed={room.outside_walls !== undefined || room.outside_color !== undefined}
+                onReset={() => onOutsideWalls(room.id, undefined, undefined)}
+              />
+            </label>
+            {(room.outside_walls || room.outside_color) && (
+              <label className={cn(row, 'grid-cols-[96px_1fr_24px]')}>
+                Outside color
+                <input
+                  type="color"
+                  className={colorWell}
+                  aria-label="Outside wall color"
+                  value={
+                    room.outside_color ??
+                    (room.outside_walls === outside.kind || !room.outside_walls
+                      ? outside.color
+                      : room.outside_walls === 'plain'
+                        ? outside.inside
+                        : OUTSIDE_WALLS[room.outside_walls].color)
+                  }
+                  onChange={e => onOutsideWalls(room.id, room.outside_walls, e.target.value)}
+                />
+                <ResetButton
+                  label="Outside color"
+                  changed={room.outside_color !== undefined}
+                  onReset={() => onOutsideWalls(room.id, room.outside_walls, undefined)}
+                />
+              </label>
+            )}
+          </>
         )}
         {/* Each wall on its own, named for the side of the room it is on. A
             wall left alone takes the room's color above. */}

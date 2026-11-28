@@ -1,7 +1,15 @@
 import { SLAB_BEVEL_SEGMENTS, SLAB_CURVE_SEGMENTS } from '#/constants.ts'
 import SurfaceMaterial from '#/scene/SurfaceMaterial.tsx'
 import type { SurfaceKind } from '#/materials/textures.ts'
-import { FLOOR_MATERIALS, FLOOR_PATTERN_SHIFT_M, ROOM_SLAB_EDGE_RADIUS_M, ROOM_SLAB_THICKNESS_M } from '#/theme.ts'
+import {
+  BRICK_COLOR,
+  FLOOR_MATERIALS,
+  FLOOR_PATTERN_SHIFT_M,
+  OUTSIDE_WALLS,
+  ROOM_SLAB_EDGE_RADIUS_M,
+  ROOM_SLAB_THICKNESS_M,
+  WALL_COLOR,
+} from '#/theme.ts'
 import { floorColor } from '#/scene/floorColor.ts'
 import { useEased } from '#/scene/decor/ease.ts'
 import { presenceTint } from '#/scene/presence.ts'
@@ -133,6 +141,16 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
   })
   useEffect(() => () => wallGeometry?.dispose(), [wallGeometry])
 
+  // The outside of its walls: its own, or the home's.
+  const outside = room.outside_walls ?? walls?.outside ?? 'brick'
+  const outsideColor =
+    room.outside_color ??
+    (room.outside_walls && room.outside_walls !== walls?.outside
+      ? room.outside_walls === 'plain'
+        ? (walls?.color ?? WALL_COLOR)
+        : OUTSIDE_WALLS[room.outside_walls].color
+      : (walls?.outsideColor ?? BRICK_COLOR))
+
   const floor = room.floor ? FLOOR_MATERIALS[room.floor.material] : undefined
   // The presence filter fades over the floor and away again.
   const shown = useEased(occupied ? 1 : 0, 4)
@@ -168,10 +186,14 @@ function Room({ room, rooms, index, radius, gap, occupied = false, walls = null,
           {/* Inside, the room's own color; outside, the home's brick or
               plain finish. */}
           <meshStandardMaterial attach="material-0" vertexColors roughness={0.9} />
-          {walls.outside === 'brick' ? (
-            <SurfaceMaterial attach="material-1" kind="brick" color={walls.outsideColor} />
+          {outside === 'plain' ? (
+            <meshStandardMaterial attach="material-1" color={outsideColor} roughness={0.9} />
           ) : (
-            <meshStandardMaterial attach="material-1" color={walls.outsideColor} roughness={0.9} />
+            <SurfaceMaterial
+              attach="material-1"
+              kind={outside === 'wood' ? 'cladding' : 'brick'}
+              color={outsideColor}
+            />
           )}
         </mesh>
       )}

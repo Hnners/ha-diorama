@@ -1,7 +1,8 @@
 import { decorationKind, paramValue } from '#/decoration/catalog.ts'
 import type { WallOpening } from '#/geometry/roomWalls.ts'
 import {
-  BRICK_COLOR,
+  OUTSIDE_WALLS,
+  type OutsideWalls,
   TALL_WALL_HEIGHT_M,
   TALL_WALL_JUT_M,
   TALL_WALL_RADIUS_M,
@@ -18,7 +19,7 @@ export type Walls = {
   height: number
   thickness: number
   color: string
-  outside: 'brick' | 'plain'
+  outside: OutsideWalls
   outsideColor: string
   tall: { height: number; jut: number; radius: number } | null
 }
@@ -32,7 +33,8 @@ export function wallsOf(config: CardConfig): Walls | null {
     thickness: Math.min(Math.max(w.thickness ?? WALL_THICKNESS_M, 0.01), 0.5),
     color: w.color ?? WALL_COLOR,
     outside: w.outside ?? 'brick',
-    outsideColor: w.outside_color ?? (w.outside === 'plain' ? (w.color ?? WALL_COLOR) : BRICK_COLOR),
+    outsideColor:
+      w.outside_color ?? (w.outside === 'plain' ? (w.color ?? WALL_COLOR) : OUTSIDE_WALLS[w.outside ?? 'brick'].color),
     tall: w.tall
       ? {
           height: Math.min(Math.max(w.tall.height ?? TALL_WALL_HEIGHT_M, 0.2), 5),

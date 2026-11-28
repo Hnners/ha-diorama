@@ -1,11 +1,4 @@
-import {
-  DataTexture,
-  LinearMipmapLinearFilter,
-  RepeatWrapping,
-  RGBAFormat,
-  SRGBColorSpace,
-  type Texture,
-} from 'three'
+import { DataTexture, LinearMipmapLinearFilter, RepeatWrapping, RGBAFormat, SRGBColorSpace, type Texture } from 'three'
 
 // Procedural surfaces, generated once on a canvas and cached. Each material
 // gives a light grayscale color map, so the item's color tints it, and a
@@ -35,6 +28,8 @@ export type SurfaceKind =
   | 'metal'
   | 'matte'
   | 'brick'
+  | 'cladding'
+  | 'grass'
 
 const SIZE = 512
 // Cached per kind and per intensity, since the color map is baked with it.
@@ -146,6 +141,48 @@ const FIELDS: Record<
     roughness: 0.92,
     repeat: 1 / 0.45,
     normalScale: 0.35,
+  },
+  cladding: {
+    // Shiplap timber boards running level along the wall, 12.5 cm a board,
+    // each overlapping the one below so a shadow line runs under it. The
+    // tile is four boards up and stretched four times along the wall, so a
+    // board's butt joint comes every 2 m, staggered from row to row.
+    field: (u, v) => {
+      const rows = 4
+      const row = Math.floor(v * rows)
+      const fy = v * rows - row
+      const along = u + hash2(row, 5, 23)
+      const plank = Math.floor(along * 2)
+      const butt = Math.abs(along * 2 - plank - 0.5) > 0.497
+      // The board leans out towards its foot, where it laps the next one.
+      const lap = fy < 0.08
+      const grain = fbm(u, v, 3, 48, 29)
+      const tone = 0.86 + grain * 0.08 + (hash2(row, plank, 31) - 0.5) * 0.08
+      return {
+        height: lap ? 0.2 + fy * 3 : butt ? 0.4 : 0.75 - fy * 0.2 + grain * 0.06,
+        light: lap ? tone * 0.7 : butt ? tone * 0.85 : tone,
+      }
+    },
+    roughness: 0.8,
+    repeat: 2,
+    stretch: 4,
+    normalScale: 0.4,
+  },
+  grass: {
+    // A lawn: patches of lighter and darker green, clumps, and fine blades
+    // over them.
+    field: (u, v) => {
+      const patch = fbm(u, v, 3, 3, 71, 3)
+      const clump = fbm(u, v, 14, 14, 73, 2)
+      const blade = fbm(u, v, 90, 90, 75, 1)
+      return {
+        height: clump * 0.5 + blade * 0.5,
+        light: 0.78 + patch * 0.16 + clump * 0.08 + blade * 0.06,
+      }
+    },
+    roughness: 1,
+    repeat: 0.8,
+    normalScale: 0.5,
   },
   tiles: {
     // Square tiles with grout lines. Three per tile at 0.83 tiles per meter,

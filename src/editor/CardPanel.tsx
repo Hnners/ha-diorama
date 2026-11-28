@@ -11,7 +11,7 @@ import ControlsGuide from '#/editor/ControlsGuide.tsx'
 import { ResetButton, Slider, Switch } from '#/editor/panel.tsx'
 import { SUN_DIRECTION_DEG } from '#/constants.ts'
 import {
-  BRICK_COLOR,
+  OUTSIDE_WALLS,
   EDITOR_TINT_COLOR,
   TALL_WALL_HEIGHT_M,
   TALL_WALL_JUT_M,
@@ -604,18 +604,22 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
                   options={[
                     { value: 'brick', label: 'Brick' },
                     { value: 'plain', label: 'Plain' },
+                    { value: 'wood', label: 'Wood panelling' },
                   ]}
-                  onChange={v => setWall('outside', v === 'brick' ? undefined : (v as 'plain'))}
+                  onChange={v => setWall('outside', v === 'brick' ? undefined : (v as 'plain' | 'wood'))}
                 />
                 <span />
               </label>
               <label className="grid grid-cols-[minmax(0,1fr)_96px_24px] items-center gap-2 text-[13px]">
-                {outside === 'brick' ? 'Brick color' : 'Outside color'}
+                {outside === 'brick' ? 'Brick color' : outside === 'wood' ? 'Panelling color' : 'Outside color'}
                 <input
                   type="color"
                   className={colorWell}
                   aria-label="Wall color outside"
-                  value={walls.outside_color ?? (outside === 'brick' ? BRICK_COLOR : (walls.color ?? WALL_COLOR))}
+                  value={
+                    walls.outside_color ??
+                    (outside === 'plain' ? (walls.color ?? WALL_COLOR) : OUTSIDE_WALLS[outside].color)
+                  }
                   onChange={e => setWall('outside_color', e.target.value)}
                 />
                 <ResetButton
@@ -625,7 +629,7 @@ export default function CardPanel({ hass, config, onChange, opening, onOpen }: P
                 />
               </label>
               <p className="text-label-2 text-xs">
-                Each room can have its own color inside, in its settings in the editor.
+                Each room can have its own color inside, and its own outside walls, in its settings in the editor.
               </p>
               <label className="flex cursor-pointer items-center justify-between gap-4 pt-2">
                 <span className="flex min-w-0 flex-col">
