@@ -1,6 +1,6 @@
 # Diorama development guide
 
-This guide is for people working on the card's code. If you only want to use the card in your Home Assistant, you do not need it: install it from HACS as the [README](../README.md) explains, and build your home in the card's own editor.
+This guide is for people working on the code. If you only want to use S.I.M.S. in your Home Assistant, you do not need it: install the app as the [README](../README.md) explains, and build your home in its editor.
 
 It covers running the card from source against a local Home Assistant, the editor's commands, the catalog, how pieces show device state, and the card config format that the editor writes.
 

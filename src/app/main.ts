@@ -215,9 +215,8 @@ async function start() {
     status.textContent = 'S.I.M.S. could not load the house.'
     return
   }
-  const { config, imported_from } = (await r.json()) as { config: CardConfig; imported_from: string | null }
+  const { config } = (await r.json()) as { config: CardConfig }
   house = config
-  if (imported_from) toast(`Brought your house over from the "${imported_from}" dashboard`)
   if (!house.rooms?.length && !location.hash) location.hash = '#edit'
   route()
 }
