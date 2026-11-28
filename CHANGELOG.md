@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.32.0] - 2026-11-28
+
 ### Changed
 
 - Only the tall walls joined to the back of the home stand up as the view turns, so no piece of wall is left standing tall on its own in the middle.
@@ -979,7 +981,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.31.1...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.32.0...HEAD
+[1.32.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.31.1...v1.32.0
 [1.31.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.31.0...v1.31.1
 [1.31.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.30.0...v1.31.0
 [1.30.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.29.0...v1.30.0
