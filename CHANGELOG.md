@@ -9,6 +9,8 @@ moves that section under the new version and uses it as the release notes.
 
 ## [Unreleased]
 
+## [1.29.0] - 2026-11-28
+
 ### Added
 
 - Outside spaces can have a timber fence on any of their sides, each side its own height, with the slat width and stain set in the space's settings; where the house runs along a side its wall stands there instead.
@@ -951,7 +953,8 @@ moves that section under the new version and uses it as the release notes.
 
 ### Changed
 
-[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.28.0...HEAD
+[Unreleased]: https://github.com/CarlesRojas/ha-diorama/compare/v1.29.0...HEAD
+[1.29.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.28.0...v1.29.0
 [1.28.0]: https://github.com/CarlesRojas/ha-diorama/compare/v1.27.2...v1.28.0
 [1.27.2]: https://github.com/CarlesRojas/ha-diorama/compare/v1.27.1...v1.27.2
 [1.27.1]: https://github.com/CarlesRojas/ha-diorama/compare/v1.27.0...v1.27.1
